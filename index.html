@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>TimeWalk 試作</title>
+<!--
+  TimeWalk 試作・段階1：今いる場所から鎌倉大仏までの距離を出す
+  確かめること：位置が取れるか／何mずれるか
+  使っているもの：ブラウザ標準の位置情報（Geolocation API）だけ。外部の部品なし。
+  大仏の位置：OpenStreetMap「鎌倉大仏」node 260752586（2026-10-21確認）
+-->
+<style>
+  :root {
+    --indigo: #3D5A80;
+    --brown: #8B6B4A;
+    --bg: #F5F0E8;
+    --card: #FFFFFF;
+    --text: #2A2A2A;
+    --muted: #6B6B6B;
+    --warn: #B0442C;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, "Hiragino Sans", "Hiragino Kaku Gothic ProN", sans-serif;
+    line-height: 1.6;
+  }
+  header {
+    background: var(--indigo);
+    color: #fff;
+    padding: 14px 16px;
+  }
+  header h1 { margin: 0; font-size: 20px; letter-spacing: .05em; }
+  header p { margin: 2px 0 0; font-size: 13px; opacity: .85; }
+  main { padding: 16px; max-width: 480px; margin: 0 auto; }
+  .card {
+    background: var(--card);
+    border-radius: 14px;
+    padding: 18px 16px;
+    margin-bottom: 14px;
+    box-shadow: 0 1px 3px rgba(0,0,0,.08);
+  }
+  .label { font-size: 13px; color: var(--muted); margin: 0; }
+  .label small { color: var(--brown); }
+  .big {
+    font-size: 52px;
+    font-weight: 700;
+    color: var(--indigo);
+    margin: 4px 0 0;
+    line-height: 1.1;
+  }
+  .sub { font-size: 15px; color: var(--brown); margin: 6px 0 0; }
+  .row { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid #EEE7DC; font-size: 15px; }
+  .row:last-child { border-bottom: none; }
+  .row span:last-child { font-weight: 600; }
+  button {
+    width: 100%;
+    border: none;
+    border-radius: 12px;
+    padding: 16px;
+    font-size: 18px;
+    font-weight: 700;
+    background: var(--indigo);
+    color: #fff;
+    margin-bottom: 10px;
+  }
+  button.secondary { background: #fff; color: var(--brown); border: 2px solid var(--brown); font-size: 15px; padding: 12px; }
+  .msg { font-size: 14px; color: var(--warn); margin: 0; }
+  .hidden { display: none; }
+  footer { font-size: 12px; color: var(--muted); text-align: center; padding: 8px 16px 24px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>TimeWalk</h1>
+  <p>試作・段階1　大仏までの距離</p>
+</header>
+
+<main>
+  <button id="start">位置を取る <small>/ Find my location</small></button>
+  <p id="msg" class="msg hidden"></p>
+
+  <div class="card">
+    <p class="label">鎌倉大仏まで <small>/ To the Great Buddha</small></p>
+    <p class="big" id="dist">—</p>
+    <p class="sub" id="walk">ボタンを押すと距離が出ます</p>
+  </div>
+
+  <div class="card">
+    <div class="row"><span>位置の誤差（スマホの申告）</span><span id="acc">—</span></div>
+    <div class="row"><span>止まっている間のぶれ</span><span id="drift">—</span></div>
+    <div class="row"><span>位置を取った回数</span><span id="count">0</span></div>
+    <div class="row"><span>最後に取った時刻</span><span id="time">—</span></div>
+  </div>
+
+  <button id="reset" class="secondary hidden">ぶれの記録をやり直す</button>
+</main>
+
+<footer>大仏の位置：OpenStreetMap ／ 位置はこの画面の中だけで使い、どこにも送りません</footer>
+
+<script>
+  // 鎌倉大仏（OpenStreetMap node 260752586）
+  const BUDDHA = { lat: 35.3168482, lon: 139.5357212 };
+
+  const $ = (id) => document.getElementById(id);
+  let watchId = null;
+  let first = null;      // ぶれを測る基準（最初に取れた位置）
+  let maxDrift = 0;      // 基準から一番離れた距離
+  let count = 0;
+
+  // 2点間の距離（m）。地球を球として計算（ハバーサイン式）
+  function distanceM(a, b) {
+    const R = 6371000;
+    const toRad = (d) => d * Math.PI / 180;
+    const dLat = toRad(b.lat - a.lat);
+    const dLon = toRad(b.lon - a.lon);
+    const h = Math.sin(dLat / 2) ** 2 +
+              Math.cos(toRad(a.lat)) * Math.cos(toRad(b.lat)) * Math.sin(dLon / 2) ** 2;
+    return 2 * R * Math.asin(Math.sqrt(h));
+  }
+
+  function fmt(m) {
+    if (m < 1000) return Math.round(m) + " m";
+    return (m / 1000).toFixed(m < 10000 ? 2 : 1) + " km";
+  }
+
+  function showMsg(text) {
+    $("msg").textContent = text;
+    $("msg").classList.remove("hidden");
+  }
+
+  function onPosition(pos) {
+    const here = { lat: pos.coords.latitude, lon: pos.coords.longitude };
+    const d = distanceM(here, BUDDHA);
+    count += 1;
+
+    if (!first) first = here;
+    maxDrift = Math.max(maxDrift, distanceM(first, here));
+
+    $("dist").textContent = fmt(d);
+    // 歩く速さ 分速80m（不動産広告の基準）で概算
+    $("walk").textContent = d < 30
+      ? "大仏の前にいます"
+      : "歩いて約 " + Math.max(1, Math.round(d / 80)) + " 分（直線距離で計算）";
+    $("acc").textContent = "± " + Math.round(pos.coords.accuracy) + " m";
+    $("drift").textContent = Math.round(maxDrift) + " m";
+    $("count").textContent = count;
+    $("time").textContent = new Date(pos.timestamp).toLocaleTimeString("ja-JP");
+    $("msg").classList.add("hidden");
+    $("reset").classList.remove("hidden");
+  }
+
+  function onError(err) {
+    if (err.code === err.PERMISSION_DENIED) {
+      showMsg("位置情報が許可されていません。iPhoneの「設定」→「プライバシーとセキュリティ」→「位置情報サービス」→「SafariのWebサイト」を「使用中のみ許可」にして、もう一度ボタンを押してください。");
+    } else if (err.code === err.TIMEOUT) {
+      showMsg("位置がなかなか取れません。屋外か窓の近くで、もう少し待ってください。");
+    } else {
+      showMsg("位置が取れませんでした（" + err.message + "）");
+    }
+  }
+
+  $("start").addEventListener("click", () => {
+    if (!window.isSecureContext) {
+      showMsg("この画面は https のページでないと位置を取れません。");
+      return;
+    }
+    if (!("geolocation" in navigator)) {
+      showMsg("このブラウザは位置情報に対応していません。");
+      return;
+    }
+    if (watchId !== null) return; // すでに取り続けている
+    $("start").textContent = "位置を取り続けています…";
+    $("walk").textContent = "位置を探しています…";
+    watchId = navigator.geolocation.watchPosition(onPosition, onError, {
+      enableHighAccuracy: true,  // GPSを使う
+      maximumAge: 0,             // 古い位置を使い回さない
+      timeout: 20000
+    });
+  });
+
+  $("reset").addEventListener("click", () => {
+    first = null;
+    maxDrift = 0;
+    $("drift").textContent = "0 m";
+  });
+</script>
+</body>
+</html>

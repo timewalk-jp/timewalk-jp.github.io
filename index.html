@@ -84,16 +84,44 @@
     margin: 6px auto 0;
     border-radius: 6px;
   }
-  .photo video {
-    display: block;
-    width: 100%;
-    height: 33vh;
-    object-fit: cover;
-    border-radius: 6px;
-    margin-top: 6px;
-    background: #222;
+  /* 全画面の見比べ */
+  #view { position: fixed; inset: 0; background: #000; z-index: 10; }
+  #view.hidden { display: none; }
+  /* 大きい方＝画面いっぱい。古写真が大きい時は切らずに全体を見せる（contain） */
+  #view .big { position: absolute; inset: 0; width: 100%; height: 100%; }
+  #view video.big { object-fit: cover; }
+  #view img.big { object-fit: contain; background: #000; }
+  /* 小さい方＝右下の枠。古写真は切らずに全体を見せる */
+  #view .small {
+    position: absolute;
+    right: 12px;
+    bottom: calc(44px + env(safe-area-inset-bottom));
+    width: 38vw;
+    max-height: 34vh;
+    border: 3px solid #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,.5);
+    background: #000;
+    z-index: 2;
   }
-  .photo video.hidden { display: none; }
+  #view img.small { object-fit: contain; height: auto; }
+  #view video.small { object-fit: cover; height: 34vh; }
+  #close {
+    position: absolute; top: calc(12px + env(safe-area-inset-top)); left: 12px;
+    width: 44px; height: 44px; padding: 0; margin: 0;
+    border-radius: 50%; font-size: 26px; line-height: 44px;
+    background: rgba(0,0,0,.55); color: #fff; z-index: 3;
+  }
+  #tip {
+    position: absolute; top: calc(14px + env(safe-area-inset-top)); left: 66px; right: 12px;
+    margin: 0; color: #fff; font-size: 13px; line-height: 1.4;
+    text-shadow: 0 1px 3px #000; z-index: 3;
+  }
+  #viewCredit {
+    position: absolute; left: 12px; right: 12px;
+    bottom: calc(10px + env(safe-area-inset-bottom));
+    margin: 0; color: #eee; font-size: 11px; text-shadow: 0 1px 3px #000; z-index: 3;
+  }
   .credit { font-size: 12px; color: var(--muted); margin: 8px 0 0; line-height: 1.5; }
   .credit a { color: var(--indigo); }
   footer { font-size: 12px; color: var(--muted); text-align: center; padding: 8px 16px 24px; }
@@ -139,14 +167,20 @@
     </p>
   </div>
 
-  <div class="card photo">
-    <p class="label">今 <small>/ Now</small></p>
-    <video id="cam" playsinline muted autoplay class="hidden"></video>
-    <p id="camHint" class="sub">下のボタンでカメラを起動します</p>
-  </div>
-  <button id="camStart">カメラを起動 <small>/ Open camera</small></button>
+  <button id="camStart">カメラで見比べる <small>/ Compare with camera</small></button>
   <p id="camMsg" class="msg hidden"></p>
 </main>
+
+<!-- 全画面の見比べ：画面いっぱいにカメラ、隅に古写真（まるごと）。古写真を押すと大小が入れ替わる -->
+<div id="view" class="hidden">
+  <video id="cam" playsinline muted autoplay></video>
+  <img id="pip" alt="昔の写真（押すと大きく表示）"
+       src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/da/Grote_Boeddha_%28Daibatsu%29_van_Kamakura%2C_van_voren_gezien_%28titel_op_object%29%2C_RP-F-F01102-AQ.jpg/960px-Grote_Boeddha_%28Daibatsu%29_van_Kamakura%2C_van_voren_gezien_%28titel_op_object%29%2C_RP-F-F01102-AQ.jpg"
+       crossorigin="anonymous">
+  <button id="close" aria-label="閉じる">×</button>
+  <p id="tip">小さい方を押すと、昔と今が入れ替わります<br><small>Tap the small picture to swap</small></p>
+  <p id="viewCredit">昔の写真：鎌倉の大仏（1870〜1900年ごろ）アムステルダム国立美術館 所蔵・CC0</p>
+</div>
 
 <footer>大仏の位置：OpenStreetMap ／ 位置とカメラの映像はこの画面の中だけで使い、どこにも送りません</footer>
 
@@ -241,20 +275,17 @@
       msg.classList.remove("hidden");
       return;
     }
-    if (camStream) return; // すでに起動している
     try {
-      camStream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: { ideal: "environment" } }, // 背面カメラ
-        audio: false
-      });
-      const v = $("cam");
-      v.srcObject = camStream;
-      await v.play();
-      v.classList.remove("hidden");
-      $("camHint").classList.add("hidden");
-      $("camStart").textContent = "カメラ起動中";
-      // 昔と今が1画面に並ぶ位置まで自動で動かす
-      document.querySelector("h2.sec").scrollIntoView({ behavior: "smooth" });
+      if (!camStream) {
+        camStream = await navigator.mediaDevices.getUserMedia({
+          video: { facingMode: { ideal: "environment" } }, // 背面カメラ
+          audio: false
+        });
+        $("cam").srcObject = camStream;
+      }
+      setBig("cam");
+      $("view").classList.remove("hidden");
+      await $("cam").play();
     } catch (e) {
       camStream = null;
       msg.textContent = (e.name === "NotAllowedError")
@@ -262,6 +293,23 @@
         : "カメラを起動できませんでした（" + e.name + "）";
       msg.classList.remove("hidden");
     }
+  });
+
+  // 大きく見せる方を決める（もう一方は右下の小さい枠）
+  function setBig(id) {
+    const other = id === "cam" ? "pip" : "cam";
+    $(id).className = "big";
+    $(other).className = "small";
+  }
+  // 小さい方を押すと入れ替え
+  $("cam").addEventListener("click", () => { if ($("cam").className === "small") setBig("cam"); });
+  $("pip").addEventListener("click", () => { if ($("pip").className === "small") setBig("pip"); });
+
+  // 閉じる：カメラを止めて元の画面へ
+  $("close").addEventListener("click", () => {
+    $("view").classList.add("hidden");
+    if (camStream) camStream.getTracks().forEach((t) => t.stop());
+    camStream = null;
   });
 
   $("reset").addEventListener("click", () => {

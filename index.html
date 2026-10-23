@@ -70,13 +70,39 @@
   button.secondary { background: #fff; color: var(--brown); border: 2px solid var(--brown); font-size: 15px; padding: 12px; }
   .msg { font-size: 14px; color: var(--warn); margin: 0; }
   .hidden { display: none; }
+  h2.sec { font-size: 18px; color: var(--indigo); margin: 24px 0 10px; }
+  h2.sec small { font-size: 13px; color: var(--brown); font-weight: 400; }
+  /* 昔と今が1画面に収まるよう、それぞれ画面の高さの約4割まで */
+  .photo { padding: 12px; margin-bottom: 10px; }
+  /* 古写真は切らない：縦横比のまま全体を表示（幅か高さの小さい方に合わせる） */
+  .photo img {
+    display: block;
+    max-width: 100%;
+    max-height: 33vh;
+    width: auto;
+    height: auto;
+    margin: 6px auto 0;
+    border-radius: 6px;
+  }
+  .photo video {
+    display: block;
+    width: 100%;
+    height: 33vh;
+    object-fit: cover;
+    border-radius: 6px;
+    margin-top: 6px;
+    background: #222;
+  }
+  .photo video.hidden { display: none; }
+  .credit { font-size: 12px; color: var(--muted); margin: 8px 0 0; line-height: 1.5; }
+  .credit a { color: var(--indigo); }
   footer { font-size: 12px; color: var(--muted); text-align: center; padding: 8px 16px 24px; }
 </style>
 </head>
 <body>
 <header>
   <h1>TimeWalk</h1>
-  <p>試作・段階1　大仏までの距離</p>
+  <p>試作・段階2　大仏までの距離／昔と今を見比べる</p>
 </header>
 
 <main>
@@ -97,9 +123,32 @@
   </div>
 
   <button id="reset" class="secondary hidden">ぶれの記録をやり直す</button>
+
+  <!-- 段階2：見比べる（古写真はまるごと・加工なしで表示） -->
+  <h2 class="sec">昔と今を見比べる <small>/ Then and now</small></h2>
+
+  <div class="card photo">
+    <p class="label">昔 <small>/ Then</small></p>
+    <img id="old" alt="鎌倉の大仏（正面）1870年ごろ〜1900年ごろ"
+         src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/da/Grote_Boeddha_%28Daibatsu%29_van_Kamakura%2C_van_voren_gezien_%28titel_op_object%29%2C_RP-F-F01102-AQ.jpg/960px-Grote_Boeddha_%28Daibatsu%29_van_Kamakura%2C_van_voren_gezien_%28titel_op_object%29%2C_RP-F-F01102-AQ.jpg"
+         crossorigin="anonymous">
+    <p class="credit">
+      鎌倉の大仏（正面）／1870年ごろ〜1900年ごろ／撮影者不明<br>
+      所蔵：アムステルダム国立美術館（Rijksmuseum, RP-F-F01102-AQ）・権利放棄（CC0）<br>
+      <a href="https://commons.wikimedia.org/wiki/File:Grote_Boeddha_(Daibatsu)_van_Kamakura,_van_voren_gezien_(titel_op_object),_RP-F-F01102-AQ.jpg" target="_blank" rel="noopener">写真の出典を見る</a>
+    </p>
+  </div>
+
+  <div class="card photo">
+    <p class="label">今 <small>/ Now</small></p>
+    <video id="cam" playsinline muted autoplay class="hidden"></video>
+    <p id="camHint" class="sub">下のボタンでカメラを起動します</p>
+  </div>
+  <button id="camStart">カメラを起動 <small>/ Open camera</small></button>
+  <p id="camMsg" class="msg hidden"></p>
 </main>
 
-<footer>大仏の位置：OpenStreetMap ／ 位置はこの画面の中だけで使い、どこにも送りません</footer>
+<footer>大仏の位置：OpenStreetMap ／ 位置とカメラの映像はこの画面の中だけで使い、どこにも送りません</footer>
 
 <script>
   // 鎌倉大仏（OpenStreetMap node 260752586）
@@ -180,6 +229,39 @@
       maximumAge: 0,             // 古い位置を使い回さない
       timeout: 20000
     });
+  });
+
+  // 段階2：背面カメラを開いて「今」の枠に映す
+  let camStream = null;
+  $("camStart").addEventListener("click", async () => {
+    const msg = $("camMsg");
+    msg.classList.add("hidden");
+    if (!window.isSecureContext || !navigator.mediaDevices?.getUserMedia) {
+      msg.textContent = "このブラウザではカメラを使えません（https のページで開いてください）。";
+      msg.classList.remove("hidden");
+      return;
+    }
+    if (camStream) return; // すでに起動している
+    try {
+      camStream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: { ideal: "environment" } }, // 背面カメラ
+        audio: false
+      });
+      const v = $("cam");
+      v.srcObject = camStream;
+      await v.play();
+      v.classList.remove("hidden");
+      $("camHint").classList.add("hidden");
+      $("camStart").textContent = "カメラ起動中";
+      // 昔と今が1画面に並ぶ位置まで自動で動かす
+      document.querySelector("h2.sec").scrollIntoView({ behavior: "smooth" });
+    } catch (e) {
+      camStream = null;
+      msg.textContent = (e.name === "NotAllowedError")
+        ? "カメラが許可されていません。iPhoneの「設定」→「アプリ」→「Safari」→「カメラ」を「確認」か「許可」にして、ページを開き直してください。"
+        : "カメラを起動できませんでした（" + e.name + "）";
+      msg.classList.remove("hidden");
+    }
   });
 
   $("reset").addEventListener("click", () => {

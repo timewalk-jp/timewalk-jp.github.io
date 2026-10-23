@@ -95,7 +95,7 @@
   #view .small {
     position: absolute;
     right: 12px;
-    bottom: calc(44px + env(safe-area-inset-bottom));
+    bottom: calc(130px + env(safe-area-inset-bottom)); /* シャッターと重ならない高さ */
     width: 38vw;
     max-height: 34vh;
     border: 3px solid #fff;
@@ -117,6 +117,25 @@
     margin: 0; color: #fff; font-size: 13px; line-height: 1.4;
     text-shadow: 0 1px 3px #000; z-index: 3;
   }
+  /* シャッター（白い丸） */
+  #shutter {
+    position: absolute; left: 50%; transform: translateX(-50%);
+    bottom: calc(40px + env(safe-area-inset-bottom));
+    width: 72px; height: 72px; padding: 0; margin: 0;
+    border-radius: 50%; background: #fff;
+    border: 5px solid rgba(255,255,255,.5); background-clip: padding-box;
+    box-shadow: 0 0 0 3px #fff; z-index: 3;
+  }
+  /* 撮った1枚の確認画面 */
+  #shot {
+    position: fixed; inset: 0; z-index: 20; overflow-y: auto;
+    background: var(--bg); padding: calc(16px + env(safe-area-inset-top)) 16px 24px;
+  }
+  #shot.hidden { display: none; }
+  #shot .shotTitle { font-size: 18px; font-weight: 700; color: var(--indigo); margin: 0 0 10px; }
+  #shot .shotTitle small { font-size: 13px; color: var(--brown); font-weight: 400; }
+  #shotImg { display: block; width: 100%; height: auto; border-radius: 8px; margin-bottom: 14px; box-shadow: 0 1px 4px rgba(0,0,0,.15); }
+  #saveHint { font-size: 13px; color: var(--muted); }
   #viewCredit {
     position: absolute; left: 12px; right: 12px;
     bottom: calc(10px + env(safe-area-inset-bottom));
@@ -130,7 +149,7 @@
 <body>
 <header>
   <h1>TimeWalk</h1>
-  <p>試作・段階2　大仏までの距離／昔と今を見比べる</p>
+  <p>試作・段階3　大仏までの距離／昔と今を見比べて撮る</p>
 </header>
 
 <main>
@@ -179,7 +198,17 @@
        crossorigin="anonymous">
   <button id="close" aria-label="閉じる">×</button>
   <p id="tip">小さい方を押すと、昔と今が入れ替わります<br><small>Tap the small picture to swap</small></p>
+  <button id="shutter" aria-label="撮る"></button>
   <p id="viewCredit">昔の写真：鎌倉の大仏（1870〜1900年ごろ）アムステルダム国立美術館 所蔵・CC0</p>
+</div>
+
+<!-- 段階3：撮った1枚（昔と今を横に並べたもの）の確認と保存 -->
+<div id="shot" class="hidden">
+  <p class="shotTitle">撮れました <small>/ Saved picture</small></p>
+  <img id="shotImg" alt="昔と今を並べた写真">
+  <button id="saveBtn">保存・共有する <small>/ Save or share</small></button>
+  <button id="retake" class="secondary">もう一度撮る <small>/ Retake</small></button>
+  <p id="saveHint" class="hidden">うまく保存できないときは、上の写真を長押しして「"写真"に保存」を選んでください。</p>
 </div>
 
 <footer>大仏の位置：OpenStreetMap ／ 位置とカメラの映像はこの画面の中だけで使い、どこにも送りません</footer>
@@ -310,6 +339,86 @@
     $("view").classList.add("hidden");
     if (camStream) camStream.getTracks().forEach((t) => t.stop());
     camStream = null;
+  });
+
+  // 段階3：昔と今を横に並べた1枚を作る
+  // 古写真は切らず・加工せず、そのままの縦横比で左に置く。今の写真は同じ大きさの枠に合わせて右に置く。
+  // 出典の文字は写真の上には書かず、下の余白に書く。
+  let shotBlob = null;
+  function makeComparison() {
+    const old = $("pip");
+    const cam = $("cam");
+    const ratio = old.naturalWidth / old.naturalHeight; // 古写真の横÷縦
+    const H = 1200;                       // 写真の高さ（画素）
+    const W = Math.round(H * ratio);      // 1枚分の幅
+    const pad = 40, gap = 24, top = 110, bottom = 130;
+    const c = document.createElement("canvas");
+    c.width = pad * 2 + W * 2 + gap;
+    c.height = top + H + bottom;
+    const x = c.getContext("2d");
+
+    x.fillStyle = "#F5F0E8";
+    x.fillRect(0, 0, c.width, c.height);
+
+    // 見出し
+    x.fillStyle = "#3D5A80";
+    x.font = "bold 44px -apple-system, 'Hiragino Sans', sans-serif";
+    x.fillText("TimeWalk　鎌倉大仏", pad, 62);
+    x.fillStyle = "#8B6B4A";
+    x.font = "30px -apple-system, 'Hiragino Sans', sans-serif";
+    const today = new Date().toLocaleDateString("ja-JP");
+    x.fillText("昔　1870〜1900年ごろ", pad, top - 14);
+    x.fillText("今　" + today, pad + W + gap, top - 14);
+
+    // 左：古写真（そのまま全体）
+    x.drawImage(old, pad, top, W, H);
+
+    // 右：今のカメラ映像を、同じ縦横比になるよう中央で切り出す（切るのは自分で撮った今の写真だけ）
+    const vw = cam.videoWidth, vh = cam.videoHeight;
+    let sw = vw, sh = vw / ratio;
+    if (sh > vh) { sh = vh; sw = vh * ratio; }
+    x.drawImage(cam, (vw - sw) / 2, (vh - sh) / 2, sw, sh, pad + W + gap, top, W, H);
+
+    // 出典（写真の外の余白に書く）
+    x.fillStyle = "#6B6B6B";
+    x.font = "24px -apple-system, 'Hiragino Sans', sans-serif";
+    x.fillText("昔の写真：鎌倉の大仏（正面）1870〜1900年ごろ・撮影者不明・アムステルダム国立美術館 所蔵（RP-F-F01102-AQ）・CC0", pad, top + H + 50);
+    x.fillText("Old photo: Rijksmuseum, Amsterdam (CC0)", pad, top + H + 90);
+    return c;
+  }
+
+  $("shutter").addEventListener("click", () => {
+    if (!camStream || !$("cam").videoWidth) return;
+    const c = makeComparison();
+    $("shotImg").src = c.toDataURL("image/jpeg", 0.9);
+    c.toBlob((b) => { shotBlob = b; }, "image/jpeg", 0.9);
+    $("saveHint").classList.add("hidden");
+    $("shot").classList.remove("hidden");
+  });
+
+  $("retake").addEventListener("click", () => {
+    $("shot").classList.add("hidden");
+  });
+
+  // iPhoneの共有シートで「画像を保存」できるようにする。使えない時は長押し保存を案内
+  $("saveBtn").addEventListener("click", async () => {
+    if (!shotBlob) return;
+    const name = "timewalk-daibutsu-" + new Date().toISOString().slice(0, 10) + ".jpg";
+    const file = new File([shotBlob], name, { type: "image/jpeg" });
+    try {
+      if (navigator.canShare && navigator.canShare({ files: [file] })) {
+        await navigator.share({ files: [file], title: "TimeWalk" });
+        return;
+      }
+    } catch (e) {
+      if (e.name === "AbortError") return; // 共有画面を閉じただけ
+    }
+    // 共有が使えない場合（パソコン等）はダウンロード
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(shotBlob);
+    a.download = name;
+    a.click();
+    $("saveHint").classList.remove("hidden");
   });
 
   $("reset").addEventListener("click", () => {

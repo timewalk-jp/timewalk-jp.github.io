@@ -142,6 +142,10 @@
   /* ② 覗く：古写真の見本（切らずに全体） */
   .photo { padding: 12px; margin-bottom: 10px; }
   .photo img { display: block; max-width: 100%; max-height: 33vh; width: auto; height: auto; margin: 6px auto 0; border-radius: 6px; }
+  #picker { display: flex; gap: 8px; overflow-x: auto; margin: 10px 0 0; }
+  #picker .pk { width: auto; flex: 0 0 auto; margin: 0; padding: 4px; background: #fff; border: 2px solid #ddd; border-radius: 8px; color: var(--text); font-size: 11px; font-weight: 400; }
+  #picker .pk.on { border-color: var(--coral); }
+  #picker .pk img { display: block; height: 48px; width: auto; max-width: 90px; margin: 0 auto 2px; }
   .credit { font-size: 12px; color: var(--muted); margin: 8px 0 0; line-height: 1.5; }
   .credit a { color: var(--indigo); }
 
@@ -265,6 +269,7 @@
   <div class="card photo">
     <p class="label" data-t="oldPhoto"></p>
     <img id="old" alt="" crossorigin="anonymous">
+    <div id="picker" class="hidden"></div>
     <p class="credit" id="credit"></p>
   </div>
 
@@ -3205,15 +3210,15 @@
     modePlanSub: ["古写真の場所を見て旅を考える", "Browse all old-photo places"],
     modeNear:    ["近くにある？", "Anything nearby?"],
     modeNearSub: ["今いる場所から近い順に", "Closest to you first"],
-    planMsg:     ["写真の場所は {n} か所（体験できる {r} か所）。点か一覧から選んでください。", "{n} places ({r} ready). Choose on the map or from the list."],
+    planMsg:     ["写真の場所は {n} か所（撮影地点まで案内できる {r} か所）。点か一覧から選んでください。", "{n} places ({r} with exact photo spot). Choose on the map or from the list."],
     nearFinding: ["今いる場所を調べています…", "Finding where you are…"],
     nearMsg:     ["今いる場所から近い順です。", "Closest places to you."],
-    ready:       ["体験できる", "Ready"],
-    soonTag:     ["準備中", "Coming soon"],
+    ready:       ["撮影地点あり", "Photo spot set"],
+    soonTag:     ["撮影地点は調査中", "Spot not set"],
     photoCount:  ["古写真 {n} 枚", "{n} old photos"],
     away:        ["ここから {m}・歩いて約 {t} 分", "{m} away · about {t} min walk"],
-    legendReady: ["体験できる", "Ready"],
-    legendSoon:  ["準備中", "Coming soon"],
+    legendReady: ["撮影地点あり", "Photo spot set"],
+    legendSoon:  ["撮影地点は調査中", "Photo spot not set"],
     legendYou:   ["あなた", "You"],
     chosen:      ["選んでいる場所：", "Selected: "],
     s1:          ["立つ", "Stand"],
@@ -3264,8 +3269,15 @@
     creditHolder:["所蔵", "Collection"],
     seeSource:   ["写真の出典を見る", "Photo source"],
     oldPhotoCap: ["昔の写真", "Old photo"],
-    soonText:    ["準備中（古写真の撮影地点を調べています）", "Coming soon"],
+    soonText:    ["撮影地点は調査中（写っている場所まで案内します）", "Photo spot not set yet (guide to the place shown)"],
     goHere:      ["この場所を選ぶ", "Choose this place"],
+    toLabelTarget:["{n}まで（写っている場所）", "To {n} (the place in the photo)"],
+    noStandAt:   ["撮影地点（先人が立った場所）はまだ割り出していません。今は写っている場所の近くまで案内します。現地で古写真と見比べて、同じ景色が見える場所を探してください。", "The exact photo spot is not set yet. We guide you to the place shown; look around to find the same view."],
+    nearTarget:  ["{n}に近づきました。", "You are close to {n}."],
+    hereTarget:  ["{n}の近くに着きました。", "You are near {n}."],
+    hereTargetDir:["古写真と見比べて、同じ景色が見える場所を探してください", "Compare with the old photo to find the same view"],
+    noAim:       ["この写真の向きの目安はまだありません。古写真と見比べて合わせてください", "No direction hint yet. Match the view by eye."],
+    pickPhoto:   ["覗く古写真を選ぶ", "Choose the old photo"],
     footer:      ["地図：© OpenStreetMap ／ 位置・向き・カメラの映像はこの画面の中だけで使い、どこにも送りません", "Map: © OpenStreetMap / Your location, motion and camera stay on this phone."],
     errPerm:     ["位置情報が許可されていません。iPhoneの「設定」→「プライバシーとセキュリティ」→「位置情報サービス」→「SafariのWebサイト」を「使用中のみ許可」にして、もう一度ボタンを押してください。", "Location is not allowed. On iPhone: Settings > Privacy & Security > Location Services > Safari Websites > While Using. Then try again."],
     errTimeout:  ["位置がなかなか取れません。屋外か窓の近くで、もう少し待ってください。", "Still looking for your location. Please wait outdoors or near a window."],
@@ -3335,24 +3347,53 @@
   });
 
   // ===== スポットの情報を画面に入れる =====
-  function applySpot(s) {
+  // 案内の目的地：撮影地点が分かっていればそこ、まだなら写っている対象の位置
+  const dest = (s) => s.standAt || s.target;
+  let photoIdx = 0;
+  const photosOf = (s) => s.photos || (s.photo ? [s.photo] : []);
+  function applySpot(s, idx) {
+    if (s !== spot) photoIdx = 0;
+    if (typeof idx === "number") photoIdx = idx;
     spot = s;
     const n = pick(s.name, s.nameEn);
     $("chosen").textContent = t("chosen") + n;
-    $("toLabel").textContent = t("toLabel", { n });
-    $("spotNote").textContent = s.standAt.estimated ? pick(s.note, s.noteEn) : "";
-    const p = s.photo;
+    $("toLabel").textContent = t(s.standAt ? "toLabel" : "toLabelTarget", { n });
+    $("spotNote").textContent = !s.standAt ? t("noStandAt") : (s.standAt.estimated ? pick(s.note, s.noteEn) : "");
+    const list = photosOf(s);
+    const p = list[photoIdx] || list[0];
+    spot.photo = p;
+    renderPicker(list);
     if ($("old").getAttribute("src") !== p.src) { $("old").src = p.src; $("pip").src = p.src; }
     $("old").alt = pick(p.title, p.titleEn);
     $("pip").alt = pick(p.title, p.titleEn);
     const c = $("credit");
     c.innerHTML = "";
-    c.append(pick(p.title, p.titleEn) + " / " + pick(p.year, p.yearEn) + " / " + pick(p.by, p.byEn), document.createElement("br"),
-             t("creditHolder") + ": " + pick(p.holder, p.holderEn) + " (" + p.id + ") · " + p.license, document.createElement("br"));
+    c.append(pick(p.title, p.titleEn) + " / " + pick(p.year, p.yearEn) + (p.by ? " / " + pick(p.by, p.byEn) : ""), document.createElement("br"),
+             t("creditHolder") + ": " + pick(p.holder, p.holderEn) + (p.id ? " (" + p.id + ")" : "") + " · " + p.license, document.createElement("br"));
+    if (p.credit) { c.append(p.credit, document.createElement("br")); }
     const a = document.createElement("a");
     a.href = p.page; a.target = "_blank"; a.rel = "noopener"; a.textContent = t("seeSource");
     c.append(a);
     $("viewCredit").textContent = t("oldPhotoCap") + ": " + pick(p.title, p.titleEn) + " (" + pick(p.year, p.yearEn) + ") " + pick(p.holder, p.holderEn) + " · " + p.license;
+    if (here) render();
+    renderAim();
+  }
+  // 写真が複数ある場所：どの古写真で覗くかを選ぶ
+  function renderPicker(list) {
+    const box = $("picker");
+    box.innerHTML = "";
+    if (list.length < 2) { box.classList.add("hidden"); return; }
+    box.classList.remove("hidden");
+    list.forEach((ph, i) => {
+      const b = document.createElement("button");
+      b.type = "button";
+      b.className = "pk" + (i === photoIdx ? " on" : "");
+      const im = document.createElement("img"); im.src = ph.thumb || ph.src; im.alt = "";
+      const tx = document.createElement("span"); tx.textContent = pick(ph.year, ph.yearEn);
+      b.append(im, tx);
+      b.addEventListener("click", () => applySpot(spot, i));
+      box.append(b);
+    });
   }
 
   // ===== 旅の地図 =====
@@ -3391,14 +3432,11 @@
         cr.textContent = pick(ph.year, ph.yearEn) + " · " + pick(ph.holder, ph.holderEn) + " · " + ph.license;
         box.append(cr);
       });
-      if (ready) {
-        const btn = document.createElement("button");
-        btn.textContent = t("goHere");
-        btn.addEventListener("click", () => chooseSpot(s));
-        box.append(btn);
-      } else {
-        const p = document.createElement("p"); p.textContent = t("soonText"); box.append(p);
-      }
+      if (!ready) { const p = document.createElement("p"); p.textContent = t("soonText"); box.append(p); }
+      const btn = document.createElement("button");
+      btn.textContent = t("goHere");
+      btn.addEventListener("click", () => chooseSpot(s));
+      box.append(btn);
       m.bindPopup(box).addTo(markerLayer);
       markersById[s.id] = m;
     });
@@ -3410,15 +3448,9 @@
   let mode = "plan";
   const markersById = {};
   function chooseSpot(s) {
-    if (s.ready) {
-      applySpot(s); if (here) render();
-      if (map) map.closePopup();
-      $("stepStand").scrollIntoView({ behavior: "smooth" });
-    } else if (map && markersById[s.id]) {
-      map.setView([s.target.lat, s.target.lon], 15);
-      markersById[s.id].openPopup();
-      $("map").scrollIntoView({ behavior: "smooth" });
-    }
+    applySpot(s);
+    if (map) map.closePopup();
+    $("stepStand").scrollIntoView({ behavior: "smooth" });
   }
   function renderList() {
     const all = SPOTS.concat(SOON);
@@ -3492,11 +3524,17 @@
   function render() {
     if (!here) return;
     const n = pick(spot.name, spot.nameEn);
-    const d = distanceM(here, spot.standAt);
-    const b = bearing(here, spot.standAt);
+    const goal = dest(spot);
+    const d = distanceM(here, goal);
+    const b = bearing(here, goal);
     $("dist").textContent = fmt(d);
     const st = $("status");
-    if (d <= HERE_M) {
+    if (d <= HERE_M && !spot.standAt) {
+      $("dirText").textContent = t("hereTargetDir");
+      $("dirSub").textContent = t("faceSub");
+      st.className = "here"; st.textContent = t("hereTarget", { n });
+      rotateArrow(b);
+    } else if (d <= HERE_M) {
       const face = bearing(spot.standAt, spot.target);
       $("dirText").textContent = t("face", { n, d: dirName(face) });
       $("dirSub").textContent = t("faceSub");
@@ -3505,7 +3543,7 @@
     } else {
       $("dirText").textContent = t("go", { d: dirName(b), m: fmt(d) });
       $("dirSub").textContent = t("walk", { t: Math.max(1, Math.round(d / 80)) });
-      if (d <= NEAR_M) { st.className = "near"; st.textContent = t("near", { n }); }
+      if (d <= NEAR_M) { st.className = "near"; st.textContent = t(spot.standAt ? "near" : "nearTarget", { n }); }
       else { st.className = ""; st.textContent = ""; }
       rotateArrow(b);
     }
@@ -3563,7 +3601,8 @@
   // 覗く画面：古写真と同じ構図への合わせ方（向き・傾き）
   function renderAim() {
     const box = $("aim");
-    if (!spot.aim || (heading === null && pitch === null)) { box.textContent = t("noSensor"); return; }
+    if (!spot.aim) { box.textContent = t("noAim"); return; }
+    if (heading === null && pitch === null) { box.textContent = t("noSensor"); return; }
     const parts = [];
     if (heading !== null) {
       const dh = angleDiff(spot.aim.heading, heading);
@@ -3649,9 +3688,29 @@
     let sw = vw, sh = vw / ratio;
     if (sh > vh) { sh = vh; sw = vh * ratio; }
     x.drawImage(cam, (vw - sw) / 2, (vh - sh) / 2, sw, sh, pad + W + gap, top, W, H);
-    x.fillStyle = "#6B6B6B"; x.font = "24px " + font;
-    x.fillText("昔の写真：" + p.title + " " + p.year + "・" + p.by + "・" + p.holder + " 所蔵（" + p.id + "）・" + p.license, pad, top + H + 50);
-    x.fillText("Old photo: " + p.titleEn + ", " + p.yearEn + ", " + p.holderEn + " (" + p.license + ")", pad, top + H + 90);
+    // 出典は写真の外（下の余白）に、幅に合わせて折り返して書く
+    x.font = "24px " + font;
+    const maxW = c.width - pad * 2;
+    const lines = [];
+    const wrap = (text) => {
+      let line = "";
+      for (const ch of text) {
+        if (x.measureText(line + ch).width > maxW) { lines.push(line); line = ch; } else line += ch;
+      }
+      if (line) lines.push(line);
+    };
+    wrap("昔の写真：" + (p.credit || (p.title + " " + p.year + (p.by ? "・" + p.by : "") + "・" + p.holder + (p.id ? "（" + p.id + "）" : "")) ) + "・" + p.license);
+    wrap("Old photo: " + (p.titleEn || p.title) + ", " + (p.yearEn || p.year) + ", " + (p.holderEn || p.holder) + " (" + p.license + ")");
+    const need = top + H + 30 + lines.length * 36 + 20;
+    if (need > c.height) {   // 出典が長い時は下の余白を広げて描き直す
+      const img = x.getImageData(0, 0, c.width, top + H);
+      c.height = need;
+      x.fillStyle = "#F5F0E8"; x.fillRect(0, 0, c.width, c.height);
+      x.putImageData(img, 0, 0);
+      x.font = "24px " + font;
+    }
+    x.fillStyle = "#6B6B6B";
+    lines.forEach((ln, i) => x.fillText(ln, pad, top + H + 50 + i * 36));
     return c;
   }
   $("shutter").addEventListener("click", () => {

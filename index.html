@@ -5,10 +5,12 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>TimeWalk 試作</title>
 <!--
-  TimeWalk 試作・段階1：今いる場所から鎌倉大仏までの距離を出す
-  確かめること：位置が取れるか／何mずれるか
-  使っているもの：ブラウザ標準の位置情報（Geolocation API）だけ。外部の部品なし。
-  大仏の位置：OpenStreetMap「鎌倉大仏」node 260752586（2026-10-21確認）
+  TimeWalk 試作：先人が立った場所で、昔の景色を旅する。
+  ① 立つ：古写真を撮った場所（先人が立った場所）まで、距離と方向で案内
+  ② 覗く：画面いっぱいのカメラ＋古写真（まるごと・加工なし）で見比べる
+  ③ 残す：昔と今を横に並べた1枚を保存・共有
+  場所の情報は下の SPOTS（スポット表）に1件ずつ持つ。新しい場所は表に1件足すだけ。
+  使っているもの：ブラウザ標準の機能だけ（位置・向き・カメラ・画像合成）。位置と映像は外へ送らない。
 -->
 <style>
   :root {
@@ -19,6 +21,9 @@
     --text: #2A2A2A;
     --muted: #6B6B6B;
     --warn: #B0442C;
+    --teal: #2A9D8F;
+    --coral: #E07A5F;
+    --gold: #E9A23B;
   }
   * { box-sizing: border-box; }
   body {
@@ -33,8 +38,8 @@
     color: #fff;
     padding: 14px 16px;
   }
-  header h1 { margin: 0; font-size: 20px; letter-spacing: .05em; }
-  header p { margin: 2px 0 0; font-size: 13px; opacity: .85; }
+  header h1 { margin: 0; font-size: 22px; letter-spacing: .05em; }
+  header p { margin: 2px 0 0; font-size: 14px; opacity: .9; }
   main { padding: 16px; max-width: 480px; margin: 0 auto; }
   .card {
     background: var(--card);
@@ -53,7 +58,7 @@
     line-height: 1.1;
   }
   .sub { font-size: 15px; color: var(--brown); margin: 6px 0 0; }
-  .row { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid #EEE7DC; font-size: 15px; }
+  .row { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid #EEE7DC; font-size: 14px; }
   .row:last-child { border-bottom: none; }
   .row span:last-child { font-weight: 600; }
   button {
@@ -67,14 +72,44 @@
     color: #fff;
     margin-bottom: 10px;
   }
+  button small { font-weight: 400; font-size: 13px; }
   button.secondary { background: #fff; color: var(--brown); border: 2px solid var(--brown); font-size: 15px; padding: 12px; }
-  .msg { font-size: 14px; color: var(--warn); margin: 0; }
+  .msg { font-size: 14px; color: var(--warn); margin: 0 0 10px; }
   .hidden { display: none; }
-  h2.sec { font-size: 18px; color: var(--indigo); margin: 24px 0 10px; }
-  h2.sec small { font-size: 13px; color: var(--brown); font-weight: 400; }
-  /* 昔と今が1画面に収まるよう、それぞれ画面の高さの約4割まで */
+
+  /* ①②③ の見出し */
+  .step { display: flex; align-items: center; gap: 10px; margin: 26px 0 4px; }
+  .step .num {
+    width: 34px; height: 34px; border-radius: 50%; color: #fff;
+    font-weight: 700; font-size: 18px; display: flex; align-items: center; justify-content: center;
+  }
+  .step h2 { margin: 0; font-size: 24px; }
+  .step.s1 .num { background: var(--teal); }  .step.s1 h2 { color: var(--teal); }
+  .step.s2 .num { background: var(--coral); } .step.s2 h2 { color: var(--coral); }
+  .step.s3 .num { background: var(--gold); }  .step.s3 h2 { color: var(--gold); }
+  .lead { margin: 0 0 10px; font-weight: 700; font-size: 16px; }
+  .lead small { display: block; font-weight: 400; font-size: 13px; color: var(--muted); }
+
+  /* ① 立つ：方向の矢印と案内 */
+  .dirRow { display: flex; align-items: center; gap: 14px; margin-top: 10px; }
+  #arrow {
+    width: 56px; height: 56px; flex: 0 0 56px;
+    transition: transform .25s ease-out;
+  }
+  #dirText { font-size: 17px; font-weight: 700; color: var(--indigo); margin: 0; }
+  #dirSub { font-size: 13px; color: var(--muted); margin: 2px 0 0; }
+  #status {
+    margin: 14px 0 0; padding: 10px 12px; border-radius: 10px;
+    font-weight: 700; font-size: 16px; display: none;
+  }
+  #status.near { display: block; background: #FFF4E0; color: #9A5B00; }
+  #status.here { display: block; background: #E3F4F1; color: #1C6E64; }
+  .note { font-size: 12px; color: var(--muted); margin: 10px 0 0; }
+  details { margin: 0 0 14px; font-size: 14px; color: var(--muted); }
+  details summary { cursor: pointer; padding: 6px 0; }
+
+  /* ② 覗く：古写真の見本（切らずに全体） */
   .photo { padding: 12px; margin-bottom: 10px; }
-  /* 古写真は切らない：縦横比のまま全体を表示（幅か高さの小さい方に合わせる） */
   .photo img {
     display: block;
     max-width: 100%;
@@ -84,7 +119,10 @@
     margin: 6px auto 0;
     border-radius: 6px;
   }
-  /* 全画面の見比べ */
+  .credit { font-size: 12px; color: var(--muted); margin: 8px 0 0; line-height: 1.5; }
+  .credit a { color: var(--indigo); }
+
+  /* 全画面の覗く画面 */
   #view { position: fixed; inset: 0; background: #000; z-index: 10; }
   #view.hidden { display: none; }
   /* 大きい方＝画面いっぱい。古写真が大きい時は切らずに全体を見せる（contain） */
@@ -117,7 +155,7 @@
     margin: 0; color: #fff; font-size: 13px; line-height: 1.4;
     text-shadow: 0 1px 3px #000; z-index: 3;
   }
-  /* シャッター（白い丸） */
+  /* シャッター（白い丸）＝③ 残す */
   #shutter {
     position: absolute; left: 50%; transform: translateX(-50%);
     bottom: calc(40px + env(safe-area-inset-bottom));
@@ -126,7 +164,12 @@
     border: 5px solid rgba(255,255,255,.5); background-clip: padding-box;
     box-shadow: 0 0 0 3px #fff; z-index: 3;
   }
-  /* 撮った1枚の確認画面 */
+  #viewCredit {
+    position: absolute; left: 12px; right: 12px;
+    bottom: calc(10px + env(safe-area-inset-bottom));
+    margin: 0; color: #eee; font-size: 11px; text-shadow: 0 1px 3px #000; z-index: 3;
+  }
+  /* ③ 残す：撮った1枚の確認画面 */
   #shot {
     position: fixed; inset: 0; z-index: 20; overflow-y: auto;
     background: var(--bg); padding: calc(16px + env(safe-area-inset-top)) 16px 24px;
@@ -136,73 +179,81 @@
   #shot .shotTitle small { font-size: 13px; color: var(--brown); font-weight: 400; }
   #shotImg { display: block; width: 100%; height: auto; border-radius: 8px; margin-bottom: 14px; box-shadow: 0 1px 4px rgba(0,0,0,.15); }
   #saveHint { font-size: 13px; color: var(--muted); }
-  #viewCredit {
-    position: absolute; left: 12px; right: 12px;
-    bottom: calc(10px + env(safe-area-inset-bottom));
-    margin: 0; color: #eee; font-size: 11px; text-shadow: 0 1px 3px #000; z-index: 3;
-  }
-  .credit { font-size: 12px; color: var(--muted); margin: 8px 0 0; line-height: 1.5; }
-  .credit a { color: var(--indigo); }
   footer { font-size: 12px; color: var(--muted); text-align: center; padding: 8px 16px 24px; }
 </style>
 </head>
 <body>
 <header>
   <h1>TimeWalk</h1>
-  <p>試作・段階3　大仏までの距離／昔と今を見比べて撮る</p>
+  <p>先人が立った場所で、昔の景色を旅する。</p>
 </header>
 
 <main>
-  <button id="start">位置を取る <small>/ Find my location</small></button>
+  <!-- ① 立つ -->
+  <div class="step s1"><span class="num">1</span><h2>立つ</h2></div>
+  <p class="lead">先人が立った場所へ<small>古写真を撮った場所まで、距離と方向で案内します / Go to where the old photo was taken</small></p>
+
+  <button id="start">案内を始める <small>/ Start guide</small></button>
   <p id="msg" class="msg hidden"></p>
 
   <div class="card">
-    <p class="label">鎌倉大仏まで <small>/ To the Great Buddha</small></p>
+    <p class="label"><span id="spotName">—</span>・先人が立った場所まで <small>/ To the photo spot</small></p>
     <p class="big" id="dist">—</p>
-    <p class="sub" id="walk">ボタンを押すと距離が出ます</p>
+    <div class="dirRow">
+      <svg id="arrow" viewBox="0 0 56 56" aria-hidden="true">
+        <circle cx="28" cy="28" r="26" fill="#EEF2F7"/>
+        <path d="M28 8 L40 38 L28 31 L16 38 Z" fill="#3D5A80"/>
+      </svg>
+      <div>
+        <p id="dirText">ボタンを押すと案内が出ます</p>
+        <p id="dirSub"></p>
+      </div>
+    </div>
+    <p id="status"></p>
+    <p class="note" id="spotNote"></p>
   </div>
 
-  <div class="card">
-    <div class="row"><span>位置の誤差（スマホの申告）</span><span id="acc">—</span></div>
-    <div class="row"><span>止まっている間のぶれ</span><span id="drift">—</span></div>
-    <div class="row"><span>位置を取った回数</span><span id="count">0</span></div>
-    <div class="row"><span>最後に取った時刻</span><span id="time">—</span></div>
-  </div>
+  <details>
+    <summary>測定の詳しい数字（試作の確認用）</summary>
+    <div class="card">
+      <div class="row"><span>位置の誤差（スマホの申告）</span><span id="acc">—</span></div>
+      <div class="row"><span>止まっている間のぶれ</span><span id="drift">—</span></div>
+      <div class="row"><span>位置を取った回数</span><span id="count">0</span></div>
+      <div class="row"><span>最後に取った時刻</span><span id="time">—</span></div>
+      <div class="row"><span>向き（コンパス）</span><span id="compass">—</span></div>
+    </div>
+    <button id="reset" class="secondary">ぶれの記録をやり直す</button>
+  </details>
 
-  <button id="reset" class="secondary hidden">ぶれの記録をやり直す</button>
-
-  <!-- 段階2：見比べる（古写真はまるごと・加工なしで表示） -->
-  <h2 class="sec">昔と今を見比べる <small>/ Then and now</small></h2>
+  <!-- ② 覗く -->
+  <div class="step s2"><span class="num">2</span><h2>覗く</h2></div>
+  <p class="lead">向けると、昔の景色に<small>スマホをかざすと、昔の姿が目の前に / Hold up your phone to see the past</small></p>
 
   <div class="card photo">
-    <p class="label">昔 <small>/ Then</small></p>
-    <img id="old" alt="鎌倉の大仏（正面）1870年ごろ〜1900年ごろ"
-         src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/da/Grote_Boeddha_%28Daibatsu%29_van_Kamakura%2C_van_voren_gezien_%28titel_op_object%29%2C_RP-F-F01102-AQ.jpg/960px-Grote_Boeddha_%28Daibatsu%29_van_Kamakura%2C_van_voren_gezien_%28titel_op_object%29%2C_RP-F-F01102-AQ.jpg"
-         crossorigin="anonymous">
-    <p class="credit">
-      鎌倉の大仏（正面）／1870年ごろ〜1900年ごろ／撮影者不明<br>
-      所蔵：アムステルダム国立美術館（Rijksmuseum, RP-F-F01102-AQ）・権利放棄（CC0）<br>
-      <a href="https://commons.wikimedia.org/wiki/File:Grote_Boeddha_(Daibatsu)_van_Kamakura,_van_voren_gezien_(titel_op_object),_RP-F-F01102-AQ.jpg" target="_blank" rel="noopener">写真の出典を見る</a>
-    </p>
+    <p class="label">この場所の昔の写真 <small>/ The old photo</small></p>
+    <img id="old" alt="" crossorigin="anonymous">
+    <p class="credit" id="credit"></p>
   </div>
 
-  <button id="camStart">カメラで見比べる <small>/ Compare with camera</small></button>
+  <button id="camStart">覗く（カメラを開く） <small>/ Look through</small></button>
   <p id="camMsg" class="msg hidden"></p>
+
+  <!-- ③ 残す -->
+  <div class="step s3"><span class="num">3</span><h2>残す</h2></div>
+  <p class="lead">昔と今を、1枚に<small>覗く画面の白い丸を押すと、昔と今を並べた1枚が残せます / Tap the white button to save then-and-now</small></p>
 </main>
 
-<!-- 全画面の見比べ：画面いっぱいにカメラ、隅に古写真（まるごと）。古写真を押すと大小が入れ替わる -->
+<!-- ② 覗く（全画面）：画面いっぱいにカメラ、隅に古写真（まるごと）。小さい方を押すと大小が入れ替わる -->
 <div id="view" class="hidden">
   <video id="cam" playsinline muted autoplay></video>
-  <img id="pip" alt="昔の写真（押すと大きく表示）"
-       src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/da/Grote_Boeddha_%28Daibatsu%29_van_Kamakura%2C_van_voren_gezien_%28titel_op_object%29%2C_RP-F-F01102-AQ.jpg/960px-Grote_Boeddha_%28Daibatsu%29_van_Kamakura%2C_van_voren_gezien_%28titel_op_object%29%2C_RP-F-F01102-AQ.jpg"
-       crossorigin="anonymous">
+  <img id="pip" alt="昔の写真（押すと大きく表示）" crossorigin="anonymous">
   <button id="close" aria-label="閉じる">×</button>
   <p id="tip">小さい方を押すと、昔と今が入れ替わります<br><small>Tap the small picture to swap</small></p>
   <button id="shutter" aria-label="撮る"></button>
-  <p id="viewCredit">昔の写真：鎌倉の大仏（1870〜1900年ごろ）アムステルダム国立美術館 所蔵・CC0</p>
+  <p id="viewCredit"></p>
 </div>
 
-<!-- 段階3：撮った1枚（昔と今を横に並べたもの）の確認と保存 -->
+<!-- ③ 残す：撮った1枚（昔と今を横に並べたもの）の確認と保存 -->
 <div id="shot" class="hidden">
   <p class="shotTitle">撮れました <small>/ Saved picture</small></p>
   <img id="shotImg" alt="昔と今を並べた写真">
@@ -211,60 +262,139 @@
   <p id="saveHint" class="hidden">うまく保存できないときは、上の写真を長押しして「"写真"に保存」を選んでください。</p>
 </div>
 
-<footer>大仏の位置：OpenStreetMap ／ 位置とカメラの映像はこの画面の中だけで使い、どこにも送りません</footer>
+<footer>地図の情報：OpenStreetMap ／ 位置・向き・カメラの映像はこの画面の中だけで使い、どこにも送りません</footer>
 
 <script>
-  // 鎌倉大仏（OpenStreetMap node 260752586）
-  const BUDDHA = { lat: 35.3168482, lon: 139.5357212 };
+  // ===== スポット表（場所ごとの情報）。新しい場所はここに1件足す =====
+  // target  ＝対象物（位置と高さ m）
+  // standAt ＝先人が立った場所（古写真の撮影地点）。estimated:true は推定で、現地での確認が必要
+  // photo   ＝古写真（加工せずそのまま表示）と出典
+  const SPOTS = [
+    {
+      id: "daibutsu",
+      name: "鎌倉大仏",
+      nameEn: "Great Buddha of Kamakura",
+      // OpenStreetMap node 260752586：台座込みの高さ13.35m（像11.31m＋台座2.04m）
+      target: { lat: 35.3168482, lon: 139.5357212, height: 13.35 },
+      // 古写真は正面の石段を手前に入れて撮っている→正面の大きな石段の下（像から南へ約31m）と推定
+      standAt: { lat: 35.316575, lon: 139.535672, estimated: true,
+                 note: "撮影地点は、古写真の写り方から推定した場所です（正面の大きな石段の下・大仏から約31m）。" },
+      photo: {
+        src: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/da/Grote_Boeddha_%28Daibatsu%29_van_Kamakura%2C_van_voren_gezien_%28titel_op_object%29%2C_RP-F-F01102-AQ.jpg/960px-Grote_Boeddha_%28Daibatsu%29_van_Kamakura%2C_van_voren_gezien_%28titel_op_object%29%2C_RP-F-F01102-AQ.jpg",
+        page: "https://commons.wikimedia.org/wiki/File:Grote_Boeddha_(Daibatsu)_van_Kamakura,_van_voren_gezien_(titel_op_object),_RP-F-F01102-AQ.jpg",
+        title: "鎌倉の大仏（正面）",
+        year: "1870〜1900年ごろ",
+        by: "撮影者不明",
+        holder: "アムステルダム国立美術館",
+        holderEn: "Rijksmuseum, Amsterdam",
+        id: "RP-F-F01102-AQ",
+        license: "CC0"
+      }
+    }
+  ];
+
+  // 案内の区切り（m）
+  const NEAR_M = 50;   // これより近い＝「近づきました」
+  const HERE_M = 12;   // これより近い＝「到着しました」（iPhoneの位置のぶれ約11mを見込む）
 
   const $ = (id) => document.getElementById(id);
+  let spot = SPOTS[0];
+  let here = null;
+  let heading = null;    // スマホが向いている方位（北=0°）。取れない時は null
   let watchId = null;
-  let first = null;      // ぶれを測る基準（最初に取れた位置）
-  let maxDrift = 0;      // 基準から一番離れた距離
-  let count = 0;
+  let first = null, maxDrift = 0, count = 0;
 
-  // 2点間の距離（m）。地球を球として計算（ハバーサイン式）
-  function distanceM(a, b) {
+  // --- 計算の道具 ---
+  const toRad = (d) => d * Math.PI / 180;
+  const toDeg = (r) => r * 180 / Math.PI;
+  function distanceM(a, b) {             // 2点間の距離（m）
     const R = 6371000;
-    const toRad = (d) => d * Math.PI / 180;
-    const dLat = toRad(b.lat - a.lat);
-    const dLon = toRad(b.lon - a.lon);
-    const h = Math.sin(dLat / 2) ** 2 +
-              Math.cos(toRad(a.lat)) * Math.cos(toRad(b.lat)) * Math.sin(dLon / 2) ** 2;
+    const dLat = toRad(b.lat - a.lat), dLon = toRad(b.lon - a.lon);
+    const h = Math.sin(dLat / 2) ** 2 + Math.cos(toRad(a.lat)) * Math.cos(toRad(b.lat)) * Math.sin(dLon / 2) ** 2;
     return 2 * R * Math.asin(Math.sqrt(h));
   }
-
+  function bearing(a, b) {               // a から見た b の方位（北=0°・時計回り）
+    const y = Math.sin(toRad(b.lon - a.lon)) * Math.cos(toRad(b.lat));
+    const x = Math.cos(toRad(a.lat)) * Math.sin(toRad(b.lat)) -
+              Math.sin(toRad(a.lat)) * Math.cos(toRad(b.lat)) * Math.cos(toRad(b.lon - a.lon));
+    return (toDeg(Math.atan2(y, x)) + 360) % 360;
+  }
+  const DIR16 = ["北","北北東","北東","東北東","東","東南東","南東","南南東","南","南南西","南西","西南西","西","西北西","北西","北北西"];
+  const dirName = (deg) => DIR16[Math.round(deg / 22.5) % 16];
   function fmt(m) {
     if (m < 1000) return Math.round(m) + " m";
     return (m / 1000).toFixed(m < 10000 ? 2 : 1) + " km";
   }
+  function showMsg(text) { $("msg").textContent = text; $("msg").classList.remove("hidden"); }
 
-  function showMsg(text) {
-    $("msg").textContent = text;
-    $("msg").classList.remove("hidden");
+  // --- スポットの情報を画面に入れる ---
+  function nearestSpot(p) {             // 近くに複数ある時は、近い方を優先（写真スポット.pptx）
+    return SPOTS.reduce((best, s) => distanceM(p, s.standAt) < distanceM(p, best.standAt) ? s : best, SPOTS[0]);
+  }
+  function applySpot(s) {
+    spot = s;
+    $("spotName").textContent = s.name;
+    $("spotNote").textContent = s.standAt.estimated ? s.standAt.note + "現地で確かめて直します。" : "";
+    const p = s.photo;
+    if ($("old").src !== p.src) { $("old").src = p.src; $("pip").src = p.src; }
+    $("old").alt = p.title + "（" + p.year + "）";
+    $("credit").innerHTML = "";
+    $("credit").append(
+      p.title + "／" + p.year + "／" + p.by, document.createElement("br"),
+      "所蔵：" + p.holder + "（" + p.holderEn + ", " + p.id + "）・" + p.license, document.createElement("br"));
+    const a = document.createElement("a");
+    a.href = p.page; a.target = "_blank"; a.rel = "noopener"; a.textContent = "写真の出典を見る";
+    $("credit").append(a);
+    $("viewCredit").textContent = "昔の写真：" + p.title + "（" + p.year + "）" + p.holder + " 所蔵・" + p.license;
+  }
+  applySpot(spot);
+
+  // --- ① 立つ：案内の表示 ---
+  function render() {
+    if (!here) return;
+    const d = distanceM(here, spot.standAt);
+    const b = bearing(here, spot.standAt);
+    $("dist").textContent = fmt(d);
+
+    const st = $("status");
+    if (d <= HERE_M) {
+      // 到着：対象物の方を向くよう案内
+      const face = bearing(spot.standAt, spot.target);
+      $("dirText").textContent = spot.name + "の方（" + dirName(face) + "）を向いてください";
+      $("dirSub").textContent = "向いたら「② 覗く」へ";
+      st.className = "here";
+      st.textContent = "到着しました。ここが先人が立った場所です。";
+      rotateArrow(face);
+    } else {
+      $("dirText").textContent = dirName(b) + "へ " + fmt(d);
+      $("dirSub").textContent = d < 1000
+        ? "歩いて約 " + Math.max(1, Math.round(d / 80)) + " 分（まっすぐ進んだ場合）"
+        : "歩いて約 " + Math.round(d / 80) + " 分（まっすぐ進んだ場合）";
+      if (d <= NEAR_M) { st.className = "near"; st.textContent = spot.name + "の撮影地点に近づきました。"; }
+      else { st.className = ""; st.textContent = ""; }
+      rotateArrow(b);
+    }
+  }
+  // 矢印：向き（コンパス）が取れる時は「スマホから見た方向」、取れない時は北を上にした地図の向き
+  function rotateArrow(targetDeg) {
+    const rel = heading === null ? targetDeg : (targetDeg - heading + 360) % 360;
+    $("arrow").style.transform = "rotate(" + rel + "deg)";
   }
 
   function onPosition(pos) {
-    const here = { lat: pos.coords.latitude, lon: pos.coords.longitude };
-    const d = distanceM(here, BUDDHA);
+    here = { lat: pos.coords.latitude, lon: pos.coords.longitude };
     count += 1;
-
     if (!first) first = here;
     maxDrift = Math.max(maxDrift, distanceM(first, here));
-
-    $("dist").textContent = fmt(d);
-    // 歩く速さ 分速80m（不動産広告の基準）で概算
-    $("walk").textContent = d < 30
-      ? "大仏の前にいます"
-      : "歩いて約 " + Math.max(1, Math.round(d / 80)) + " 分（直線距離で計算）";
+    const s = nearestSpot(here);
+    if (s !== spot) applySpot(s);
+    render();
     $("acc").textContent = "± " + Math.round(pos.coords.accuracy) + " m";
     $("drift").textContent = Math.round(maxDrift) + " m";
     $("count").textContent = count;
     $("time").textContent = new Date(pos.timestamp).toLocaleTimeString("ja-JP");
     $("msg").classList.add("hidden");
-    $("reset").classList.remove("hidden");
   }
-
   function onError(err) {
     if (err.code === err.PERMISSION_DENIED) {
       showMsg("位置情報が許可されていません。iPhoneの「設定」→「プライバシーとセキュリティ」→「位置情報サービス」→「SafariのWebサイト」を「使用中のみ許可」にして、もう一度ボタンを押してください。");
@@ -275,26 +405,48 @@
     }
   }
 
+  // 向き（コンパス）。iPhoneは最初に1回、許可を求める
+  function onOrientation(e) {
+    let h = null;
+    if (typeof e.webkitCompassHeading === "number") h = e.webkitCompassHeading;        // iPhone
+    else if (e.absolute && typeof e.alpha === "number") h = (360 - e.alpha) % 360;      // Android
+    if (h === null) return;
+    heading = h;
+    $("compass").textContent = Math.round(h) + "°（" + dirName(h) + "）";
+    render();
+  }
+  async function startCompass() {
+    try {
+      if (typeof DeviceOrientationEvent !== "undefined" &&
+          typeof DeviceOrientationEvent.requestPermission === "function") {
+        const r = await DeviceOrientationEvent.requestPermission();
+        if (r !== "granted") { $("compass").textContent = "許可されていません"; return; }
+      }
+      window.addEventListener("deviceorientationabsolute", onOrientation);
+      window.addEventListener("deviceorientation", onOrientation);
+    } catch (e) {
+      $("compass").textContent = "使えません";
+    }
+  }
+
   $("start").addEventListener("click", () => {
-    if (!window.isSecureContext) {
-      showMsg("この画面は https のページでないと位置を取れません。");
-      return;
-    }
-    if (!("geolocation" in navigator)) {
-      showMsg("このブラウザは位置情報に対応していません。");
-      return;
-    }
-    if (watchId !== null) return; // すでに取り続けている
-    $("start").textContent = "位置を取り続けています…";
-    $("walk").textContent = "位置を探しています…";
+    if (!window.isSecureContext) { showMsg("この画面は https のページでないと位置を取れません。"); return; }
+    if (!("geolocation" in navigator)) { showMsg("このブラウザは位置情報に対応していません。"); return; }
+    if (watchId !== null) return;
+    startCompass(); // ボタンを押した時に許可を求める（iPhoneの決まり）
+    $("start").innerHTML = "案内中… <small>/ Guiding</small>";
+    $("dirText").textContent = "位置を探しています…";
     watchId = navigator.geolocation.watchPosition(onPosition, onError, {
-      enableHighAccuracy: true,  // GPSを使う
-      maximumAge: 0,             // 古い位置を使い回さない
-      timeout: 20000
+      enableHighAccuracy: true, maximumAge: 0, timeout: 20000
     });
   });
 
-  // 段階2：背面カメラを開いて「今」の枠に映す
+  $("reset").addEventListener("click", () => {
+    first = null; maxDrift = 0;
+    $("drift").textContent = "0 m";
+  });
+
+  // ===== ② 覗く：背面カメラを全画面で開く =====
   let camStream = null;
   $("camStart").addEventListener("click", async () => {
     const msg = $("camMsg");
@@ -330,7 +482,6 @@
     $(id).className = "big";
     $(other).className = "small";
   }
-  // 小さい方を押すと入れ替え
   $("cam").addEventListener("click", () => { if ($("cam").className === "small") setBig("cam"); });
   $("pip").addEventListener("click", () => { if ($("pip").className === "small") setBig("pip"); });
 
@@ -341,34 +492,34 @@
     camStream = null;
   });
 
-  // 段階3：昔と今を横に並べた1枚を作る
+  // ===== ③ 残す：昔と今を横に並べた1枚を作る =====
   // 古写真は切らず・加工せず、そのままの縦横比で左に置く。今の写真は同じ大きさの枠に合わせて右に置く。
   // 出典の文字は写真の上には書かず、下の余白に書く。
   let shotBlob = null;
   function makeComparison() {
     const old = $("pip");
     const cam = $("cam");
+    const p = spot.photo;
     const ratio = old.naturalWidth / old.naturalHeight; // 古写真の横÷縦
-    const H = 1200;                       // 写真の高さ（画素）
-    const W = Math.round(H * ratio);      // 1枚分の幅
+    const H = 1200;
+    const W = Math.round(H * ratio);
     const pad = 40, gap = 24, top = 110, bottom = 130;
     const c = document.createElement("canvas");
     c.width = pad * 2 + W * 2 + gap;
     c.height = top + H + bottom;
     const x = c.getContext("2d");
+    const font = "-apple-system, 'Hiragino Sans', sans-serif";
 
     x.fillStyle = "#F5F0E8";
     x.fillRect(0, 0, c.width, c.height);
 
-    // 見出し
     x.fillStyle = "#3D5A80";
-    x.font = "bold 44px -apple-system, 'Hiragino Sans', sans-serif";
-    x.fillText("TimeWalk　鎌倉大仏", pad, 62);
+    x.font = "bold 44px " + font;
+    x.fillText("TimeWalk　" + spot.name, pad, 62);
     x.fillStyle = "#8B6B4A";
-    x.font = "30px -apple-system, 'Hiragino Sans', sans-serif";
-    const today = new Date().toLocaleDateString("ja-JP");
-    x.fillText("昔　1870〜1900年ごろ", pad, top - 14);
-    x.fillText("今　" + today, pad + W + gap, top - 14);
+    x.font = "30px " + font;
+    x.fillText("昔　" + p.year, pad, top - 14);
+    x.fillText("今　" + new Date().toLocaleDateString("ja-JP"), pad + W + gap, top - 14);
 
     // 左：古写真（そのまま全体）
     x.drawImage(old, pad, top, W, H);
@@ -381,9 +532,9 @@
 
     // 出典（写真の外の余白に書く）
     x.fillStyle = "#6B6B6B";
-    x.font = "24px -apple-system, 'Hiragino Sans', sans-serif";
-    x.fillText("昔の写真：鎌倉の大仏（正面）1870〜1900年ごろ・撮影者不明・アムステルダム国立美術館 所蔵（RP-F-F01102-AQ）・CC0", pad, top + H + 50);
-    x.fillText("Old photo: Rijksmuseum, Amsterdam (CC0)", pad, top + H + 90);
+    x.font = "24px " + font;
+    x.fillText("昔の写真：" + p.title + " " + p.year + "・" + p.by + "・" + p.holder + " 所蔵（" + p.id + "）・" + p.license, pad, top + H + 50);
+    x.fillText("Old photo: " + p.holderEn + " (" + p.license + ")", pad, top + H + 90);
     return c;
   }
 
@@ -396,14 +547,12 @@
     $("shot").classList.remove("hidden");
   });
 
-  $("retake").addEventListener("click", () => {
-    $("shot").classList.add("hidden");
-  });
+  $("retake").addEventListener("click", () => { $("shot").classList.add("hidden"); });
 
   // iPhoneの共有シートで「画像を保存」できるようにする。使えない時は長押し保存を案内
   $("saveBtn").addEventListener("click", async () => {
     if (!shotBlob) return;
-    const name = "timewalk-daibutsu-" + new Date().toISOString().slice(0, 10) + ".jpg";
+    const name = "timewalk-" + spot.id + "-" + new Date().toISOString().slice(0, 10) + ".jpg";
     const file = new File([shotBlob], name, { type: "image/jpeg" });
     try {
       if (navigator.canShare && navigator.canShare({ files: [file] })) {
@@ -413,18 +562,11 @@
     } catch (e) {
       if (e.name === "AbortError") return; // 共有画面を閉じただけ
     }
-    // 共有が使えない場合（パソコン等）はダウンロード
     const a = document.createElement("a");
     a.href = URL.createObjectURL(shotBlob);
     a.download = name;
     a.click();
     $("saveHint").classList.remove("hidden");
-  });
-
-  $("reset").addEventListener("click", () => {
-    first = null;
-    maxDrift = 0;
-    $("drift").textContent = "0 m";
   });
 </script>
 </body>

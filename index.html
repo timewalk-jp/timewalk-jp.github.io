@@ -132,6 +132,9 @@
   #arrow { width: 56px; height: 56px; flex: 0 0 56px; transition: transform .25s ease-out; }
   #dirText { font-size: 17px; font-weight: 700; color: var(--indigo); margin: 0; }
   #dirSub { font-size: 13px; color: var(--muted); margin: 2px 0 0; }
+  #miniMap { height: 240px; border-radius: 10px; overflow: hidden; margin-top: 12px; }
+  .destLabel { background: #E07A5F; color: #fff; border: none; font-weight: 700; font-size: 12px; padding: 2px 8px; border-radius: 10px; box-shadow: 0 1px 3px rgba(0,0,0,.3); }
+  .destLabel::before { display: none; }
   #status { margin: 14px 0 0; padding: 10px 12px; border-radius: 10px; font-weight: 700; font-size: 16px; display: none; }
   #status.near { display: block; background: #FFF4E0; color: #9A5B00; }
   #status.here { display: block; background: #E3F4F1; color: #1C6E64; }
@@ -246,6 +249,7 @@
       </div>
     </div>
     <p id="status"></p>
+    <div id="miniMap"></div>
     <p class="note" id="spotNote"></p>
   </div>
 
@@ -3271,6 +3275,7 @@
     oldPhotoCap: ["昔の写真", "Old photo"],
     soonText:    ["撮影地点は調査中（写っている場所まで案内します）", "Photo spot not set yet (guide to the place shown)"],
     goHere:      ["この場所を選ぶ", "Choose this place"],
+    photoSpotMark:["（撮影地点）", "(photo spot)"],
     toLabelTarget:["{n}まで（写っている場所）", "To {n} (the place in the photo)"],
     noStandAt:   ["撮影地点（先人が立った場所）はまだ割り出していません。今は写っている場所の近くまで案内します。現地で古写真と見比べて、同じ景色が見える場所を探してください。", "The exact photo spot is not set yet. We guide you to the place shown; look around to find the same view."],
     nearTarget:  ["{n}に近づきました。", "You are close to {n}."],
@@ -3375,8 +3380,10 @@
     a.href = p.page; a.target = "_blank"; a.rel = "noopener"; a.textContent = t("seeSource");
     c.append(a);
     $("viewCredit").textContent = t("oldPhotoCap") + ": " + pick(p.title, p.titleEn) + " (" + pick(p.year, p.yearEn) + ") " + pick(p.holder, p.holderEn) + " · " + p.license;
+    miniFitted = false;
     if (here) render();
     renderAim();
+    updateMini();
   }
   // 写真が複数ある場所：どの古写真で覗くかを選ぶ
   function renderPicker(list) {
@@ -3514,6 +3521,38 @@
   }
   $("modePlan").addEventListener("click", () => setMode("plan"));
   $("modeNear").addEventListener("click", () => setMode("near"));
+  // ① 立つの小さな地図：目的地（朱色・名前つき）と自分（青）と、その間の点線。両方が入る縮尺に合わせる
+  let mini = null, miniDest = null, miniYou = null, miniLine = null, selMarker = null;
+  function updateMini() {
+    if (typeof window.L === "undefined") return;
+    const g = dest(spot);
+    if (!mini) {
+      mini = window.L.map("miniMap", { zoomControl: true, attributionControl: true }).setView([g.lat, g.lon], 16);
+      window.L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", { maxZoom: 19, attribution: "&copy; OpenStreetMap" }).addTo(mini);
+    }
+    const label = pick(spot.name, spot.nameEn) + (spot.standAt ? " " + t("photoSpotMark") : "");
+    if (!miniDest) miniDest = window.L.marker([g.lat, g.lon], { icon: dot("#E07A5F", 11) }).addTo(mini);
+    miniDest.setLatLng([g.lat, g.lon]);
+    miniDest.unbindTooltip().bindTooltip(label, { permanent: true, direction: "top", offset: [0, -12], className: "destLabel" });
+    if (here) {
+      if (!miniYou) miniYou = window.L.marker([here.lat, here.lon], { icon: dot("#3B82F6", 8) }).addTo(mini);
+      miniYou.setLatLng([here.lat, here.lon]);
+      const pts = [[here.lat, here.lon], [g.lat, g.lon]];
+      if (!miniLine) miniLine = window.L.polyline(pts, { color: "#E07A5F", weight: 3, dashArray: "6 8" }).addTo(mini);
+      miniLine.setLatLngs(pts);
+      if (!miniFitted) { mini.fitBounds(pts, { padding: [40, 40], maxZoom: 17 }); miniFitted = true; }
+    } else {
+      mini.setView([g.lat, g.lon], 16);
+    }
+    // 大きな地図でも、選んでいる場所を朱色の大きな点にする
+    if (map) {
+      if (!selMarker) selMarker = window.L.marker([spot.target.lat, spot.target.lon], { icon: dot("#E07A5F", 11), zIndexOffset: 900 }).addTo(map);
+      selMarker.setLatLng([spot.target.lat, spot.target.lon]);
+    }
+    setTimeout(() => mini.invalidateSize(), 0);
+  }
+  let miniFitted = false;
+
   function showYou() {
     if (!map || !here) return;
     if (!youMarker) youMarker = window.L.marker([here.lat, here.lon], { icon: dot("#3B82F6", 7), zIndexOffset: 1000 }).addTo(map);
@@ -3560,6 +3599,7 @@
     maxDrift = Math.max(maxDrift, distanceM(first, here));
     render();
     showYou();
+    updateMini();
     if (mode === "near") { renderList(); if (map && !fittedNear) fitNear(); }
     $("acc").textContent = "± " + Math.round(pos.coords.accuracy) + " m";
     $("drift").textContent = Math.round(maxDrift) + " m";

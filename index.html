@@ -166,6 +166,11 @@
   }
   #view img.small { object-fit: contain; height: auto; }
   #view video.small { object-fit: cover; height: 34vh; }
+  #view .small { touch-action: none; }
+  /* 小さい窓の右下の角：引っぱって大きさを変える */
+  #rsz { position: absolute; width: 34px; height: 34px; margin: 0; padding: 0; border-radius: 50%;
+         background: #fff; color: #3D5A80; font-size: 18px; line-height: 34px; text-align: center;
+         box-shadow: 0 1px 6px rgba(0,0,0,.5); z-index: 4; touch-action: none; user-select: none; -webkit-user-select: none; }
   #close {
     position: absolute; top: calc(12px + env(safe-area-inset-top)); left: 12px;
     width: 44px; height: 44px; padding: 0; margin: 0;
@@ -303,6 +308,7 @@
 <div id="view" class="hidden">
   <video id="cam" playsinline muted autoplay></video>
   <img id="pip" alt="" crossorigin="anonymous">
+  <div id="rsz" aria-label="resize">⤡</div>
   <button id="close" aria-label="close">×</button>
   <p id="tip" data-t="viewTip"></p>
   <div id="aim"></div>
@@ -3275,7 +3281,7 @@
     s3:          ["残す", "Keep"],
     s3Lead:      ["昔と今を、1枚に", "Then and now, in one picture"],
     s3Sub:       ["覗く画面の白い丸を押すと、昔と今を並べた1枚が残せます", "Tap the white button in the camera to save it"],
-    viewTip:     ["小さい方を押すと、昔と今が入れ替わります", "Tap the small picture to swap"],
+    viewTip:     ["小さい方は指で動かせます。右下の丸で大きさを変えられます。押すと昔と今が入れ替わります", "Drag the small picture to move it, use the corner dot to resize, tap to swap"],
     aimHead:     ["向き：", "Direction: "],
     aimTilt:     ["傾き：", "Tilt: "],
     ok:          ["ぴったり", "Good"],
@@ -3755,10 +3761,106 @@
   function setBig(id) {
     const other = id === "cam" ? "pip" : "cam";
     $(id).className = "big";
+    $(id).style.cssText = "";
     $(other).className = "small";
+    placeSmall();
   }
-  $("cam").addEventListener("click", () => { if ($("cam").className === "small") setBig("cam"); });
-  $("pip").addEventListener("click", () => { if ($("pip").className === "small") setBig("pip"); });
+  // ===== 小さい窓を動かす・大きさを変える =====
+  // 1本指で動かす／2本指で広げる・縮める／右下の丸を引っぱって大きさを変える。古写真は縦横比を変えない（切らない・伸ばさない）
+  const win = { x: null, y: null, w: null, h: null };
+  let movedSmall = false;
+  const smallEl = () => ($("cam").className === "small" ? $("cam") : $("pip"));
+  function clampWin() {
+    const W = window.innerWidth, H = window.innerHeight;
+    win.w = Math.max(90, Math.min(win.w, W));
+    if (win.h !== null) win.h = Math.max(90, Math.min(win.h, H));
+    win.x = Math.max(-win.w + 60, Math.min(win.x, W - 60));
+    win.y = Math.max(0, Math.min(win.y, H - 60));
+  }
+  function placeSmall() {
+    const el = smallEl();
+    if (win.x !== null) {
+      clampWin();
+      el.style.left = win.x + "px"; el.style.top = win.y + "px";
+      el.style.right = "auto"; el.style.bottom = "auto";
+      el.style.width = win.w + "px"; el.style.maxHeight = "none";
+      if (el.tagName === "VIDEO") el.style.height = (win.h || win.w * 1.3) + "px"; else el.style.height = "auto";
+    } else { el.style.cssText = ""; }
+    requestAnimationFrame(placeHandle);
+  }
+  function placeHandle() {
+    const r = smallEl().getBoundingClientRect();
+    $("rsz").style.left = (r.right - 22) + "px";
+    $("rsz").style.top = (r.bottom - 22) + "px";
+  }
+  function grabWin() {   // 今の位置と大きさを数字で持つ（最初の1回）
+    const r = smallEl().getBoundingClientRect();
+    win.x = r.left; win.y = r.top; win.w = r.width;
+    if (smallEl().tagName === "VIDEO") win.h = r.height;
+  }
+  const touches = new Map();
+  let g0 = null;
+  function onDown(e) {
+    if (e.currentTarget.className !== "small") return;
+    try { e.currentTarget.setPointerCapture(e.pointerId); } catch (_) {}
+    touches.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    grabWin();
+    const ps = [...touches.values()];
+    if (ps.length === 1) { movedSmall = false; g0 = { kind: "move", px: e.clientX, py: e.clientY, x: win.x, y: win.y }; }
+    else if (ps.length === 2) {
+      g0 = { kind: "pinch", d: Math.hypot(ps[0].x - ps[1].x, ps[0].y - ps[1].y), w: win.w, h: win.h, cx: win.x + win.w / 2, cy: win.y };
+      movedSmall = true;
+    }
+  }
+  function onMove(e) {
+    if (!touches.has(e.pointerId) || !g0) return;
+    touches.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    const ps = [...touches.values()];
+    if (g0.kind === "move" && ps.length === 1) {
+      const dx = e.clientX - g0.px, dy = e.clientY - g0.py;
+      if (Math.abs(dx) + Math.abs(dy) > 8) movedSmall = true;
+      if (!movedSmall) return;
+      win.x = g0.x + dx; win.y = g0.y + dy;
+    } else if (g0.kind === "pinch" && ps.length === 2) {
+      const k = Math.hypot(ps[0].x - ps[1].x, ps[0].y - ps[1].y) / Math.max(1, g0.d);
+      win.w = g0.w * k; if (g0.h !== null && g0.h !== undefined) win.h = g0.h * k;
+      win.x = g0.cx - win.w / 2;
+    } else return;
+    placeSmall();
+  }
+  function onUp(e) { touches.delete(e.pointerId); if (touches.size === 0) g0 = null; }
+  ["cam", "pip"].forEach((id) => {
+    const el = $(id);
+    el.addEventListener("pointerdown", onDown);
+    el.addEventListener("pointermove", onMove);
+    el.addEventListener("pointerup", onUp);
+    el.addEventListener("pointercancel", onUp);
+    el.addEventListener("click", () => {
+      if (movedSmall) { movedSmall = false; return; }   // 動かした後は入れ替えない
+      if (el.className === "small") setBig(id);
+    });
+  });
+  // 右下の丸：引っぱって大きさ（動画は縦と横を別々に、古写真は縦横比そのまま）
+  let r0 = null;
+  $("rsz").addEventListener("pointerdown", (e) => {
+    e.preventDefault(); try { $("rsz").setPointerCapture(e.pointerId); } catch (_) {} grabWin();
+    r0 = { px: e.clientX, py: e.clientY, w: win.w, h: win.h };
+  });
+  $("rsz").addEventListener("pointermove", (e) => {
+    if (!r0) return;
+    const dx = e.clientX - r0.px, dy = e.clientY - r0.py;
+    if (smallEl().tagName === "VIDEO") { win.w = r0.w + dx; win.h = r0.h + dy; }
+    else {   // 古写真：斜めに引いた量の大きい方で幅を決める（高さは写真の縦横比のまま）
+      const im = $("pip"), ratio = im.naturalHeight ? im.naturalWidth / im.naturalHeight : 1;
+      win.w = r0.w + Math.max(dx, dy * ratio);
+    }
+    placeSmall();
+  });
+  const rEnd = () => { r0 = null; };
+  $("rsz").addEventListener("pointerup", rEnd);
+  $("rsz").addEventListener("pointercancel", rEnd);
+  $("pip").addEventListener("load", () => { if (!$("view").classList.contains("hidden")) placeSmall(); });
+  window.addEventListener("resize", () => { if (!$("view").classList.contains("hidden")) placeSmall(); });
   $("close").addEventListener("click", () => {
     $("view").classList.add("hidden");
     if (camStream) camStream.getTracks().forEach((tr) => tr.stop());

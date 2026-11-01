@@ -196,6 +196,20 @@
     position: absolute; left: 12px; right: 12px; bottom: calc(10px + env(safe-area-inset-bottom));
     margin: 0; color: #eee; font-size: 11px; text-shadow: 0 1px 3px #000; z-index: 3;
   }
+  /* 写真を見る画面：その場所の古写真を左右にめくって見る */
+  #gallery { position: fixed; inset: 0; background: #111; z-index: 1100; display: flex; flex-direction: column; }
+  #gallery.hidden { display: none; }
+  #galTop { display: flex; align-items: center; gap: 10px; padding: calc(10px + env(safe-area-inset-top)) 12px 8px; color: #fff; }
+  #galTop b { flex: 1; font-size: 16px; }
+  #galClose { width: 44px; height: 44px; padding: 0; margin: 0; border-radius: 50%; font-size: 26px; line-height: 44px; background: rgba(255,255,255,.15); color: #fff; flex: 0 0 44px; }
+  #galCount { font-size: 13px; color: #ccc; }
+  #galTrack { flex: 1; display: flex; overflow-x: auto; scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; }
+  .galPage { flex: 0 0 100%; scroll-snap-align: center; display: flex; flex-direction: column; padding: 0 12px; box-sizing: border-box; min-height: 0; }
+  .galPage img { flex: 1; min-height: 0; width: 100%; object-fit: contain; }
+  .galPage .cap { color: #eee; font-size: 12px; line-height: 1.5; margin: 8px 0 0; }
+  .galPage .cap a { color: #9cc9ff; }
+  .galPage button { margin: 10px 0 calc(14px + env(safe-area-inset-bottom)); }
+  .galBtn { display: inline-block; width: auto; margin: 6px 0 0; padding: 6px 12px; font-size: 13px; }
   /* ③ 残す：撮った1枚の確認画面 */
   #shot {
     position: fixed; inset: 0; z-index: 1001; overflow-y: auto;
@@ -294,6 +308,12 @@
   <div id="aim"></div>
   <button id="shutter" aria-label="shutter"></button>
   <p id="viewCredit"></p>
+</div>
+
+<!-- 写真を見る（その場所の古写真を全部） -->
+<div id="gallery" class="hidden">
+  <div id="galTop"><b id="galName"></b><span id="galCount"></span><button id="galClose" type="button" aria-label="close">×</button></div>
+  <div id="galTrack"></div>
 </div>
 
 <!-- ③ 残す：撮った1枚の確認と保存 -->
@@ -3275,6 +3295,8 @@
     oldPhotoCap: ["昔の写真", "Old photo"],
     soonText:    ["撮影地点は調査中（写っている場所まで案内します）", "Photo spot not set yet (guide to the place shown)"],
     goHere:      ["この場所を選ぶ", "Choose this place"],
+    galOpen:     ["写真を見る（{n}枚）", "See photos ({n})"],
+    galUse:      ["この写真で行く", "Go with this photo"],
     photoSpotMark:["（撮影地点）", "(photo spot)"],
     toLabelTarget:["{n}まで（写っている場所）", "To {n} (the place in the photo)"],
     noStandAt:   ["撮影地点（先人が立った場所）はまだ割り出していません。今は写っている場所の近くまで案内します。現地で古写真と見比べて、同じ景色が見える場所を探してください。", "The exact photo spot is not set yet. We guide you to the place shown; look around to find the same view."],
@@ -3403,6 +3425,43 @@
     });
   }
 
+  // ===== 写真を見る：その場所の古写真を大きく、左右にめくって見る =====
+  let galSpot = null;
+  function openGallery(s, start) {
+    galSpot = s;
+    const list = photosOf(s);
+    $("galName").textContent = pick(s.name, s.nameEn);
+    const tr = $("galTrack");
+    tr.innerHTML = "";
+    list.forEach((ph, i) => {
+      const pg = document.createElement("div"); pg.className = "galPage";
+      const im = document.createElement("img"); im.src = ph.src; im.alt = pick(ph.title, ph.titleEn); im.loading = "lazy";
+      const cap = document.createElement("p"); cap.className = "cap";
+      cap.append(pick(ph.title, ph.titleEn) + " / " + pick(ph.year, ph.yearEn) + (ph.by ? " / " + pick(ph.by, ph.byEn) : ""), document.createElement("br"),
+                 t("creditHolder") + ": " + pick(ph.holder, ph.holderEn) + (ph.id ? " (" + ph.id + ")" : "") + " · " + ph.license + " ");
+      if (ph.page) { const a = document.createElement("a"); a.href = ph.page; a.target = "_blank"; a.rel = "noopener"; a.textContent = t("seeSource"); cap.append(a); }
+      const b = document.createElement("button"); b.type = "button"; b.textContent = t("galUse");
+      b.addEventListener("click", () => { closeGallery(); chooseSpot(s); applySpot(s, i); });
+      pg.append(im, cap, b);
+      tr.append(pg);
+    });
+    $("gallery").classList.remove("hidden");
+    const n = list.length;
+    const upd = () => { const i = Math.round(tr.scrollLeft / Math.max(1, tr.clientWidth)); $("galCount").textContent = n > 1 ? (i + 1) + " / " + n : ""; };
+    tr.onscroll = upd;
+    requestAnimationFrame(() => { tr.scrollLeft = (start || 0) * tr.clientWidth; upd(); });
+    if (map) map.closePopup();
+  }
+  function closeGallery() { $("gallery").classList.add("hidden"); galSpot = null; }
+  $("galClose").addEventListener("click", closeGallery);
+  function galButton(s) {
+    const b = document.createElement("button"); b.type = "button"; b.className = "secondary galBtn";
+    b.textContent = t("galOpen", { n: photosOf(s).length });
+    b.addEventListener("click", (e) => { e.stopPropagation(); openGallery(s, 0); });
+    return b;
+  }
+  $("old").addEventListener("click", () => { if (spot) openGallery(spot, photoIdx); });
+
   // ===== 旅の地図 =====
   let map = null, markerLayer = null, youMarker = null;
   function initMap() {
@@ -3440,6 +3499,7 @@
         box.append(cr);
       });
       if (!ready) { const p = document.createElement("p"); p.textContent = t("soonText"); box.append(p); }
+      box.append(galButton(s));
       const btn = document.createElement("button");
       btn.textContent = t("goHere");
       btn.addEventListener("click", () => chooseSpot(s));
@@ -3493,6 +3553,7 @@
           tx.append(more);
         }
       }
+      if (photosOf(s).length) tx.append(document.createElement("br"), galButton(s));
       it.append(th, tx);
       it.addEventListener("click", () => chooseSpot(s));
       box.append(it);

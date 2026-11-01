@@ -167,6 +167,14 @@
   #view img.small { object-fit: contain; height: auto; }
   #view video.small { object-fit: cover; height: 34vh; }
   #view .small { touch-action: none; }
+  /* 文字や案内をまとめた層。スマホを横に持ったら、この層だけ90°回して横向きで読めるようにする */
+  #hud { position: absolute; inset: 0; z-index: 3; pointer-events: none; }
+  #hud > * { pointer-events: auto; }
+  #hud #tip { pointer-events: none; }
+  /* 保存する「今」の写真の枠（外側を少し暗くする） */
+  #frameBox { position: absolute; z-index: 1; pointer-events: none; border: 2px solid rgba(255,255,255,.85); box-shadow: 0 0 0 100vmax rgba(0,0,0,.35); }
+  #frameBtn { position: absolute; right: 12px; top: calc(64px + env(safe-area-inset-top)); width: auto; margin: 0; padding: 6px 12px;
+              font-size: 13px; border-radius: 16px; background: rgba(0,0,0,.55); color: #fff; border: 1px solid rgba(255,255,255,.6); }
   /* 小さい窓の右下の角：引っぱって大きさを変える */
   #rsz { position: absolute; width: 34px; height: 34px; margin: 0; padding: 0; border-radius: 50%;
          background: #fff; color: #3D5A80; font-size: 18px; line-height: 34px; text-align: center;
@@ -319,10 +327,14 @@
   <img id="pip" alt="" crossorigin="anonymous">
   <div id="rsz" aria-label="resize">⤡</div>
   <button id="close" aria-label="close">×</button>
-  <p id="tip" data-t="viewTip"></p>
-  <div id="aim"></div>
+  <div id="frameBox"></div>
+  <div id="hud">
+    <p id="tip" data-t="viewTip"></p>
+    <div id="aim"></div>
+    <button id="frameBtn" type="button"></button>
+    <p id="viewCredit"></p>
+  </div>
   <button id="shutter" aria-label="shutter"></button>
-  <p id="viewCredit"></p>
 </div>
 
 <!-- 写真を見る（その場所の古写真を全部） -->
@@ -3311,6 +3323,8 @@
     soonText:    ["撮影地点は調査中（写っている場所まで案内します）", "Photo spot not set yet (guide to the place shown)"],
     goHere:      ["この場所を選ぶ", "Choose this place"],
     galOpen:     ["写真を見る（{n}枚）", "See photos ({n})"],
+    frameTate:   ["枠：縦", "Frame: portrait"],
+    frameYoko:   ["枠：横", "Frame: landscape"],
     galUse:      ["この景色を探しに行く", "Go find this view"],
     photoSpotMark:["（撮影地点）", "(photo spot)"],
     toLabelTarget:["{n}まで（写っている場所）", "To {n} (the place in the photo)"],
@@ -3703,16 +3717,33 @@
     else if (Math.abs(th) < 35) next = 0;
     if (next !== holdRot) { holdRot = next; applyRot(); }
   }
+  // 横持ちになったら：文字の層を回し、写す枠を横長に。古写真はあるがまま（回さない）
+  let frameMode = "tate";
   function applyRot() {
-    const im = $("pip");
-    if (im.className === "big") {
-      if (holdRot) Object.assign(im.style, { inset: "auto", left: "50%", top: "50%", width: "100vh", height: "100vw", transform: "translate(-50%,-50%) rotate(" + holdRot + "deg)" });
-      else im.style.cssText = "";
-    } else {
-      im.style.transform = holdRot ? "rotate(" + holdRot + "deg)" : "";
-      requestAnimationFrame(placeHandle);
-    }
+    const h = $("hud");
+    if (holdRot) Object.assign(h.style, { inset: "auto", left: "50%", top: "50%", width: "100vh", height: "100vw", transform: "translate(-50%,-50%) rotate(" + holdRot + "deg)" });
+    else h.style.cssText = "";
+    frameMode = holdRot ? "yoko" : "tate";
+    drawFrame();
   }
+  // 枠の形：画面に見えている範囲の中で、縦長（3:4）か横長（4:3）。横持ちの時は画面の向きが逆になる
+  function frameRect() {
+    const W = window.innerWidth, H = window.innerHeight;
+    const world = frameMode === "yoko" ? 4 / 3 : 3 / 4;
+    const a = holdRot ? 1 / world : world;
+    let w = W, h = W / a;
+    if (h > H) { h = H; w = H * a; }
+    return { x: (W - w) / 2, y: (H - h) / 2, w, h, world };
+  }
+  function drawFrame() {
+    const b = $("frameBox");
+    $("frameBtn").textContent = t(frameMode === "yoko" ? "frameYoko" : "frameTate");
+    if ($("cam").className !== "big") { b.style.display = "none"; return; }
+    const r = frameRect();
+    Object.assign(b.style, { display: "block", left: r.x + "px", top: r.y + "px", width: r.w + "px", height: r.h + "px" });
+  }
+  $("frameBtn").addEventListener("click", () => { frameMode = frameMode === "yoko" ? "tate" : "yoko"; drawFrame(); });
+
 
   // ===== 向き（コンパス）と傾き =====
   function onOrientation(e) {
@@ -3788,6 +3819,8 @@
         $("cam").srcObject = camStream;
       }
       setBig("cam");
+      frameMode = (window.innerWidth > window.innerHeight || holdRot) ? "yoko" : "tate";
+      drawFrame();
       renderAim();
       $("view").classList.remove("hidden");
       document.documentElement.style.overflow = "hidden"; document.body.style.overflow = "hidden";
@@ -3804,7 +3837,7 @@
     $(id).style.cssText = "";
     $(other).className = "small";
     placeSmall();
-    applyRot();
+    drawFrame();
   }
   // ===== 小さい窓を動かす・大きさを変える =====
   // 1本指で動かす／2本指で広げる・縮める／右下の丸を引っぱって大きさを変える。古写真は縦横比を変えない（切らない・伸ばさない）
@@ -3827,7 +3860,6 @@
       el.style.width = win.w + "px"; el.style.maxHeight = "none";
       if (el.tagName === "VIDEO") el.style.height = (win.h || win.w * 1.3) + "px"; else el.style.height = "auto";
     } else { el.style.cssText = ""; }
-    if (el.id === "pip" && holdRot) el.style.transform = "rotate(" + holdRot + "deg)";
     requestAnimationFrame(placeHandle);
   }
   function placeHandle() {
@@ -3902,7 +3934,11 @@
   $("rsz").addEventListener("pointerup", rEnd);
   $("rsz").addEventListener("pointercancel", rEnd);
   $("pip").addEventListener("load", () => { if (!$("view").classList.contains("hidden")) placeSmall(); });
-  window.addEventListener("resize", () => { if (!$("view").classList.contains("hidden")) placeSmall(); });
+  window.addEventListener("resize", () => { if (!$("view").classList.contains("hidden")) {
+    placeSmall();
+    if (!holdRot) frameMode = window.innerWidth > window.innerHeight ? "yoko" : "tate";   // 画面ごと回った時は枠も合わせる
+    drawFrame();
+  } });
   // 覗く画面では、指を下へ引いてもページが一緒に動かないようにする
   $("view").addEventListener("touchmove", (e) => { e.preventDefault(); }, { passive: false });
   $("close").addEventListener("click", () => {
@@ -3918,10 +3954,10 @@
   function makeComparison() {
     const old = $("pip"), cam = $("cam"), p = spot.photo;
     const ratio = old.naturalWidth / old.naturalHeight;
-    const H = 1200, W = Math.round(H * ratio);
+    const H = 1200, W = Math.round(H * ratio), W2 = Math.round(H * frameRect().world);   // 昔はあるがままの形・今は枠の形
     const pad = 40, gap = 24, top = 110, bottom = 130;
     const c = document.createElement("canvas");
-    c.width = pad * 2 + W * 2 + gap;
+    c.width = pad * 2 + W + gap + W2;
     c.height = top + H + bottom;
     const x = c.getContext("2d");
     const font = "-apple-system, 'Hiragino Sans', sans-serif";
@@ -3932,17 +3968,19 @@
     x.fillText(t("then") + "　" + pick(p.year, p.yearEn), pad, top - 14);
     x.fillText(t("now") + "　" + new Date().toLocaleDateString(lang === "ja" ? "ja-JP" : "en-US"), pad + W + gap, top - 14);
     x.drawImage(old, pad, top, W, H);
-    let src = cam, vw = cam.videoWidth, vh = cam.videoHeight;
-    if (holdRot) {   // 横持ちで撮った時は、今の写真もまっすぐに起こす
-      const u = document.createElement("canvas");
-      u.width = vh; u.height = vw;
-      const ux = u.getContext("2d");
-      ux.translate(vh / 2, vw / 2); ux.rotate(-holdRot * Math.PI / 180); ux.drawImage(cam, -vw / 2, -vh / 2);
-      src = u; vw = u.width; vh = u.height;
-    }
-    let sw = vw, sh = vw / ratio;
-    if (sh > vh) { sh = vh; sw = vh * ratio; }
-    x.drawImage(src, (vw - sw) / 2, (vh - sh) / 2, sw, sh, pad + W + gap, top, W, H);
+    // 今の写真：白い枠の中に見えていた範囲を切り出し、横持ちならまっすぐに起こす
+    const fr = frameRect(), SW = window.innerWidth, SH = window.innerHeight;
+    const vw = cam.videoWidth, vh = cam.videoHeight;
+    const sc = Math.max(SW / vw, SH / vh), ox = (SW - vw * sc) / 2, oy = (SH - vh * sc) / 2;
+    let sx = (fr.x - ox) / sc, sy = (fr.y - oy) / sc, sw = fr.w / sc, sh = fr.h / sc;
+    sx = Math.max(0, sx); sy = Math.max(0, sy); sw = Math.min(sw, vw - sx); sh = Math.min(sh, vh - sy);
+    const u = document.createElement("canvas");
+    const turned = holdRot !== 0;
+    u.width = Math.round(turned ? sh : sw); u.height = Math.round(turned ? sw : sh);
+    const ux = u.getContext("2d");
+    ux.translate(u.width / 2, u.height / 2); ux.rotate(-holdRot * Math.PI / 180);
+    ux.drawImage(cam, sx, sy, sw, sh, -sw / 2, -sh / 2, sw, sh);
+    x.drawImage(u, 0, 0, u.width, u.height, pad + W + gap, top, W2, H);
     // 出典は写真の外（下の余白）に、幅に合わせて折り返して書く
     x.font = "24px " + font;
     const maxW = c.width - pad * 2;

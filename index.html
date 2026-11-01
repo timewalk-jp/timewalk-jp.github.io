@@ -3689,6 +3689,31 @@
     else showMsg(t("errOther") + "（" + err.message + "）");
   }
 
+  // ===== 横持ちの見分け（iPhoneの「縦向きのロック」がオンでも横で使えるように）=====
+  // 画面が縦のままでスマホだけ横にされたら、古写真を90°回して、横にしたスマホから見てまっすぐに見せる
+  let holdRot = 0;
+  function detectHold(b, g) {
+    if (window.innerWidth > window.innerHeight) { if (holdRot) { holdRot = 0; applyRot(); } return; }   // 画面ごと横になっている時は不要
+    const ux = -Math.cos(b) * Math.sin(g), uy = Math.sin(b), uz = Math.cos(b) * Math.cos(g);
+    if (Math.abs(uz) > 0.8) return;   // ほぼ平らに置いている時は変えない
+    const th = Math.atan2(ux, uy) * 180 / Math.PI;
+    let next = holdRot;
+    if (th > 55 && th < 125) next = 90;
+    else if (th < -55 && th > -125) next = -90;
+    else if (Math.abs(th) < 35) next = 0;
+    if (next !== holdRot) { holdRot = next; applyRot(); }
+  }
+  function applyRot() {
+    const im = $("pip");
+    if (im.className === "big") {
+      if (holdRot) Object.assign(im.style, { inset: "auto", left: "50%", top: "50%", width: "100vh", height: "100vw", transform: "translate(-50%,-50%) rotate(" + holdRot + "deg)" });
+      else im.style.cssText = "";
+    } else {
+      im.style.transform = holdRot ? "rotate(" + holdRot + "deg)" : "";
+      requestAnimationFrame(placeHandle);
+    }
+  }
+
   // ===== 向き（コンパス）と傾き =====
   function onOrientation(e) {
     let h = null;
@@ -3700,6 +3725,7 @@
       const r = Math.PI / 180;
       pitch = Math.asin(Math.max(-1, Math.min(1, -Math.cos(e.beta * r) * Math.cos(e.gamma * r)))) / r;
       $("tilt").textContent = Math.round(pitch) + "°";
+      detectHold(e.beta * r, e.gamma * r);
     }
     render();
     renderAim();
@@ -3764,6 +3790,7 @@
       setBig("cam");
       renderAim();
       $("view").classList.remove("hidden");
+      document.documentElement.style.overflow = "hidden"; document.body.style.overflow = "hidden";
       await $("cam").play();
     } catch (e) {
       camStream = null;
@@ -3777,6 +3804,7 @@
     $(id).style.cssText = "";
     $(other).className = "small";
     placeSmall();
+    applyRot();
   }
   // ===== 小さい窓を動かす・大きさを変える =====
   // 1本指で動かす／2本指で広げる・縮める／右下の丸を引っぱって大きさを変える。古写真は縦横比を変えない（切らない・伸ばさない）
@@ -3799,6 +3827,7 @@
       el.style.width = win.w + "px"; el.style.maxHeight = "none";
       if (el.tagName === "VIDEO") el.style.height = (win.h || win.w * 1.3) + "px"; else el.style.height = "auto";
     } else { el.style.cssText = ""; }
+    if (el.id === "pip" && holdRot) el.style.transform = "rotate(" + holdRot + "deg)";
     requestAnimationFrame(placeHandle);
   }
   function placeHandle() {
@@ -3807,9 +3836,9 @@
     $("rsz").style.top = (r.bottom - 22) + "px";
   }
   function grabWin() {   // 今の位置と大きさを数字で持つ（最初の1回）
-    const r = smallEl().getBoundingClientRect();
-    win.x = r.left; win.y = r.top; win.w = r.width;
-    if (smallEl().tagName === "VIDEO") win.h = r.height;
+    const el = smallEl();   // 回していても、回す前の位置と大きさで持つ
+    win.x = el.offsetLeft; win.y = el.offsetTop; win.w = el.offsetWidth;
+    if (el.tagName === "VIDEO") win.h = el.offsetHeight;
   }
   const touches = new Map();
   let g0 = null;
@@ -3874,8 +3903,11 @@
   $("rsz").addEventListener("pointercancel", rEnd);
   $("pip").addEventListener("load", () => { if (!$("view").classList.contains("hidden")) placeSmall(); });
   window.addEventListener("resize", () => { if (!$("view").classList.contains("hidden")) placeSmall(); });
+  // 覗く画面では、指を下へ引いてもページが一緒に動かないようにする
+  $("view").addEventListener("touchmove", (e) => { e.preventDefault(); }, { passive: false });
   $("close").addEventListener("click", () => {
     $("view").classList.add("hidden");
+    document.documentElement.style.overflow = ""; document.body.style.overflow = "";
     if (camStream) camStream.getTracks().forEach((tr) => tr.stop());
     camStream = null;
   });
@@ -3900,10 +3932,17 @@
     x.fillText(t("then") + "　" + pick(p.year, p.yearEn), pad, top - 14);
     x.fillText(t("now") + "　" + new Date().toLocaleDateString(lang === "ja" ? "ja-JP" : "en-US"), pad + W + gap, top - 14);
     x.drawImage(old, pad, top, W, H);
-    const vw = cam.videoWidth, vh = cam.videoHeight;
+    let src = cam, vw = cam.videoWidth, vh = cam.videoHeight;
+    if (holdRot) {   // 横持ちで撮った時は、今の写真もまっすぐに起こす
+      const u = document.createElement("canvas");
+      u.width = vh; u.height = vw;
+      const ux = u.getContext("2d");
+      ux.translate(vh / 2, vw / 2); ux.rotate(-holdRot * Math.PI / 180); ux.drawImage(cam, -vw / 2, -vh / 2);
+      src = u; vw = u.width; vh = u.height;
+    }
     let sw = vw, sh = vw / ratio;
     if (sh > vh) { sh = vh; sw = vh * ratio; }
-    x.drawImage(cam, (vw - sw) / 2, (vh - sh) / 2, sw, sh, pad + W + gap, top, W, H);
+    x.drawImage(src, (vw - sw) / 2, (vh - sh) / 2, sw, sh, pad + W + gap, top, W, H);
     // 出典は写真の外（下の余白）に、幅に合わせて折り返して書く
     x.font = "24px " + font;
     const maxW = c.width - pad * 2;

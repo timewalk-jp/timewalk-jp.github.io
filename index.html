@@ -171,10 +171,6 @@
   #hud { position: absolute; inset: 0; z-index: 3; pointer-events: none; }
   #hud > * { pointer-events: auto; }
   #hud #tip { pointer-events: none; }
-  /* 保存する「今」の写真の枠（外側を少し暗くする） */
-  #frameBox { position: absolute; z-index: 1; pointer-events: none; border: 2px solid rgba(255,255,255,.85); box-shadow: 0 0 0 100vmax rgba(0,0,0,.35); }
-  #frameBtn { position: absolute; right: 12px; top: calc(64px + env(safe-area-inset-top)); width: auto; margin: 0; padding: 6px 12px;
-              font-size: 13px; border-radius: 16px; background: rgba(0,0,0,.55); color: #fff; border: 1px solid rgba(255,255,255,.6); }
   /* 小さい窓の右下の角：引っぱって大きさを変える */
   #rsz { position: absolute; width: 34px; height: 34px; margin: 0; padding: 0; border-radius: 50%;
          background: #fff; color: #3D5A80; font-size: 18px; line-height: 34px; text-align: center;
@@ -327,11 +323,9 @@
   <img id="pip" alt="" crossorigin="anonymous">
   <div id="rsz" aria-label="resize">⤡</div>
   <button id="close" aria-label="close">×</button>
-  <div id="frameBox"></div>
   <div id="hud">
     <p id="tip" data-t="viewTip"></p>
     <div id="aim"></div>
-    <button id="frameBtn" type="button"></button>
     <p id="viewCredit"></p>
   </div>
   <button id="shutter" aria-label="shutter"></button>
@@ -3726,23 +3720,12 @@
     frameMode = holdRot ? "yoko" : "tate";
     drawFrame();
   }
-  // 枠の形：画面に見えている範囲の中で、縦長（3:4）か横長（4:3）。横持ちの時は画面の向きが逆になる
+  // 保存する「今」の写真＝画面に見えている範囲そのまま。横持ちなら横長（world＝起こした後の横÷縦）
   function frameRect() {
     const W = window.innerWidth, H = window.innerHeight;
-    const world = frameMode === "yoko" ? 4 / 3 : 3 / 4;
-    const a = holdRot ? 1 / world : world;
-    let w = W, h = W / a;
-    if (h > H) { h = H; w = H * a; }
-    return { x: (W - w) / 2, y: (H - h) / 2, w, h, world };
+    return { x: 0, y: 0, w: W, h: H, world: holdRot ? H / W : W / H };
   }
-  function drawFrame() {
-    const b = $("frameBox");
-    $("frameBtn").textContent = t(frameMode === "yoko" ? "frameYoko" : "frameTate");
-    if ($("cam").className !== "big") { b.style.display = "none"; return; }
-    const r = frameRect();
-    Object.assign(b.style, { display: "block", left: r.x + "px", top: r.y + "px", width: r.w + "px", height: r.h + "px" });
-  }
-  $("frameBtn").addEventListener("click", () => { frameMode = frameMode === "yoko" ? "tate" : "yoko"; drawFrame(); });
+  function drawFrame() {}
 
 
   // ===== 向き（コンパス）と傾き =====

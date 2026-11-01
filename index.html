@@ -224,6 +224,15 @@
   #shotImg { display: block; width: 100%; height: auto; border-radius: 8px; margin-bottom: 14px; box-shadow: 0 1px 4px rgba(0,0,0,.15); }
   #saveHint { font-size: 13px; color: var(--muted); }
   footer { font-size: 12px; color: var(--muted); text-align: center; padding: 8px 16px 24px; }
+  /* 横持ち：シャッターは右の真ん中（カメラアプリと同じ）、小さい写真は高さで大きさを決める */
+  @media (orientation: landscape) {
+    #shutter { left: auto; right: calc(20px + env(safe-area-inset-right)); top: 50%; bottom: auto; transform: translateY(-50%); }
+    #view .small { right: calc(110px + env(safe-area-inset-right)); bottom: 40px; max-height: 50vh; max-width: 45vw; }
+    #view img.small { width: auto; height: 50vh; }
+    #view video.small { width: 34vw; height: 50vh; }
+    #aim { bottom: 40px; max-width: 34vw; }
+    #viewCredit { right: calc(110px + env(safe-area-inset-right)); }
+  }
 </style>
 </head>
 <body>
@@ -3302,7 +3311,7 @@
     soonText:    ["撮影地点は調査中（写っている場所まで案内します）", "Photo spot not set yet (guide to the place shown)"],
     goHere:      ["この場所を選ぶ", "Choose this place"],
     galOpen:     ["写真を見る（{n}枚）", "See photos ({n})"],
-    galUse:      ["この写真で行く", "Go with this photo"],
+    galUse:      ["この景色を探しに行く", "Go find this view"],
     photoSpotMark:["（撮影地点）", "(photo spot)"],
     toLabelTarget:["{n}まで（写っている場所）", "To {n} (the place in the photo)"],
     noStandAt:   ["撮影地点（先人が立った場所）はまだ割り出していません。今は写っている場所の近くまで案内します。現地で古写真と見比べて、同じ景色が見える場所を探してください。", "The exact photo spot is not set yet. We guide you to the place shown; look around to find the same view."],
@@ -3686,8 +3695,12 @@
     if (typeof e.webkitCompassHeading === "number") h = e.webkitCompassHeading;     // iPhone
     else if (e.absolute && typeof e.alpha === "number") h = (360 - e.alpha) % 360;   // Android
     if (h !== null) { heading = h; $("compass").textContent = Math.round(h) + "°（" + dirName(h) + "）"; }
-    // 縦に持ってカメラを前に向けた時 beta≒90。上に向けると90より大きい
-    if (typeof e.beta === "number") { pitch = e.beta - 90; $("tilt").textContent = Math.round(pitch) + "°"; }
+    // カメラの上下の向き（縦持ちでも横持ちでも同じ式）：水平＝0°、上に向けると＋
+    if (typeof e.beta === "number" && typeof e.gamma === "number") {
+      const r = Math.PI / 180;
+      pitch = Math.asin(Math.max(-1, Math.min(1, -Math.cos(e.beta * r) * Math.cos(e.gamma * r)))) / r;
+      $("tilt").textContent = Math.round(pitch) + "°";
+    }
     render();
     renderAim();
   }

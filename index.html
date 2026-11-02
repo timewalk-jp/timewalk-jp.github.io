@@ -105,6 +105,9 @@
   .item span { font-size: 12px; color: var(--muted); }
   .item .tag { display: inline-block; font-size: 11px; padding: 1px 8px; border-radius: 10px; margin-right: 6px; color: #fff; background: var(--teal); }
   .item.soon .tag { background: #9AA3AD; }
+  .item .stamp { display: inline-block; font-size: 11px; padding: 0 6px; margin-right: 6px; color: #C0392B; border: 1.5px solid #C0392B; border-radius: 4px; font-weight: 700; }
+  #stampMsg { font-size: 14px; color: #C0392B; font-weight: 700; }
+  #stampMsg.miss { color: var(--muted); font-weight: 400; }
   #map { height: 40vh; min-height: 280px; border-radius: 14px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,.12); margin-bottom: 8px; }
   .legend { font-size: 12px; color: var(--muted); margin: 0 0 6px; display: flex; gap: 14px; }
   .legend i { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 4px; vertical-align: middle; }
@@ -344,6 +347,7 @@
   <button id="saveBtn" data-t="saveBtn"></button>
   <button id="retake" class="secondary" data-t="retakeBtn"></button>
   <p id="saveHint" class="hidden" data-t="saveHint"></p>
+  <p id="stampMsg" class="hidden"></p>
 </div>
 
 <footer data-t="footer"></footer>
@@ -4535,6 +4539,12 @@
     ready:       ["撮影地点あり", "Photo spot set"],
     soonTag:     ["撮影地点は調査中", "Spot not set"],
     photoCount:  ["古写真 {n} 枚", "{n} old photos"],
+    stampCount:  ["スタンプ {s} / {n} か所", "Stamps {s} / {n} places"],
+    stampMark:   ["済", "Done"],
+    stampGot:    ["スタンプを押しました（{n}・{c}か所目）", "Stamp collected ({n}, #{c})"],
+    stampAgain:  ["この場所のスタンプは押してあります（{d}）", "Already stamped here ({d})"],
+    stampFar:    ["スタンプは、この場所から50m以内で残したときに押されます（今は {m}）", "Stamps are given only within 50 m of this place (now {m} away)"],
+    stampNoPos:  ["今いる場所が分からないため、スタンプは押していません", "No stamp: your location is unknown"],
     away:        ["ここから {m}・歩いて約 {t} 分", "{m} away · about {t} min walk"],
     legendReady: ["撮影地点あり", "Photo spot set"],
     legendSoon:  ["撮影地点は調査中", "Photo spot not set"],
@@ -4616,6 +4626,8 @@
   };
   let lang = "ja";
   try { if (localStorage.getItem("tw-lang") === "en") lang = "en"; } catch (e) {}
+  let stamps = {};
+  try { stamps = JSON.parse(localStorage.getItem("tw-stamps") || "{}") || {}; } catch (e) { stamps = {}; }
   if (lang === "ja" && !(navigator.language || "ja").startsWith("ja")) lang = "en"; // 海外の端末は英語で始める
   const t = (k, vars) => {
     let s = (T[k] || [k, k])[lang === "ja" ? 0 : 1];
@@ -4784,7 +4796,7 @@
     markerLayer.clearLayers();
     SPOTS.concat(SOON).forEach((s) => {
       const ready = !!s.ready;
-      const m = window.L.marker([s.target.lat, s.target.lon], { icon: dot(ready ? "#2A9D8F" : "#9AA3AD", ready ? 10 : 7) });
+      const m = window.L.marker([s.target.lat, s.target.lon], { icon: stamps[s.id] ? dot("#C0392B", 11) : dot(ready ? "#2A9D8F" : "#9AA3AD", ready ? 10 : 7) });
       const box = document.createElement("div");
       box.className = "pop";
       const b = document.createElement("b"); b.textContent = pick(s.name, s.nameEn); box.append(b);
@@ -4821,7 +4833,7 @@
     const items = all.map((s) => ({ s, d: here ? distanceM(here, s.standAt || s.target) : null }));
     if (mode === "near" && here) items.sort((a, b) => a.d - b.d);
     else items.sort((a, b) => (b.s.ready ? 1 : 0) - (a.s.ready ? 1 : 0));
-    if (mode === "plan") $("listMsg").textContent = t("planMsg", { n: all.length, r: SPOTS.length });
+    if (mode === "plan") $("listMsg").textContent = t("planMsg", { n: all.length, r: SPOTS.length }) + "　" + t("stampCount", { s: Object.keys(stamps).length, n: all.length });
     else $("listMsg").textContent = here ? t("nearMsg") : t("nearFinding");
     const box = $("spotList");
     box.innerHTML = "";
@@ -4835,6 +4847,7 @@
       const b = document.createElement("b"); b.textContent = pick(s.name, s.nameEn);
       const sp = document.createElement("span");
       const tag = document.createElement("i"); tag.className = "tag"; tag.textContent = s.ready ? t("ready") : t("soonTag");
+      if (stamps[s.id]) { const st = document.createElement("i"); st.className = "stamp"; st.textContent = t("stampMark") + " " + stamps[s.id].date.slice(5).replace("-", "/"); sp.append(st); }
       sp.append(tag);
       if (d !== null) sp.append(t("away", { m: fmt(d), t: Math.max(1, Math.round(d / 80)) }));
       tx.append(b, sp);
@@ -5269,9 +5282,24 @@
     $("shotImg").src = c.toDataURL("image/jpeg", 0.9);
     c.toBlob((b) => { shotBlob = b; }, "image/jpeg", 0.9);
     $("saveHint").classList.add("hidden");
+    $("stampMsg").classList.add("hidden");
     $("shot").classList.remove("hidden");
   });
   $("retake").addEventListener("click", () => { $("shot").classList.add("hidden"); });
+  // ===== スタンプ：③残すを、その場所から50m以内でしたときだけ押す（スマホの中だけに記録） =====
+  function giveStamp() {
+    const box = $("stampMsg");
+    box.classList.remove("hidden", "miss");
+    const n = pick(spot.name, spot.nameEn);
+    if (stamps[spot.id]) { box.textContent = t("stampAgain", { d: stamps[spot.id].date }); return; }
+    if (!here) { box.classList.add("miss"); box.textContent = t("stampNoPos"); return; }
+    const d = distanceM(here, dest(spot));
+    if (d > NEAR_M) { box.classList.add("miss"); box.textContent = t("stampFar", { m: fmt(d) }); return; }
+    stamps[spot.id] = { date: new Date().toISOString().slice(0, 10), photo: photoIdx, m: Math.round(d) };
+    try { localStorage.setItem("tw-stamps", JSON.stringify(stamps)); } catch (e) {}
+    box.textContent = t("stampGot", { n, c: Object.keys(stamps).length });
+    renderList(); buildMarkers();
+  }
   $("saveBtn").addEventListener("click", async () => {
     if (!shotBlob) return;
     const name = "timewalk-" + spot.id + "-" + new Date().toISOString().slice(0, 10) + ".jpg";
@@ -5279,12 +5307,14 @@
     try {
       if (navigator.canShare && navigator.canShare({ files: [file] })) {
         await navigator.share({ files: [file], title: "TimeWalk" });
+        giveStamp();
         return;
       }
     } catch (e) { if (e.name === "AbortError") return; }
     const a = document.createElement("a");
     a.href = URL.createObjectURL(shotBlob); a.download = name; a.click();
     $("saveHint").classList.remove("hidden");
+    giveStamp();
   });
 
   // ===== はじめに =====

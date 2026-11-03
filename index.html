@@ -82,6 +82,10 @@
   button.secondary { background: #fff; color: var(--brown); border: 2px solid var(--brown); font-size: 15px; padding: 12px; }
   .msg { font-size: 14px; color: var(--warn); margin: 0 0 10px; }
   .hidden { display: none !important; }
+  /* 画面の切り替え（BOSS 11/3「TOPページ…シンプルで使いやすいものに」） */
+  .back { display: inline-block; width: auto; margin: 0 0 10px; padding: 8px 14px; font-size: 15px;
+          background: transparent; color: var(--indigo, #3D5A80); border: 1px solid currentColor; border-radius: 20px; }
+  .scrTitle { margin: 4px 0 6px; font-size: 20px; }
 
   /* 旅の入口：2つの使い方 */
   .modes { display: flex; gap: 8px; margin: 4px 0 10px; }
@@ -279,16 +283,31 @@
 </header>
 
 <main>
+  <!-- 画面1：ホーム（地図と2つの入口） -->
+  <section id="scrHome" class="scr">
   <!-- 旅の入口：2つの使い方「どこへ行こう？」「近くにある？」 -->
   <div class="modes">
-    <button id="modePlan" class="mode on" type="button"><span data-t="modePlan"></span><small data-t="modePlanSub"></small></button>
+    <button id="modePlan" class="mode" type="button"><span data-t="modePlan"></span><small data-t="modePlanSub"></small></button>
     <button id="modeNear" class="mode" type="button"><span data-t="modeNear"></span><small data-t="modeNearSub"></small></button>
   </div>
   <div id="map"></div>
   <p class="legend"><span><i style="background:#2A9D8F"></i><span data-t="legendReady"></span></span><span><i style="background:#9AA3AD"></i><span data-t="legendSoon"></span></span><span><i style="background:#3B82F6"></i><span data-t="legendYou"></span></span></p>
-  <p id="listMsg" class="note"></p>
+  <p id="nearMsg" class="note hidden"></p>
+  <div id="nearList"></div>
   <div id="walkBox"></div>
+  </section>
+
+  <!-- 画面2：どこへ行こう？（場所の一覧） -->
+  <section id="scrPlaces" class="scr hidden">
+  <button class="back" type="button" data-t="back"></button>
+  <h2 class="scrTitle" data-t="modePlan"></h2>
+  <p id="listMsg" class="note"></p>
   <div id="spotList"></div>
+  </section>
+
+  <!-- 画面3：立つ・覗く・残す -->
+  <section id="scrSpot" class="scr hidden">
+  <button class="back" type="button" data-t="back"></button>
   <p id="chosen"></p>
 
   <!-- ① 立つ -->
@@ -348,6 +367,7 @@
   <!-- ③ 残す -->
   <div class="step s3"><span class="num">3</span><h2 data-t="s3"></h2></div>
   <p class="lead"><span data-t="s3Lead"></span><small data-t="s3Sub"></small></p>
+  </section>
 </main>
 
 <!-- ② 覗く（全画面） -->
@@ -5166,6 +5186,7 @@
   const T = {
     tagline:     ["先人が立った場所で、昔の景色を旅する。", "Stand where they stood. Travel through the old views."],
     modePlan:    ["どこへ行こう？", "Where to go?"],
+    back:        ["← もどる", "← Back"],
     modePlanSub: ["古写真の場所を見て旅を考える", "Browse all old-photo places"],
     modeNear:    ["近くにある？", "Anything nearby?"],
     modeNearSub: ["今いる場所から近い順に", "Closest to you first"],
@@ -5589,19 +5610,36 @@
   function chooseSpot(s) {
     applySpot(s);
     if (map) map.closePopup();
-    $("stepStand").scrollIntoView({ behavior: "smooth" });
+    showScr("spot");
   }
+  // ===== 画面の切り替え：home（地図）／places（どこへ行こう？）／spot（立つ・覗く・残す）=====
+  // iPhoneの「戻る」（左端から右へ引く）でも前の画面へ戻れるよう、履歴に積む
+  let scr = "home";
+  function showScr(name, push = true) {
+    ["home", "places", "spot"].forEach((n) => $("scr" + n[0].toUpperCase() + n.slice(1)).classList.toggle("hidden", n !== name));
+    if (push && name !== scr) history.pushState({ scr: name }, "");
+    scr = name;
+    window.scrollTo(0, 0);
+    requestAnimationFrame(() => {
+      if (name === "home" && map) map.invalidateSize();
+      if (name === "spot" && mini) mini.invalidateSize();
+    });
+  }
+  history.replaceState({ scr: "home" }, "");
+  window.addEventListener("popstate", (e) => showScr((e.state && e.state.scr) || "home", false));
+  document.querySelectorAll(".back").forEach((b) => b.addEventListener("click", () => history.back()));
   function renderList() {
     const all = SPOTS.concat(SOON);
     const items = all.map((s) => ({ s, d: here ? distanceM(here, s.standAt || s.target) : null }));
     if (mode === "near" && here) items.sort((a, b) => a.d - b.d);
     else items.sort((a, b) => (b.s.ready ? 1 : 0) - (a.s.ready ? 1 : 0));
-    if (mode === "plan") $("listMsg").textContent = t("planMsg", { n: all.length, r: all.filter((s) => s.ready).length }) + "　" + t("stampCount", { s: Object.keys(stamps).length, n: all.length });
-    else $("listMsg").textContent = here ? t("nearMsg") : t("nearFinding");
-    const box = $("spotList");
-    box.innerHTML = "";
-    const show = mode === "near" ? items.slice(0, 5) : items;
-    show.forEach(({ s, d }) => {
+    $("listMsg").textContent = t("planMsg", { n: all.length, r: all.filter((s) => s.ready).length }) + "　" + t("stampCount", { s: Object.keys(stamps).length, n: all.length });
+    $("nearMsg").textContent = here ? t("nearMsg") : t("nearFinding");
+    $("nearMsg").classList.toggle("hidden", mode !== "near");
+    $("spotList").innerHTML = ""; $("nearList").innerHTML = "";
+    const lists = [[$("spotList"), mode === "near" && here ? items.slice().sort((a, b) => (b.s.ready ? 1 : 0) - (a.s.ready ? 1 : 0)) : items]];
+    if (mode === "near") lists.push([$("nearList"), items.slice(0, 5)]);
+    lists.forEach(([box, show]) => show.forEach(({ s, d }) => {
       const it = document.createElement("div");
       it.className = "item" + (s.ready ? "" : " soon");
       const th = document.createElement("div"); th.className = "thumb";
@@ -5631,11 +5669,11 @@
       it.append(th, tx);
       it.addEventListener("click", () => chooseSpot(s));
       box.append(it);
-    });
+    }));
   }
   function setMode(m) {
     mode = m;
-    $("modePlan").classList.toggle("on", m === "plan");
+    $("modePlan").classList.toggle("on", false);
     $("modeNear").classList.toggle("on", m === "near");
     if (m === "near") {
       startLocation();
@@ -5654,8 +5692,8 @@
     map.fitBounds(pts, { padding: [30, 30], maxZoom: 16 });
     fittedNear = true;
   }
-  $("modePlan").addEventListener("click", () => setMode("plan"));
-  $("modeNear").addEventListener("click", () => setMode("near"));
+  $("modePlan").addEventListener("click", () => { if (mode === "near") setMode("plan"); showScr("places"); });
+  $("modeNear").addEventListener("click", () => setMode(mode === "near" ? "plan" : "near"));
   // ① 立つの小さな地図：目的地（朱色・名前つき）と自分（青）と、その間の点線。両方が入る縮尺に合わせる
   let mini = null, miniDest = null, miniYou = null, miniLine = null, selMarker = null;
   function updateMini() {

@@ -89,6 +89,19 @@
   .back { display: inline-block; width: auto; margin: 0 0 10px; padding: 8px 14px; font-size: 15px;
           background: transparent; color: var(--indigo, #3D5A80); border: 1px solid currentColor; border-radius: 20px; }
   .scrTitle { margin: 4px 0 6px; font-size: 20px; }
+  /* どこへ行こう？：地域ボタンと短い一覧 */
+  .chips { display: flex; gap: 6px; overflow-x: auto; padding: 2px 0 10px; -webkit-overflow-scrolling: touch; }
+  .chip { flex: none; width: auto; margin: 0; padding: 6px 12px; font-size: 14px; border-radius: 16px; background: #fff; color: var(--indigo); border: 1.5px solid var(--indigo); }
+  .chip.on { background: var(--indigo); color: #fff; }
+  .areaHead { font-size: 16px; color: var(--navy); margin: 14px 0 4px; border-bottom: 2px solid var(--navy); padding-bottom: 2px; }
+  #spotList .item { padding: 8px; margin: 0 0 6px; }
+  #spotList .item .cr { display: block; font-size: 11px; line-height: 1.4; }
+  /* 場所の説明 */
+  #placeTags { display: block; background: none; box-shadow: none; padding: 0; margin: 0 0 8px; }
+  .phCard { background: var(--card); border-radius: 12px; padding: 8px; margin: 0 0 10px; }
+  .phCard img { width: 100%; height: auto; border-radius: 6px; display: block; background: #EEE7DC; cursor: zoom-in; }
+  .phCard p { margin: 6px 0 0; font-size: 13px; }
+  .phCard .cr { font-size: 11px; color: var(--muted); }
 
   /* 旅の入口：2つの使い方 */
   .modes { display: flex; gap: 8px; margin: 4px 0 10px; }
@@ -310,7 +323,19 @@
   <button class="back" type="button" data-t="back"></button>
   <h2 class="scrTitle" data-t="modePlan"></h2>
   <p id="listMsg" class="note"></p>
+  <div id="areaChips" class="chips"></div>
   <div id="spotList"></div>
+  </section>
+
+  <!-- 画面2b：場所の説明 -->
+  <section id="scrPlace" class="scr hidden">
+  <button class="back" type="button" data-t="back"></button>
+  <p id="placeArea" class="note"></p>
+  <h2 class="scrTitle" id="placeName"></h2>
+  <p id="placeTags" class="item"></p>
+  <div id="placePhotos"></div>
+  <div id="placeAbout"></div>
+  <button id="placeGo" type="button" data-t="goThere"></button>
   </section>
 
   <!-- 画面3：立つ・覗く・残す -->
@@ -5584,6 +5609,9 @@
     tagline:     ["先人が立った場所で、昔の景色を旅する。", "Stand where they stood. Travel through the old views."],
     modePlan:    ["どこへ行こう？", "Where to go?"],
     back:        ["← もどる", "← Back"],
+    areaAll:     ["すべて", "All"],
+    goThere:     ["ここへ行く（立つ・覗く・残す）", "Go here (stand, look, keep)"],
+    tapToZoom:   ["写真を押すと大きく見られます", "Tap a photo to see it large"],
     modePlanSub: ["古写真の場所を見て旅を考える", "Browse all old-photo places"],
     modeNear:    ["近くにある？", "Anything nearby?"],
     modeNearSub: ["今いる場所から近い順に", "Closest to you first"],
@@ -6031,7 +6059,7 @@
   // iPhoneの「戻る」（左端から右へ引く）でも前の画面へ戻れるよう、履歴に積む
   let scr = "home";
   function showScr(name, push = true) {
-    ["home", "places", "spot"].forEach((n) => $("scr" + n[0].toUpperCase() + n.slice(1)).classList.toggle("hidden", n !== name));
+    ["home", "places", "place", "spot"].forEach((n) => $("scr" + n[0].toUpperCase() + n.slice(1)).classList.toggle("hidden", n !== name));
     if (push && name !== scr) history.pushState({ scr: name }, "");
     scr = name;
     window.scrollTo(0, 0);
@@ -6043,6 +6071,51 @@
   history.replaceState({ scr: "home" }, "");
   window.addEventListener("popstate", (e) => showScr((e.state && e.state.scr) || "home", false));
   document.querySelectorAll(".back").forEach((b) => b.addEventListener("click", () => history.back()));
+  // ===== 地域（国土地理院の住所検索で市町を確かめた。境目の龍口寺＝藤沢、法性寺＝逗子は住所どおりに手で直した）=====
+  const AREA = {"daibutsu": "kamakura", "hachimangu": "kamakura", "hasedera": "kamakura", "engakuji": "kamakura", "kenchoji": "kamakura", "kamakuragu": "kamakura", "yoritomo": "kamakura", "inamuragasaki": "kamakura", "yuigahama": "kamakura", "zushi": "zushi", "zushi-rokudai-gozen": "zushi", "zushi-tagoegawa": "zushi", "zushi-namiko-fudo": "zushi", "zushi-gandenji": "zushi", "zushi-jimmuji": "zushi", "zushi-hoshoji": "zushi", "zushi-kaihoin": "zushi", "ndl-kamakura-station-1950": "kamakura", "ndl-hase-main-street-1950": "kamakura", "ndl-wakamiya-oji-1950": "kamakura", "ndl-rokujizo-1950": "kamakura", "ndl-namerikawa-mouth-1950": "kamakura", "ndl-zaimokuza-beach-1950": "kamakura", "ndl-wakaejima-1950": "kamakura", "ndl-sakanoshita-1950": "kamakura", "ndl-shichirigahama-1950": "kamakura", "ndl-kakuonji-1950": "kamakura", "ndl-gokurakuji-1950": "kamakura", "ndl-zuisenji-1950": "kamakura", "ndl-sugimotodera-1950": "kamakura", "ndl-komyoji-1950": "kamakura", "ndl-kosokuji-1950": "kamakura", "ndl-wadazuka-1950": "kamakura", "ndl-hino-toshimoto-tomb-1950": "kamakura", "ndl-jomyoji-1950": "kamakura", "ndl-jochiji-1950": "kamakura", "ndl-jufukuji-1950": "kamakura", "ndl-kamegayatsu-pass-1950": "kamakura", "ndl-perry-monument-1918": "yokosuka", "ndl-hayama-imperial-villa-1900": "hayama", "ndl-yokosuka-dock-1900": "yokosuka", "ndl-uraga-harbor-1900": "yokosuka", "hashirimizu-suigenchi-1925": "yokosuka", "misaki-port-1955": "miura", "hakushu-monument-1955": "miura", "aburatsubo-1955": "miura", "zushi-fujoki-1955": "zushi", "okura-bakufu-1955": "kamakura", "zaimokuza-1955": "kamakura", "nichiren-tsujiseppo-1955": "kamakura", "yokosuka-port-1955": "yokosuka", "uraga-dock": "yokosuka", "mikasa": "yokosuka", "kannonzaki-lh-1904": "yokosuka", "tsurugisaki-lh-1904": "miura", "jogashima-lh-1904": "miura", "uraga-townhall-1937": "yokosuka", "uraga-fishmarket-1937": "yokosuka", "kurihama-sumiyoshi-1917": "yokosuka", "kurihama-denpukuji-1917": "yokosuka", "kurihama-hachiman-1917": "yokosuka", "iwato-manganji-1917": "yokosuka", "kurihama-choanji-1917": "yokosuka", "sahara-jigenin-1917": "yokosuka", "sahara-shotokuin-1917": "yokosuka", "sahara-joshoji-1917": "yokosuka", "kumura-togakuji-1917": "yokosuka", "yawata-shogyoji-1917": "yokosuka", "yokosuka-station-1925": "yokosuka", "yokosuka-suwa-1925": "yokosuka", "kamakura-toshoji-1920": "kamakura", "kamakura-ichinotorii-1920": "kamakura", "kamakura-shirahata-1920": "kamakura", "kamakura-hoshinoi-1920": "kamakura", "kamakura-iijimazaki-1920": "kamakura", "shichirigahama-tram-1920": "kamakura", "ryukoji-katase": "enoshima", "wakamiya-oji-dankazura": "kamakura", "namerikawa": "kamakura", "enoshima-iwaya": "enoshima", "hayama-isshiki": "hayama", "enoshima-bronze-torii": "enoshima", "anjinzuka": "yokosuka", "ryuhonji": "yokosuka", "sarushima-nichiren": "yokosuka", "kinugasa-park": "yokosuka", "mansyoji-oyabe": "yokosuka", "hashirimizu-ototachibana": "yokosuka", "kurihama-village": "yokosuka", "arai-castle": "miura", "misaki-three-gosho": "miura", "nagai-yakata": "yokosuka", "yokosuka-motomachi": "yokosuka", "yokosuka-hirasaka": "yokosuka", "misaki-hanagure": "miura", "hanzobo": "kamakura", "tokimune-byo": "kamakura", "kobukurozaka": "kamakura", "misaki-town-1923": "miura", "yokosuka-city-hall": "yokosuka"};
+  const AREAS = [["kamakura", "鎌倉", "Kamakura"], ["enoshima", "江の島・片瀬", "Enoshima & Katase"], ["zushi", "逗子", "Zushi"], ["hayama", "葉山", "Hayama"], ["yokosuka", "横須賀", "Yokosuka"], ["miura", "三浦", "Miura"]];
+  let areaSel = "all";
+  try { areaSel = localStorage.getItem("tw-area") || "all"; } catch (_) {}
+  const areaName = (k) => { const a = AREAS.find((x) => x[0] === k); return a ? pick(a[1], a[2]) : ""; };
+  function renderChips(all) {
+    const box = $("areaChips"); box.innerHTML = "";
+    [["all", t("areaAll"), all.length]].concat(AREAS.map((a) => [a[0], pick(a[1], a[2]), all.filter((s) => AREA[s.id] === a[0]).length])).forEach(([k, label, n]) => {
+      if (!n) return;
+      const b = document.createElement("button"); b.type = "button"; b.className = "chip" + (k === areaSel ? " on" : "");
+      b.textContent = label + " " + n;
+      b.addEventListener("click", () => { areaSel = k; try { localStorage.setItem("tw-area", k); } catch (_) {} renderList(); });
+      box.append(b);
+    });
+  }
+  // ===== 場所の説明（どこへ行こう？で場所を押した時）=====
+  let placeSpot = null;
+  function openPlace(s) {
+    placeSpot = s;
+    $("placeArea").textContent = areaName(AREA[s.id]);
+    $("placeName").textContent = pick(s.name, s.nameEn);
+    const tg = $("placeTags"); tg.innerHTML = "";
+    const tag = document.createElement("i"); tag.className = "tag"; tag.textContent = s.ready ? t("ready") : t("soonTag"); tg.append(tag);
+    if (s.gone) { const g = document.createElement("i"); g.className = "tag gone"; g.textContent = t("goneTag"); tg.append(g); }
+    if (stamps[s.id]) { const st = document.createElement("i"); st.className = "stamp"; st.textContent = t("stampMark") + " " + stamps[s.id].date.slice(5).replace("-", "/"); tg.append(st); }
+    const box = $("placePhotos"); box.innerHTML = "";
+    const phs = photosOf(s);
+    if (phs.length) { const h = document.createElement("p"); h.className = "note"; h.textContent = t("tapToZoom"); box.append(h); }
+    phs.forEach((ph, i) => {
+      const c = document.createElement("div"); c.className = "phCard";
+      const im = document.createElement("img"); im.src = ph.src; im.alt = pick(ph.title, ph.titleEn);
+      im.addEventListener("click", () => openGallery(s, i));
+      const cap = document.createElement("p"); cap.textContent = pick(ph.title, ph.titleEn) + "　" + pick(ph.year, ph.yearEn);
+      const cr = document.createElement("p"); cr.className = "cr";
+      cr.append(pick(ph.holder, ph.holderEn) + " · " + ph.license + " ");
+      if (ph.page) { const a = document.createElement("a"); a.href = ph.page; a.target = "_blank"; a.rel = "noopener"; a.textContent = t("seeSource"); cr.append(a); }
+      c.append(im, cap, cr);
+      if (ph.gone) c.append(goneBox(ph.gone));
+      box.append(c);
+    });
+    $("placeAbout").innerHTML = "";   // 歴史・関連キーワード：文がそろったらここに出す
+    showScr("place");
+  }
+  $("placeGo").addEventListener("click", () => { if (placeSpot) chooseSpot(placeSpot); });
   const rank = (s) => (s.ready ? 2 : 0) + (s.weak ? 0 : 1);   // 撮影地点あり＞使える写真あり＞弱い写真だけ
   function renderList() {
     const all = SPOTS.concat(SOON);
@@ -6053,9 +6126,15 @@
     $("nearMsg").textContent = here ? t("nearIconMsg") : t("nearFinding");
     $("nearMsg").classList.toggle("hidden", mode !== "near");
     $("spotList").innerHTML = ""; $("nearList").innerHTML = "";
-    const lists = [[$("spotList"), mode === "near" && here ? items.slice().sort((a, b) => rank(b.s) - rank(a.s)) : items]];
+    renderChips(all);
+    const sorted = mode === "near" && here ? items.slice().sort((a, b) => rank(b.s) - rank(a.s)) : items;
     // 近くの場所はホームの地図に古写真のアイコンで出す（一覧は出さない）
-    lists.forEach(([box, show]) => show.forEach(({ s, d }) => {
+    const groups = AREAS.filter((a) => areaSel === "all" || a[0] === areaSel).map((a) => [a, sorted.filter((x) => AREA[x.s.id] === a[0])]).filter((g) => g[1].length);
+    groups.forEach(([a, show]) => {
+      const box = $("spotList");
+      const h = document.createElement("h3"); h.className = "areaHead"; h.textContent = pick(a[1], a[2]) + "（" + show.length + "）";
+      box.append(h);
+      show.forEach(({ s, d }) => {
       const it = document.createElement("div");
       it.className = "item" + (s.ready ? "" : " soon");
       const th = document.createElement("div"); th.className = "thumb";
@@ -6070,22 +6149,15 @@
       if (d !== null) sp.append(t("away", { m: fmt(d), t: Math.max(1, Math.round(d / 80)) }));
       tx.append(b, sp);
       if (s.photo) {   // 写真の出典（出典表示が必要な写真があるため一覧にも出す）
-        const cr = document.createElement("span");
-        cr.style.display = "block"; cr.style.fontSize = "11px";
-        cr.textContent = pick(s.photo.year, s.photo.yearEn) + " · " + pick(s.photo.holder, s.photo.holderEn) + " · " + s.photo.license;
+        const cr = document.createElement("span"); cr.className = "cr";
+        cr.textContent = pick(s.photo.year, s.photo.yearEn) + " · " + pick(s.photo.holder, s.photo.holderEn) + " · " + s.photo.license + (s.photos && s.photos.length > 1 ? " · " + t("photoCount", { n: s.photos.length }) : "");
         tx.append(cr);
-        if (s.photos && s.photos.length > 1) {
-          const more = document.createElement("span");
-          more.style.display = "block"; more.style.fontSize = "11px";
-          more.textContent = t("photoCount", { n: s.photos.length });
-          tx.append(more);
-        }
       }
-      if (photosOf(s).length) tx.append(document.createElement("br"), galButton(s));
       it.append(th, tx);
-      it.addEventListener("click", () => chooseSpot(s));
+      it.addEventListener("click", () => openPlace(s));
       box.append(it);
-    }));
+      });
+    });
   }
   function setMode(m) {
     mode = m;

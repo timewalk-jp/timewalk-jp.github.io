@@ -116,6 +116,11 @@
   #stampMsg.miss { color: var(--muted); font-weight: 400; }
   #walkBox { background: var(--card, #fff); border: 1px solid #E5DccF; border-left: 4px solid #C0392B; border-radius: 10px; padding: 8px 12px; margin: 0 0 10px; font-size: 13px; color: var(--text); }
   #walkBox b { font-size: 15px; }
+  /* 地図：スマホでは1本指はページを送る。地図は2本指で動かす（BOSS 11/3「地図も下にいってしまいやすい」） */
+  .mapHint { position: absolute; inset: 0; z-index: 1000; display: flex; align-items: center; justify-content: center;
+             background: rgba(0,0,0,.45); color: #fff; font-size: 16px; font-weight: bold; pointer-events: none;
+             opacity: 0; transition: opacity .2s; }
+  .mapHint.show { opacity: 1; }
   #wakeRow { font-size: 13px; color: var(--muted); margin: 6px 0 0; display: flex; align-items: center; gap: 8px; }
   #wakeRow button { width: auto; padding: 4px 12px; font-size: 13px; margin: 0; }
   #walkBox small { display: block; color: var(--muted); font-size: 11px; margin-top: 2px; }
@@ -5172,6 +5177,7 @@
     goneTag:     ["今はない", "Gone now"],
     goneSave:    ["今はないもの：", "No longer here: "],
     photoCount:  ["古写真 {n} 枚", "{n} old photos"],
+    mapHint:     ["地図は2本指で動かせます", "Use two fingers to move the map"],
     stampCount:  ["スタンプ {s} / {n} か所", "Stamps {s} / {n} places"],
     stampMark:   ["済", "Done"],
     stampGot:    ["スタンプを押しました（{n}・{c}か所目）", "Stamp collected ({n}, #{c})"],
@@ -5510,6 +5516,24 @@
 
   // ===== 旅の地図 =====
   let map = null, markerLayer = null, youMarker = null;
+  // スマホ（指で触る画面）では、1本指＝ページを送る／2本指＝地図を動かす・広げる。点を押すのはそのまま
+  function twoFinger(m, id) {
+    if (!window.L.Browser.touch || !window.matchMedia("(pointer: coarse)").matches) return;
+    m.dragging.disable();
+    const el = $(id), hint = document.createElement("div");
+    hint.className = "mapHint"; hint.textContent = t("mapHint");
+    el.appendChild(hint);
+    let timer = null, moved = false, y0 = 0;
+    el.addEventListener("touchstart", (e) => {
+      moved = false; y0 = e.touches[0].clientY;
+      if (e.touches.length > 1) { hint.classList.remove("show"); clearTimeout(timer); }
+    }, { passive: true });
+    el.addEventListener("touchmove", (e) => {   // 1本指で動かした時だけ知らせる（点を押した時は出さない）
+      if (e.touches.length !== 1 || moved || Math.abs(e.touches[0].clientY - y0) < 10) return;
+      moved = true; hint.classList.add("show"); clearTimeout(timer);
+      timer = setTimeout(() => hint.classList.remove("show"), 1200);
+    }, { passive: true });
+  }
   function initMap() {
     if (typeof window.L === "undefined") { $("map").textContent = "地図を読み込めませんでした / Map failed to load"; return; }
     map = window.L.map("map", { zoomControl: true, attributionControl: true }).setView([35.3190, 139.5480], 13);
@@ -5517,6 +5541,7 @@
       maxZoom: 19, attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
     }).addTo(map);
     markerLayer = window.L.layerGroup().addTo(map);
+    twoFinger(map, "map");
     buildMarkers();
     const all = SPOTS.concat(SOON).map((s) => [s.target.lat, s.target.lon]);
     if (all.length > 1) map.fitBounds(all, { padding: [30, 30], maxZoom: 15 });
@@ -5639,6 +5664,7 @@
     if (!mini) {
       mini = window.L.map("miniMap", { zoomControl: true, attributionControl: true }).setView([g.lat, g.lon], 16);
       window.L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", { maxZoom: 19, attribution: "&copy; OpenStreetMap" }).addTo(mini);
+      twoFinger(mini, "miniMap");
     }
     const label = pick(spot.name, spot.nameEn) + (spot.standAt ? " " + t("photoSpotMark") : "");
     if (!miniDest) miniDest = window.L.marker([g.lat, g.lon], { icon: dot("#E07A5F", 11) }).addTo(mini);

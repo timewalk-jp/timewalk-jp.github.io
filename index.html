@@ -136,6 +136,11 @@
   .legend { font-size: 12px; color: var(--muted); margin: 0 0 6px; display: flex; gap: 14px; }
   .legend i { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 4px; vertical-align: middle; }
   .pop b { font-size: 15px; }
+  /* 近くにある？：近い場所を古写真の丸いアイコンで（BOSS 11/3「古写真をアイコンにして地図上に表記」） */
+  .phIcon { width: 52px; height: 52px; border-radius: 50%; background: #ddd center/cover no-repeat;
+            border: 3px solid #2A9D8F; box-shadow: 0 2px 6px rgba(0,0,0,.45); }
+  .phIcon.soon { border-color: #9AA3AD; }
+  .phIcon.stamped { border-color: #C0392B; }
   .pop p { margin: 4px 0 8px; font-size: 13px; color: var(--muted); }
   .pop img { display: block; max-width: 180px; max-height: 120px; width: auto; height: auto; margin: 4px 0; border-radius: 4px; }
   .pop button { font-size: 14px; padding: 8px 10px; margin: 0; }
@@ -5591,6 +5596,7 @@
     goneSave:    ["今はないもの：", "No longer here: "],
     photoCount:  ["古写真 {n} 枚", "{n} old photos"],
     mapHint:     ["地図は2本指で動かせます", "Use two fingers to move the map"],
+    nearIconMsg: ["近くの古写真を地図に出しています。写真を押すと選べます。", "Nearby old photos are on the map. Tap one to choose it."],
     stampCount:  ["スタンプ {s} / {n} か所", "Stamps {s} / {n} places"],
     stampMark:   ["済", "Done"],
     stampGot:    ["スタンプを押しました（{n}・{c}か所目）", "Stamp collected ({n}, #{c})"],
@@ -5966,12 +5972,28 @@
       iconSize: [r * 2 + 6, r * 2 + 6], iconAnchor: [r + 3, r + 3]
     });
   }
+  // 近くにある？：今いる場所から近い10か所を、古写真の丸いアイコンにする
+  let nearIds = new Set(), nearKey = "";
+  function photoIcon(s) {
+    const ph = s.photo || {};
+    const cls = "phIcon" + (stamps[s.id] ? " stamped" : s.ready ? "" : " soon");
+    return window.L.divIcon({ className: "", html: '<div class="' + cls + '" style="background-image:url(\'' + (ph.thumb || ph.src || "") + '\')"></div>', iconSize: [58, 58], iconAnchor: [29, 29], popupAnchor: [0, -26] });
+  }
+  function updateNear() {
+    const ids = mode === "near" && here ? SPOTS.concat(SOON).map((s) => ({ s, d: distanceM(here, s.standAt || s.target) })).sort((a, b) => a.d - b.d).slice(0, 10).map((x) => x.s.id) : [];
+    const key = ids.join();
+    if (key === nearKey) return;
+    nearKey = key; nearIds = new Set(ids);
+    buildMarkers();
+  }
   function buildMarkers() {
     if (!map) return;
     markerLayer.clearLayers();
     SPOTS.concat(SOON).forEach((s) => {
       const ready = !!s.ready;
-      const m = window.L.marker([s.target.lat, s.target.lon], { icon: stamps[s.id] ? dot("#C0392B", 11) : dot(ready ? "#2A9D8F" : "#9AA3AD", ready ? 10 : 7) });
+      const asPhoto = mode === "near" && nearIds.has(s.id);
+      const icon = asPhoto ? photoIcon(s) : stamps[s.id] ? dot("#C0392B", 11) : dot(ready ? "#2A9D8F" : "#9AA3AD", ready ? 10 : 7);
+      const m = window.L.marker([s.target.lat, s.target.lon], { icon, zIndexOffset: asPhoto ? 1000 : 0 });
       const box = document.createElement("div");
       box.className = "pop";
       const b = document.createElement("b"); b.textContent = pick(s.name, s.nameEn); box.append(b);
@@ -5984,6 +6006,7 @@
         if (ph.gone) { const gp = goneBox(ph.gone); gp.classList.add("gone"); box.append(gp); }
       });
       if (!ready) { const p = document.createElement("p"); p.textContent = t("soonText"); box.append(p); }
+      if (here) { const p = document.createElement("p"); p.textContent = t("away", { m: fmt(distanceM(here, s.standAt || s.target)), t: Math.max(1, Math.round(distanceM(here, s.standAt || s.target) / 80)) }); box.append(p); }
       box.append(galButton(s));
       const btn = document.createElement("button");
       btn.textContent = t("goHere");
@@ -6027,11 +6050,11 @@
     if (mode === "near" && here) items.sort((a, b) => a.d - b.d);
     else items.sort((a, b) => rank(b.s) - rank(a.s));
     $("listMsg").textContent = t("planMsg", { n: all.length, r: all.filter((s) => s.ready).length }) + "　" + t("stampCount", { s: Object.keys(stamps).length, n: all.length });
-    $("nearMsg").textContent = here ? t("nearMsg") : t("nearFinding");
+    $("nearMsg").textContent = here ? t("nearIconMsg") : t("nearFinding");
     $("nearMsg").classList.toggle("hidden", mode !== "near");
     $("spotList").innerHTML = ""; $("nearList").innerHTML = "";
     const lists = [[$("spotList"), mode === "near" && here ? items.slice().sort((a, b) => rank(b.s) - rank(a.s)) : items]];
-    if (mode === "near") lists.push([$("nearList"), items.slice(0, 5)]);
+    // 近くの場所はホームの地図に古写真のアイコンで出す（一覧は出さない）
     lists.forEach(([box, show]) => show.forEach(({ s, d }) => {
       const it = document.createElement("div");
       it.className = "item" + (s.ready ? "" : " soon");
@@ -6066,6 +6089,7 @@
   }
   function setMode(m) {
     mode = m;
+    updateNear();
     $("modePlan").classList.toggle("on", false);
     $("modeNear").classList.toggle("on", m === "near");
     if (m === "near") {
@@ -6080,7 +6104,7 @@
   // 近くにある？：自分と近い3か所が入るように地図を合わせる
   let fittedNear = false;
   function fitNear() {
-    const near = SPOTS.concat(SOON).map((s) => ({ s, d: distanceM(here, s.target) })).sort((a, b) => a.d - b.d).slice(0, 3);
+    const near = SPOTS.concat(SOON).map((s) => ({ s, d: distanceM(here, s.target) })).sort((a, b) => a.d - b.d).slice(0, 5);
     const pts = [[here.lat, here.lon]].concat(near.map((x) => [x.s.target.lat, x.s.target.lon]));
     map.fitBounds(pts, { padding: [30, 30], maxZoom: 16 });
     fittedNear = true;
@@ -6209,7 +6233,7 @@
     render();
     showYou();
     updateMini();
-    if (mode === "near") { renderList(); if (map && !fittedNear) fitNear(); }
+    if (mode === "near") { renderList(); updateNear(); if (map && !fittedNear) fitNear(); }
     $("acc").textContent = "± " + Math.round(pos.coords.accuracy) + " m";
     $("drift").textContent = Math.round(maxDrift) + " m";
     $("count").textContent = count;

@@ -227,6 +227,16 @@
   .galPage .cap { color: #eee; font-size: 12px; line-height: 1.5; margin: 8px 0 0; }
   .galPage .cap a { color: #9cc9ff; }
   .galPage button { margin: 10px 0 calc(14px + env(safe-area-inset-bottom)); }
+  .galPage img { cursor: zoom-in; }
+  .galZoomHint { color: #bbb; font-size: 11px; text-align: center; margin: 4px 0 0; }
+  /* 拡大画面：2本指で広げる・ダブルタップ・＋−ボタン・指でずらす（写真そのものは切らない） */
+  #zoom { position: fixed; inset: 0; background: #000; z-index: 1200; overflow: hidden; touch-action: none; }
+  #zoom.hidden { display: none; }
+  #zoomImg { position: absolute; left: 0; top: 0; transform-origin: 0 0; max-width: none; user-select: none; -webkit-user-select: none; -webkit-user-drag: none; }
+  #zoomBar { position: absolute; left: 0; right: 0; bottom: calc(14px + env(safe-area-inset-bottom)); display: flex; justify-content: center; gap: 12px; z-index: 2; }
+  #zoomBar button, #zoomClose { width: 48px; height: 48px; padding: 0; margin: 0; border-radius: 50%; font-size: 24px; line-height: 48px; background: rgba(255,255,255,.2); color: #fff; }
+  #zoomClose { position: absolute; top: calc(10px + env(safe-area-inset-top)); right: 12px; z-index: 2; }
+  #zoomPct { color: #fff; font-size: 13px; align-self: center; min-width: 48px; text-align: center; }
   .galBtn { display: inline-block; width: auto; margin: 6px 0 0; padding: 6px 12px; font-size: 13px; }
   /* ③ 残す：撮った1枚の確認画面 */
   #shot {
@@ -346,6 +356,13 @@
 <div id="gallery" class="hidden">
   <div id="galTop"><b id="galName"></b><span id="galCount"></span><button id="galClose" type="button" aria-label="close">×</button></div>
   <div id="galTrack"></div>
+</div>
+
+<!-- 古写真の拡大 -->
+<div id="zoom" class="hidden">
+  <img id="zoomImg" alt="">
+  <button id="zoomClose" type="button" aria-label="close">×</button>
+  <div id="zoomBar"><button id="zoomOut" type="button" aria-label="zoom out">−</button><span id="zoomPct"></span><button id="zoomIn" type="button" aria-label="zoom in">＋</button></div>
 </div>
 
 <!-- ③ 残す：撮った1枚の確認と保存 -->
@@ -4682,6 +4699,7 @@
     frameTate:   ["枠：縦", "Frame: portrait"],
     frameYoko:   ["枠：横", "Frame: landscape"],
     galUse:      ["この景色を探しに行く", "Go find this view"],
+    zoomHint:    ["写真をタップすると拡大できます", "Tap the photo to zoom"],
     photoSpotMark:["（撮影地点）", "(photo spot)"],
     toLabelTarget:["{n}まで（写っている場所）", "To {n} (the place in the photo)"],
     noStandAt:   ["撮影地点（先人が立った場所）はまだ割り出していません。今は写っている場所の近くまで案内します。現地で古写真と見比べて、同じ景色が見える場所を探してください。", "The exact photo spot is not set yet. We guide you to the place shown; look around to find the same view."],
@@ -4840,7 +4858,9 @@
       if (ph.page) { const a = document.createElement("a"); a.href = ph.page; a.target = "_blank"; a.rel = "noopener"; a.textContent = t("seeSource"); cap.append(a); }
       const b = document.createElement("button"); b.type = "button"; b.textContent = t("galUse");
       b.addEventListener("click", () => { closeGallery(); chooseSpot(s); applySpot(s, i); });
-      pg.append(im, cap, b);
+      im.addEventListener("click", () => openZoom(ph.src, im.alt));
+      const zh = document.createElement("p"); zh.className = "galZoomHint"; zh.textContent = t("zoomHint");
+      pg.append(im, zh, cap, b);
       tr.append(pg);
     });
     $("gallery").classList.remove("hidden");
@@ -4851,6 +4871,82 @@
     if (map) map.closePopup();
   }
   function closeGallery() { $("gallery").classList.add("hidden"); galSpot = null; }
+  // ===== 拡大画面 =====
+  const Z = { s: 1, x: 0, y: 0, fit: 1, pts: new Map(), last: null, startDist: 0, startS: 1, mid: null, tapT: 0 };
+  const zImg = $("zoomImg"), zBox = $("zoom");
+  function zApply() {
+    const W = zBox.clientWidth, H = zBox.clientHeight, w = zImg.naturalWidth * Z.s, h = zImg.naturalHeight * Z.s;
+    // 写真が画面より小さい向きは真ん中に、大きい向きは端が画面の内側に入らないように
+    Z.x = w <= W ? (W - w) / 2 : Math.min(0, Math.max(W - w, Z.x));
+    Z.y = h <= H ? (H - h) / 2 : Math.min(0, Math.max(H - h, Z.y));
+    zImg.style.transform = "translate(" + Z.x + "px," + Z.y + "px) scale(" + Z.s + ")";
+    $("zoomPct").textContent = Math.round(Z.s / Z.fit * 100) + "%";
+  }
+  function zScaleAt(ns, cx, cy) {
+    ns = Math.max(Z.fit, Math.min(Z.fit * 8, ns));
+    Z.x = cx - (cx - Z.x) * ns / Z.s; Z.y = cy - (cy - Z.y) * ns / Z.s; Z.s = ns; zApply();
+  }
+  function zFit() {
+    Z.fit = Math.min(zBox.clientWidth / zImg.naturalWidth, zBox.clientHeight / zImg.naturalHeight);
+    Z.s = Z.fit; Z.x = 0; Z.y = 0; zApply();
+  }
+  // 国立国会図書館の写真は一覧用に横1200で読んでいるので、拡大画面では横2400を後から読み込んで差し替える
+  const hiRes = (src) => /dl\.ndl\.go\.jp\/api\/iiif\/.*\/full\/1200,\//.test(src) ? src.replace("/full/1200,/", "/full/2400,/") : null;
+  let zToken = 0;
+  function openZoom(src, alt) {
+    const my = ++zToken;
+    zBox.classList.remove("hidden"); zImg.alt = alt || "";
+    zImg.onload = () => { zImg.onload = null; zFit(); upgrade(); };
+    zImg.src = src;
+    if (zImg.complete && zImg.naturalWidth) { zImg.onload = null; zFit(); upgrade(); }
+    function upgrade() {
+      const hi = hiRes(src); if (!hi) return;
+      const pre = new Image();
+      pre.onload = () => {
+        if (my !== zToken || zBox.classList.contains("hidden")) return;
+        const r = zImg.naturalWidth / pre.naturalWidth;   // 見た目の大きさと位置はそのまま
+        zImg.src = hi; Z.s *= r; Z.fit *= r; zApply();
+      };
+      pre.src = hi;
+    }
+  }
+  $("zoomClose").addEventListener("click", () => zBox.classList.add("hidden"));
+  $("zoomIn").addEventListener("click", () => zScaleAt(Z.s * 1.6, zBox.clientWidth / 2, zBox.clientHeight / 2));
+  $("zoomOut").addEventListener("click", () => zScaleAt(Z.s / 1.6, zBox.clientWidth / 2, zBox.clientHeight / 2));
+  zImg.addEventListener("pointerdown", (e) => {
+    e.preventDefault(); zImg.setPointerCapture(e.pointerId);
+    Z.pts.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    if (Z.pts.size === 1) {
+      const now = Date.now();
+      if (now - Z.tapT < 300) zScaleAt(Z.s > Z.fit * 1.05 ? Z.fit : Z.fit * 3, e.clientX, e.clientY);   // ダブルタップ
+      Z.tapT = now; Z.last = { x: e.clientX, y: e.clientY };
+    } else if (Z.pts.size === 2) {
+      const [a, b] = [...Z.pts.values()];
+      Z.startDist = Math.hypot(a.x - b.x, a.y - b.y); Z.startS = Z.s;
+    }
+  });
+  zImg.addEventListener("pointermove", (e) => {
+    if (!Z.pts.has(e.pointerId)) return;
+    Z.pts.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    if (Z.pts.size === 2) {
+      const [a, b] = [...Z.pts.values()];
+      const d = Math.hypot(a.x - b.x, a.y - b.y);
+      if (Z.startDist > 0) zScaleAt(Z.startS * d / Z.startDist, (a.x + b.x) / 2, (a.y + b.y) / 2);
+    } else if (Z.pts.size === 1 && Z.last) {
+      Z.x += e.clientX - Z.last.x; Z.y += e.clientY - Z.last.y; Z.last = { x: e.clientX, y: e.clientY }; zApply();
+    }
+  });
+  const zUp = (e) => { Z.pts.delete(e.pointerId); if (Z.pts.size === 1) { const [p] = [...Z.pts.values()]; Z.last = { x: p.x, y: p.y }; } if (!Z.pts.size) Z.last = null; };
+  zImg.addEventListener("pointerup", zUp); zImg.addEventListener("pointercancel", zUp);
+  zBox.addEventListener("wheel", (e) => { e.preventDefault(); zScaleAt(Z.s * (e.deltaY < 0 ? 1.15 : 1 / 1.15), e.clientX, e.clientY); }, { passive: false });
+  // 画面の大きさが変わったら（Safariのバーの出入り・向きの変更）、拡大していない時だけ合わせ直す
+  window.addEventListener("resize", () => {
+    if (zBox.classList.contains("hidden") || !zImg.naturalWidth) return;
+    const atFit = Z.s <= Z.fit * 1.01;
+    Z.fit = Math.min(zBox.clientWidth / zImg.naturalWidth, zBox.clientHeight / zImg.naturalHeight);
+    if (atFit || Z.s < Z.fit) Z.s = Z.fit;
+    zApply();
+  });
   $("galClose").addEventListener("click", closeGallery);
   function galButton(s) {
     const b = document.createElement("button"); b.type = "button"; b.className = "secondary galBtn";

@@ -136,6 +136,15 @@
   #stampMsg.miss { color: var(--muted); font-weight: 400; }
   #walkBox { background: var(--card, #fff); border: 1px solid #E5DccF; border-left: 4px solid #C0392B; border-radius: 10px; padding: 8px 12px; margin: 0 0 10px; font-size: 13px; color: var(--text); }
   #walkBox b { font-size: 15px; }
+  /* 散歩を始める／記録（BOSS 11/3 4画面案） */
+  #walkBar { display: flex; gap: 8px; margin: 4px 0 8px; }
+  #walkBar #walkBtn { flex: 1; margin: 0; background: #C0392B; }
+  #walkBar #walkBtn.on { background: #fff; color: #C0392B; border: 2px solid #C0392B; }
+  #walkBar #logBtn { flex: 0 0 96px; margin: 0; background: #fff; color: var(--indigo); border: 2px solid var(--indigo); }
+  #walkNow { margin: 0 0 8px; padding: 8px 12px; border-left: 4px solid #C0392B; background: var(--card, #fff); border-radius: 8px; font-size: 14px; }
+  .logItem { background: var(--card, #fff); border-radius: 10px; padding: 10px 12px; margin: 0 0 8px; }
+  .logItem b { display: block; font-size: 15px; color: var(--navy); }
+  .logItem ol { margin: 4px 0 0; padding-left: 20px; font-size: 13px; }
   /* 地図：スマホでは1本指はページを送る。地図は2本指で動かす（BOSS 11/3「地図も下にいってしまいやすい」） */
   .mapHint { position: absolute; inset: 0; z-index: 1000; display: flex; align-items: center; justify-content: center;
              background: rgba(0,0,0,.45); color: #fff; font-size: 16px; font-weight: bold; pointer-events: none;
@@ -315,7 +324,20 @@
   <p class="legend"><span><i style="background:#2A9D8F"></i><span data-t="legendReady"></span></span><span><i style="background:#9AA3AD"></i><span data-t="legendSoon"></span></span><span><i style="background:#3B82F6"></i><span data-t="legendYou"></span></span></p>
   <p id="nearMsg" class="note hidden"></p>
   <div id="nearList"></div>
-  <div id="walkBox"></div>
+  <div id="walkBar">
+    <button id="walkBtn" type="button"></button>
+    <button id="logBtn" type="button" data-t="logBtn"></button>
+  </div>
+  <p id="walkNow" class="hidden"></p>
+  </section>
+
+  <!-- 画面4：散歩の記録（スマホの中だけに保存） -->
+  <section id="scrLog" class="scr hidden">
+  <button class="back" type="button" data-t="back"></button>
+  <h2 class="scrTitle" data-t="logTitle"></h2>
+  <p id="logSum" class="note"></p>
+  <div id="logList"></div>
+  <p class="note" data-t="logPrivacy"></p>
   </section>
 
   <!-- 画面2：どこへ行こう？（場所の一覧） -->
@@ -5631,6 +5653,15 @@
     stampAgain:  ["この場所のスタンプは押してあります（{d}）", "Already stamped here ({d})"],
     stampFar:    ["スタンプは、この場所から50m以内で残したときに押されます（今は {m}）", "Stamps are given only within 50 m of this place (now {m} away)"],
     walkTitle:   ["今日の散歩", "Today's walk"],
+    walkStart:   ["散歩を始める", "Start a walk"],
+    walkStop:    ["散歩をおわる", "End the walk"],
+    logBtn:      ["記録", "Log"],
+    logTitle:    ["散歩の記録", "Walk log"],
+    walkNowLine: ["散歩中　{min}分・{km}・約 {st} 歩・スタンプ {c}", "Walking {min} min · {km} · ~{st} steps · {c} stamps"],
+    logSum:      ["散歩 {n} 回・合計 {km}・約 {st} 歩・スタンプ {s} か所", "{n} walks · {km} · ~{st} steps · {s} stamps"],
+    logLine:     ["{t1}〜{t2}（{min}分）・{km}・約 {st} 歩", "{t1}–{t2} ({min} min) · {km} · ~{st} steps"],
+    logEmpty:    ["まだ記録はありません。ホームの「散歩を始める」から始めます。", "No walks yet. Start one from the home screen."],
+    logPrivacy:  ["記録はこのスマホの中だけに保存し、どこにも送りません。歩数は距離÷歩幅0.7mの目安です。画面を消している間は直線で数えます。", "Your log stays on this phone and is never sent. Steps = distance ÷ 0.7 m. While the screen is off, distance is counted in a straight line."],
     walkLine:    ["{km}・約 {st} 歩（目安）・スタンプ {c} か所", "{km} · about {st} steps (estimate) · {c} stamps"],
     walkNote:    ["歩いた距離は、アプリを開いている間の位置の動きと、スタンプを押した場所どうしの距離の大きいほう。歩数は距離÷歩幅0.7mの目安です。", "Distance = the larger of location tracking while the app is open and the straight line between stamps. Steps = distance ÷ 0.7 m."],
     stampNoPos:  ["今いる場所が分からないため、スタンプは押していません", "No stamp: your location is unknown"],
@@ -5725,8 +5756,11 @@
   try { stamps = JSON.parse(localStorage.getItem("tw-stamps") || "{}") || {}; } catch (e) { stamps = {}; }
   // 今日の散歩：日付ごとに位置の動きで測った距離（m）を持つ（スマホの中だけ）
   const today = () => { const d = new Date(); return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0"); };
-  let walk = { date: "", m: 0, last: null };
-  try { walk = JSON.parse(localStorage.getItem("tw-walk") || "null") || walk; } catch (e) {}
+  // 散歩：始めてから「おわる」までだけ数える（BOSS 11/3「散歩を始める（記録）」）。記録はスマホの中だけ
+  let walkNow = null, walks = [];
+  try { walkNow = JSON.parse(localStorage.getItem("tw-walknow") || "null"); } catch (e) {}
+  try { walks = JSON.parse(localStorage.getItem("tw-walks") || "[]") || []; } catch (e) {}
+  const saveWalks = () => { try { localStorage.setItem("tw-walknow", JSON.stringify(walkNow)); localStorage.setItem("tw-walks", JSON.stringify(walks)); } catch (e) {} };
   if (lang === "ja" && !(navigator.language || "ja").startsWith("ja")) lang = "en"; // 海外の端末は英語で始める
   const t = (k, vars) => {
     let s = (T[k] || [k, k])[lang === "ja" ? 0 : 1];
@@ -6059,7 +6093,7 @@
   // iPhoneの「戻る」（左端から右へ引く）でも前の画面へ戻れるよう、履歴に積む
   let scr = "home";
   function showScr(name, push = true) {
-    ["home", "places", "place", "spot"].forEach((n) => $("scr" + n[0].toUpperCase() + n.slice(1)).classList.toggle("hidden", n !== name));
+    ["home", "places", "place", "spot", "log"].forEach((n) => $("scr" + n[0].toUpperCase() + n.slice(1)).classList.toggle("hidden", n !== name));
     if (push && name !== scr) history.pushState({ scr: name }, "");
     scr = name;
     window.scrollTo(0, 0);
@@ -6258,7 +6292,8 @@
   // 歩いた距離を足す。ぶれ（約11m）は捨て、乗り物の速さは足さない
   const WALK_ACC = 30, WALK_MIN = 15, WALK_MAXSPEED = 2.5, WALK_MAXGAP = 2 * 3600;
   function addWalk(pos) {
-    if (walk.date !== today()) walk = { date: today(), m: 0, last: null };
+    if (!walkNow) return;
+    const walk = walkNow;
     const acc = pos.coords.accuracy || 999;
     if (acc > WALK_ACC) return;
     const p = { lat: pos.coords.latitude, lon: pos.coords.longitude, ts: pos.timestamp || Date.now() };
@@ -6269,33 +6304,71 @@
       if (dt > 0 && dt < WALK_MAXGAP && d / dt <= WALK_MAXSPEED) walk.m += d;   // 歩く速さなら足す（画面を消して歩いた分も直線で）
       walk.last = p;                                        // 乗り物・長い空白は足さずに起点だけ移す
     }
-    try { localStorage.setItem("tw-walk", JSON.stringify(walk)); } catch (e) {}
+    saveWalks();
     renderWalk();
   }
-  function renderWalk() {
-    const all = SPOTS.concat(SOON), d0 = today();
-    const got = Object.keys(stamps).filter((id) => stamps[id].date === d0)
+  // 散歩の中で押したスタンプ（時刻の順）
+  function walkStamps(w) {
+    const all = SPOTS.concat(SOON), end = w.end || Date.now();
+    return Object.keys(stamps).filter((id) => stamps[id].ts >= w.start && stamps[id].ts <= end)
       .map((id) => ({ s: all.find((x) => x.id === id), st: stamps[id] })).filter((x) => x.s)
-      .sort((a, b) => (a.st.ts || 0) - (b.st.ts || 0));
+      .sort((a, b) => a.st.ts - b.st.ts);
+  }
+  // 歩いた距離＝位置の動きと、スタンプの場所どうしの直線の合計の大きいほう
+  function walkMeters(w) {
+    const got = walkStamps(w);
     let line = 0;
     for (let i = 1; i < got.length; i++) line += distanceM(dest(got[i - 1].s), dest(got[i].s));
-    const gps = walk.date === d0 ? walk.m : 0;
-    const m = Math.max(gps, line);
-    const box = $("walkBox");
-    box.innerHTML = "<b>" + t("walkTitle") + "</b>　" + t("walkLine", { km: fmt(m), st: Math.round(m / 0.7).toLocaleString(), c: got.length });
-    if (got.length) {
-      const ol = document.createElement("ol");
-      got.forEach(({ s, st }) => {
-        const li = document.createElement("li");
-        const ph = photosOf(s)[st.photo] || photosOf(s)[0] || {};
-        const tm = st.ts ? new Date(st.ts).toLocaleTimeString(lang === "ja" ? "ja-JP" : "en-US", { hour: "2-digit", minute: "2-digit" }) + " " : "";
-        li.textContent = tm + pick(s.name, s.nameEn) + (ph.year ? "（" + pick(ph.year, ph.yearEn) + "）" : "");
-        ol.appendChild(li);
-      });
-      box.appendChild(ol);
-    }
-    const sm = document.createElement("small"); sm.textContent = t("walkNote"); box.appendChild(sm);
+    return Math.max(w.m || 0, line);
   }
+  function renderWalk() {
+    $("walkBtn").textContent = walkNow ? t("walkStop") : t("walkStart");
+    $("walkBtn").classList.toggle("on", !!walkNow);
+    const box = $("walkNow");
+    box.classList.toggle("hidden", !walkNow);
+    if (walkNow) {
+      const m = walkMeters(walkNow);
+      box.textContent = t("walkNowLine", { min: Math.max(0, Math.round((Date.now() - walkNow.start) / 60000)), km: fmt(m), st: Math.round(m / 0.7).toLocaleString(), c: walkStamps(walkNow).length });
+    }
+    renderLog();
+  }
+  function hm(ts) { return new Date(ts).toLocaleTimeString(lang === "ja" ? "ja-JP" : "en-US", { hour: "2-digit", minute: "2-digit" }); }
+  function renderLog() {
+    const list = $("logList"); list.innerHTML = "";
+    const totalM = walks.reduce((a, w) => a + (w.m || 0), 0);
+    $("logSum").textContent = t("logSum", { n: walks.length, km: fmt(totalM), st: Math.round(totalM / 0.7).toLocaleString(), s: Object.keys(stamps).length });
+    if (!walks.length) { const p = document.createElement("p"); p.textContent = t("logEmpty"); list.append(p); return; }
+    walks.forEach((w) => {
+      const it = document.createElement("div"); it.className = "logItem";
+      const b = document.createElement("b");
+      b.textContent = new Date(w.start).toLocaleDateString(lang === "ja" ? "ja-JP" : "en-US", { month: "numeric", day: "numeric", weekday: "short" });
+      const p = document.createElement("span");
+      p.textContent = t("logLine", { t1: hm(w.start), t2: hm(w.end), min: Math.max(1, Math.round((w.end - w.start) / 60000)), km: fmt(w.m || 0), st: Math.round((w.m || 0) / 0.7).toLocaleString() });
+      it.append(b, p);
+      if (w.stamps && w.stamps.length) {
+        const ol = document.createElement("ol");
+        const all = SPOTS.concat(SOON);
+        w.stamps.forEach((x) => { const sp = all.find((y) => y.id === x.id); const li = document.createElement("li"); li.textContent = hm(x.ts) + " " + (sp ? pick(sp.name, sp.nameEn) : x.id); ol.append(li); });
+        it.append(ol);
+      }
+      list.append(it);
+    });
+  }
+  $("walkBtn").addEventListener("click", () => {
+    if (!walkNow) {
+      walkNow = { start: Date.now(), m: 0, last: null };
+      saveWalks(); startLocation(); renderWalk();
+      return;
+    }
+    const w = walkNow;
+    w.end = Date.now();
+    const m = walkMeters(w);
+    walks.unshift({ start: w.start, end: w.end, m: Math.round(m), stamps: walkStamps(w).map((x) => ({ id: x.s.id, ts: x.st.ts })) });
+    walkNow = null; saveWalks(); renderWalk();
+    showScr("log");
+  });
+  $("logBtn").addEventListener("click", () => { renderLog(); showScr("log"); });
+  setInterval(() => { if (walkNow) renderWalk(); }, 30000);   // 散歩中は30秒ごとに時間を更新
   function onPosition(pos) {
     here = { lat: pos.coords.latitude, lon: pos.coords.longitude };
     addWalk(pos);
@@ -6695,7 +6768,8 @@
 
   // ===== はじめに =====
   initMap();
-  setTimeout(uprightAll, 600);   // 横倒しの写真を起こす（地図と一覧を出してから）
+  setTimeout(uprightAll, 600);
+  if (walkNow) startLocation();   // 散歩の途中で開き直したら、位置の計測を続ける   // 横倒しの写真を起こす（地図と一覧を出してから）
   applyLang();
 </script>
 </body>

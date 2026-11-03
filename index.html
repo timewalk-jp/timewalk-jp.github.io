@@ -5648,12 +5648,30 @@
     else if (Math.abs(th) < 35) next = 0;
     if (next !== holdRot) { holdRot = next; applyRot(); }
   }
-  // 横持ちになったら：文字の層を回し、写す枠を横長に。古写真はあるがまま（回さない）
+  // 横持ちになったら：文字の層と古写真を回し、写す枠を横長に（BOSS 11/3「古写真も向き替えれるように」）
+  // 回すのは見せ方だけ。画像そのものと、保存する1枚の古写真は元の向きのまま
   let frameMode = "tate";
+  function applyPipRot() {
+    const p = $("pip");
+    if (p.className === "big") {
+      if (holdRot) Object.assign(p.style, { inset: "auto", left: "50%", top: "50%", width: "100vh", height: "100vw", transform: "translate(-50%,-50%) rotate(" + holdRot + "deg)" });
+      else p.style.cssText = "";
+    } else {
+      p.style.transform = holdRot ? "rotate(" + holdRot + "deg)" : "";
+      if (!holdRot) return;
+      // 回すと縦横が入れ替わって画面からはみ出すことがあるので、内側へずらす
+      const r = p.getBoundingClientRect(), W = window.innerWidth, H = window.innerHeight, m = 20;   // 右下の丸が画面に収まる余白
+      const dx = Math.max(0, m - r.left) - Math.max(0, r.right - (W - m));
+      const dy = Math.max(0, m - r.top) - Math.max(0, r.bottom - (H - m));
+      if (dx || dy) p.style.transform = "translate(" + dx + "px," + dy + "px) rotate(" + holdRot + "deg)";
+    }
+  }
   function applyRot() {
     const h = $("hud");
     if (holdRot) Object.assign(h.style, { inset: "auto", left: "50%", top: "50%", width: "100vh", height: "100vw", transform: "translate(-50%,-50%) rotate(" + holdRot + "deg)" });
     else h.style.cssText = "";
+    applyPipRot();
+    if ($("pip").className === "small") requestAnimationFrame(placeHandle);
     frameMode = holdRot ? "yoko" : "tate";
     drawFrame();
   }
@@ -5778,6 +5796,7 @@
     $(id).style.cssText = "";
     $(other).className = "small";
     placeSmall();
+    applyPipRot();
     drawFrame();
   }
   // ===== 小さい窓を動かす・大きさを変える =====
@@ -5801,6 +5820,7 @@
       el.style.width = win.w + "px"; el.style.maxHeight = "none";
       if (el.tagName === "VIDEO") el.style.height = (win.h || win.w * 1.3) + "px"; else el.style.height = "auto";
     } else { el.style.cssText = ""; }
+    if (el.id === "pip") applyPipRot();
     requestAnimationFrame(placeHandle);
   }
   function placeHandle() {

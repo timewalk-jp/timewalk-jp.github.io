@@ -108,6 +108,10 @@
   .item .stamp { display: inline-block; font-size: 11px; padding: 0 6px; margin-right: 6px; color: #C0392B; border: 1.5px solid #C0392B; border-radius: 4px; font-weight: 700; }
   #stampMsg { font-size: 14px; color: #C0392B; font-weight: 700; }
   #stampMsg.miss { color: var(--muted); font-weight: 400; }
+  #walkBox { background: var(--card, #fff); border: 1px solid #E5DccF; border-left: 4px solid #C0392B; border-radius: 10px; padding: 8px 12px; margin: 0 0 10px; font-size: 13px; color: var(--text); }
+  #walkBox b { font-size: 15px; }
+  #walkBox small { display: block; color: var(--muted); font-size: 11px; margin-top: 2px; }
+  #walkBox ol { margin: 4px 0 0; padding-left: 20px; }
   #map { height: 40vh; min-height: 280px; border-radius: 14px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,.12); margin-bottom: 8px; }
   .legend { font-size: 12px; color: var(--muted); margin: 0 0 6px; display: flex; gap: 14px; }
   .legend i { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 4px; vertical-align: middle; }
@@ -260,6 +264,7 @@
   <div id="map"></div>
   <p class="legend"><span><i style="background:#2A9D8F"></i><span data-t="legendReady"></span></span><span><i style="background:#9AA3AD"></i><span data-t="legendSoon"></span></span><span><i style="background:#3B82F6"></i><span data-t="legendYou"></span></span></p>
   <p id="listMsg" class="note"></p>
+  <div id="walkBox"></div>
   <div id="spotList"></div>
   <p id="chosen"></p>
 
@@ -4606,6 +4611,9 @@
     stampGot:    ["スタンプを押しました（{n}・{c}か所目）", "Stamp collected ({n}, #{c})"],
     stampAgain:  ["この場所のスタンプは押してあります（{d}）", "Already stamped here ({d})"],
     stampFar:    ["スタンプは、この場所から50m以内で残したときに押されます（今は {m}）", "Stamps are given only within 50 m of this place (now {m} away)"],
+    walkTitle:   ["今日の散歩", "Today's walk"],
+    walkLine:    ["{km}・約 {st} 歩（目安）・スタンプ {c} か所", "{km} · about {st} steps (estimate) · {c} stamps"],
+    walkNote:    ["歩いた距離は、アプリを開いている間の位置の動きと、スタンプを押した場所どうしの距離の大きいほう。歩数は距離÷歩幅0.7mの目安です。", "Distance = the larger of location tracking while the app is open and the straight line between stamps. Steps = distance ÷ 0.7 m."],
     stampNoPos:  ["今いる場所が分からないため、スタンプは押していません", "No stamp: your location is unknown"],
     away:        ["ここから {m}・歩いて約 {t} 分", "{m} away · about {t} min walk"],
     legendReady: ["撮影地点あり", "Photo spot set"],
@@ -4690,6 +4698,10 @@
   try { if (localStorage.getItem("tw-lang") === "en") lang = "en"; } catch (e) {}
   let stamps = {};
   try { stamps = JSON.parse(localStorage.getItem("tw-stamps") || "{}") || {}; } catch (e) { stamps = {}; }
+  // 今日の散歩：日付ごとに位置の動きで測った距離（m）を持つ（スマホの中だけ）
+  const today = () => { const d = new Date(); return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0"); };
+  let walk = { date: "", m: 0, last: null };
+  try { walk = JSON.parse(localStorage.getItem("tw-walk") || "null") || walk; } catch (e) {}
   if (lang === "ja" && !(navigator.language || "ja").startsWith("ja")) lang = "en"; // 海外の端末は英語で始める
   const t = (k, vars) => {
     let s = (T[k] || [k, k])[lang === "ja" ? 0 : 1];
@@ -4737,6 +4749,7 @@
     if (here) render(); else $("dirText").textContent = t("pressStart");
     buildMarkers();
     renderList();
+    renderWalk();
   }
   $("langBtn").addEventListener("click", () => {
     lang = lang === "ja" ? "en" : "ja";
@@ -5030,8 +5043,50 @@
     $("arrow").style.transform = "rotate(" + rel + "deg)";
   }
 
+  // 歩いた距離を足す。ぶれ（約11m）は捨て、乗り物の速さは足さない
+  const WALK_ACC = 30, WALK_MIN = 15, WALK_MAXSPEED = 2.5, WALK_MAXGAP = 2 * 3600;
+  function addWalk(pos) {
+    if (walk.date !== today()) walk = { date: today(), m: 0, last: null };
+    const acc = pos.coords.accuracy || 999;
+    if (acc > WALK_ACC) return;
+    const p = { lat: pos.coords.latitude, lon: pos.coords.longitude, ts: pos.timestamp || Date.now() };
+    if (!walk.last) { walk.last = p; }
+    else {
+      const d = distanceM(walk.last, p), dt = (p.ts - walk.last.ts) / 1000;
+      if (d < Math.max(WALK_MIN, acc)) return;            // ぶれの範囲：起点はそのまま
+      if (dt > 0 && dt < WALK_MAXGAP && d / dt <= WALK_MAXSPEED) walk.m += d;   // 歩く速さなら足す（画面を消して歩いた分も直線で）
+      walk.last = p;                                        // 乗り物・長い空白は足さずに起点だけ移す
+    }
+    try { localStorage.setItem("tw-walk", JSON.stringify(walk)); } catch (e) {}
+    renderWalk();
+  }
+  function renderWalk() {
+    const all = SPOTS.concat(SOON), d0 = today();
+    const got = Object.keys(stamps).filter((id) => stamps[id].date === d0)
+      .map((id) => ({ s: all.find((x) => x.id === id), st: stamps[id] })).filter((x) => x.s)
+      .sort((a, b) => (a.st.ts || 0) - (b.st.ts || 0));
+    let line = 0;
+    for (let i = 1; i < got.length; i++) line += distanceM(dest(got[i - 1].s), dest(got[i].s));
+    const gps = walk.date === d0 ? walk.m : 0;
+    const m = Math.max(gps, line);
+    const box = $("walkBox");
+    box.innerHTML = "<b>" + t("walkTitle") + "</b>　" + t("walkLine", { km: fmt(m), st: Math.round(m / 0.7).toLocaleString(), c: got.length });
+    if (got.length) {
+      const ol = document.createElement("ol");
+      got.forEach(({ s, st }) => {
+        const li = document.createElement("li");
+        const ph = photosOf(s)[st.photo] || photosOf(s)[0] || {};
+        const tm = st.ts ? new Date(st.ts).toLocaleTimeString(lang === "ja" ? "ja-JP" : "en-US", { hour: "2-digit", minute: "2-digit" }) + " " : "";
+        li.textContent = tm + pick(s.name, s.nameEn) + (ph.year ? "（" + pick(ph.year, ph.yearEn) + "）" : "");
+        ol.appendChild(li);
+      });
+      box.appendChild(ol);
+    }
+    const sm = document.createElement("small"); sm.textContent = t("walkNote"); box.appendChild(sm);
+  }
   function onPosition(pos) {
     here = { lat: pos.coords.latitude, lon: pos.coords.longitude };
+    addWalk(pos);
     count += 1;
     if (!first) first = here;
     maxDrift = Math.max(maxDrift, distanceM(first, here));
@@ -5362,10 +5417,10 @@
     if (!here) { box.classList.add("miss"); box.textContent = t("stampNoPos"); return; }
     const d = distanceM(here, dest(spot));
     if (d > NEAR_M) { box.classList.add("miss"); box.textContent = t("stampFar", { m: fmt(d) }); return; }
-    stamps[spot.id] = { date: new Date().toISOString().slice(0, 10), photo: photoIdx, m: Math.round(d) };
+    stamps[spot.id] = { date: today(), ts: Date.now(), photo: photoIdx, m: Math.round(d) };
     try { localStorage.setItem("tw-stamps", JSON.stringify(stamps)); } catch (e) {}
     box.textContent = t("stampGot", { n, c: Object.keys(stamps).length });
-    renderList(); buildMarkers();
+    renderList(); buildMarkers(); renderWalk();
   }
   $("saveBtn").addEventListener("click", async () => {
     if (!shotBlob) return;

@@ -105,6 +105,12 @@
   .item span { font-size: 12px; color: var(--muted); }
   .item .tag { display: inline-block; font-size: 11px; padding: 1px 8px; border-radius: 10px; margin-right: 6px; color: #fff; background: var(--teal); }
   .item.soon .tag { background: #9AA3AD; }
+  .item .tag.gone, .pop .gone b { background: #8B6B4A; }
+  .goneNote { margin: 10px 0 0; padding: 8px 10px; border-left: 4px solid #8B6B4A; background: rgba(139,107,74,.10); font-size: 14px; line-height: 1.6; }
+  .goneNote b { display: inline-block; font-size: 11px; color: #fff; background: #8B6B4A; border-radius: 10px; padding: 0 8px; margin-right: 6px; }
+  #gallery .goneNote { color: #eee; background: rgba(139,107,74,.35); }
+  #viewGone { display: block; margin: 0 0 6px; color: #fff; font-size: 13px; text-shadow: 0 1px 3px #000; }
+  #viewGone:empty { display: none; }
   .item .stamp { display: inline-block; font-size: 11px; padding: 0 6px; margin-right: 6px; color: #C0392B; border: 1.5px solid #C0392B; border-radius: 4px; font-weight: 700; }
   #stampMsg { font-size: 14px; color: #C0392B; font-weight: 700; }
   #stampMsg.miss { color: var(--muted); font-weight: 400; }
@@ -327,6 +333,7 @@
     <p class="label" data-t="oldPhoto"></p>
     <img id="old" alt="" crossorigin="anonymous">
     <div id="picker" class="hidden"></div>
+    <p class="goneNote hidden" id="goneNote"></p>
     <p class="credit" id="credit"></p>
   </div>
 
@@ -347,7 +354,7 @@
   <div id="hud">
     <p id="tip" data-t="viewTip"></p>
     <div id="aim"></div>
-    <p id="viewCredit"></p>
+    <p id="viewCredit"><span id="viewGone"></span><span id="viewCreditText"></span></p>
   </div>
   <button id="shutter" aria-label="shutter"></button>
 </div>
@@ -766,6 +773,19 @@
     "holder": "昔の絵はがき（元の所蔵不明・コモンズ投稿）",
     "holderEn": "Old picture postcard (original holder unknown; Wikimedia Commons)",
     "license": "Public domain（日本の旧著作権法による）"
+   },
+   {
+    "src": "https://dl.ndl.go.jp/api/iiif/1175673/R0000207/full/1200,/0/default.jpg",
+    "thumb": "https://dl.ndl.go.jp/api/iiif/1175673/R0000207/full/400,/0/default.jpg",
+    "page": "https://dl.ndl.go.jp/pid/1175673/1/207",
+    "title": "『逗子町誌』より「逗子海岸より大崎を望む」「逗子海岸より鳴鶴ヶ崎を望む」",
+    "titleEn": "From Zushi Choshi: Osaki and Meikakugasaki seen from Zushi beach",
+    "year": "1928（昭和3）",
+    "yearEn": "1928",
+    "holder": "国立国会図書館デジタルコレクション",
+    "holderEn": "National Diet Library Digital Collections",
+    "license": "保護期間満了（インターネット公開）",
+    "credit": "荒井友三郎 編『逗子町誌』,逗子町,昭和3. 国立国会図書館デジタルコレクション https://dl.ndl.go.jp/pid/1175673 (参照 2026-11-01)"
    }
   ],
   "photo": {
@@ -778,6 +798,285 @@
    "holder": "昔の絵はがき（元の所蔵不明・コモンズ投稿）",
    "holderEn": "Old picture postcard (original holder unknown; Wikimedia Commons)",
    "license": "Public domain（日本の旧著作権法による）"
+  }
+ },
+ {
+  "id": "zushi-rokudai-gozen",
+  "ready": false,
+  "name": "六代御前の墓（逗子）",
+  "nameEn": "Tomb of Rokudai Gozen, Zushi",
+  "target": {
+   "lat": 35.2946,
+   "lon": 139.5805
+  },
+  "photos": [
+   {
+    "src": "https://dl.ndl.go.jp/api/iiif/1175673/R0000076/full/1200,/0/default.jpg",
+    "thumb": "https://dl.ndl.go.jp/api/iiif/1175673/R0000076/full/400,/0/default.jpg",
+    "page": "https://dl.ndl.go.jp/pid/1175673/1/76",
+    "title": "『逗子町誌』より 六代御前墓",
+    "titleEn": "From Zushi Choshi: Tomb of Rokudai Gozen",
+    "year": "1928（昭和3）",
+    "yearEn": "1928",
+    "holder": "国立国会図書館デジタルコレクション",
+    "holderEn": "National Diet Library Digital Collections",
+    "license": "保護期間満了（インターネット公開）",
+    "credit": "荒井友三郎 編『逗子町誌』,逗子町,昭和3. 国立国会図書館デジタルコレクション https://dl.ndl.go.jp/pid/1175673 (参照 2026-11-01)"
+   }
+  ],
+  "photo": {
+   "src": "https://dl.ndl.go.jp/api/iiif/1175673/R0000076/full/1200,/0/default.jpg",
+   "thumb": "https://dl.ndl.go.jp/api/iiif/1175673/R0000076/full/400,/0/default.jpg",
+   "page": "https://dl.ndl.go.jp/pid/1175673/1/76",
+   "title": "『逗子町誌』より 六代御前墓",
+   "titleEn": "From Zushi Choshi: Tomb of Rokudai Gozen",
+   "year": "1928（昭和3）",
+   "yearEn": "1928",
+   "holder": "国立国会図書館デジタルコレクション",
+   "holderEn": "National Diet Library Digital Collections",
+   "license": "保護期間満了（インターネット公開）",
+   "credit": "荒井友三郎 編『逗子町誌』,逗子町,昭和3. 国立国会図書館デジタルコレクション https://dl.ndl.go.jp/pid/1175673 (参照 2026-11-01)"
+  }
+ },
+ {
+  "id": "zushi-tagoegawa",
+  "ready": false,
+  "name": "田越川（逗子）",
+  "nameEn": "Tagoe River, Zushi",
+  "target": {
+   "lat": 35.293,
+   "lon": 139.579
+  },
+  "photos": [
+   {
+    "src": "https://dl.ndl.go.jp/api/iiif/953212/R0000008/full/1200,/0/default.jpg",
+    "thumb": "https://dl.ndl.go.jp/api/iiif/953212/R0000008/full/400,/0/default.jpg",
+    "page": "https://dl.ndl.go.jp/pid/953212/1/8",
+    "title": "『三浦郡誌』より 田越川",
+    "titleEn": "From Miura-gunshi: Tagoe River",
+    "year": "1918（大正7）",
+    "yearEn": "1918",
+    "holder": "国立国会図書館デジタルコレクション",
+    "holderEn": "National Diet Library Digital Collections",
+    "license": "保護期間満了（インターネット公開）",
+    "credit": "神奈川県三浦郡教育会 編『三浦郡誌』,横須賀印刷,大正7. 国立国会図書館デジタルコレクション https://dl.ndl.go.jp/pid/953212 (参照 2026-11-01)"
+   }
+  ],
+  "photo": {
+   "src": "https://dl.ndl.go.jp/api/iiif/953212/R0000008/full/1200,/0/default.jpg",
+   "thumb": "https://dl.ndl.go.jp/api/iiif/953212/R0000008/full/400,/0/default.jpg",
+   "page": "https://dl.ndl.go.jp/pid/953212/1/8",
+   "title": "『三浦郡誌』より 田越川",
+   "titleEn": "From Miura-gunshi: Tagoe River",
+   "year": "1918（大正7）",
+   "yearEn": "1918",
+   "holder": "国立国会図書館デジタルコレクション",
+   "holderEn": "National Diet Library Digital Collections",
+   "license": "保護期間満了（インターネット公開）",
+   "credit": "神奈川県三浦郡教育会 編『三浦郡誌』,横須賀印刷,大正7. 国立国会図書館デジタルコレクション https://dl.ndl.go.jp/pid/953212 (参照 2026-11-01)"
+  }
+ },
+ {
+  "id": "zushi-namiko-fudo",
+  "ready": false,
+  "name": "浪子不動（逗子）",
+  "nameEn": "Namiko Fudo, Zushi",
+  "target": {
+   "lat": 35.2873,
+   "lon": 139.5773
+  },
+  "photos": [
+   {
+    "src": "https://dl.ndl.go.jp/api/iiif/1112143/R0000036/full/1200,/0/default.jpg",
+    "thumb": "https://dl.ndl.go.jp/api/iiif/1112143/R0000036/full/400,/0/default.jpg",
+    "page": "https://dl.ndl.go.jp/pid/1112143/1/36",
+    "title": "『日本名勝風俗大写真帖』より「三浦半島の勝景」浪子不動（逗子海岸）",
+    "titleEn": "From Nihon Meisho Fuzoku Dai-shashincho: Namiko Fudo, Zushi",
+    "year": "1931（昭和6）",
+    "yearEn": "1931",
+    "holder": "国立国会図書館デジタルコレクション",
+    "holderEn": "National Diet Library Digital Collections",
+    "license": "保護期間満了（インターネット公開）",
+    "credit": "忠誠堂編輯部 編『日本名勝風俗大写真帖』,忠誠堂,昭和6. 国立国会図書館デジタルコレクション https://dl.ndl.go.jp/pid/1112143 (参照 2026-11-01)"
+   }
+  ],
+  "photo": {
+   "src": "https://dl.ndl.go.jp/api/iiif/1112143/R0000036/full/1200,/0/default.jpg",
+   "thumb": "https://dl.ndl.go.jp/api/iiif/1112143/R0000036/full/400,/0/default.jpg",
+   "page": "https://dl.ndl.go.jp/pid/1112143/1/36",
+   "title": "『日本名勝風俗大写真帖』より「三浦半島の勝景」浪子不動（逗子海岸）",
+   "titleEn": "From Nihon Meisho Fuzoku Dai-shashincho: Namiko Fudo, Zushi",
+   "year": "1931（昭和6）",
+   "yearEn": "1931",
+   "holder": "国立国会図書館デジタルコレクション",
+   "holderEn": "National Diet Library Digital Collections",
+   "license": "保護期間満了（インターネット公開）",
+   "credit": "忠誠堂編輯部 編『日本名勝風俗大写真帖』,忠誠堂,昭和6. 国立国会図書館デジタルコレクション https://dl.ndl.go.jp/pid/1112143 (参照 2026-11-01)"
+  }
+ },
+ {
+  "id": "zushi-gandenji",
+  "ready": false,
+  "name": "岩殿寺（逗子）",
+  "nameEn": "Gandenji Temple, Zushi",
+  "target": {
+   "lat": 35.3035,
+   "lon": 139.5905
+  },
+  "photos": [
+   {
+    "src": "https://dl.ndl.go.jp/api/iiif/1175673/R0000157/full/1200,/0/default.jpg",
+    "thumb": "https://dl.ndl.go.jp/api/iiif/1175673/R0000157/full/400,/0/default.jpg",
+    "page": "https://dl.ndl.go.jp/pid/1175673/1/157",
+    "title": "『逗子町誌』より 岩殿寺",
+    "titleEn": "From Zushi Choshi: Gandenji",
+    "year": "1928（昭和3）",
+    "yearEn": "1928",
+    "holder": "国立国会図書館デジタルコレクション",
+    "holderEn": "National Diet Library Digital Collections",
+    "license": "保護期間満了（インターネット公開）",
+    "credit": "荒井友三郎 編『逗子町誌』,逗子町,昭和3. 国立国会図書館デジタルコレクション https://dl.ndl.go.jp/pid/1175673 (参照 2026-11-01)"
+   }
+  ],
+  "photo": {
+   "src": "https://dl.ndl.go.jp/api/iiif/1175673/R0000157/full/1200,/0/default.jpg",
+   "thumb": "https://dl.ndl.go.jp/api/iiif/1175673/R0000157/full/400,/0/default.jpg",
+   "page": "https://dl.ndl.go.jp/pid/1175673/1/157",
+   "title": "『逗子町誌』より 岩殿寺",
+   "titleEn": "From Zushi Choshi: Gandenji",
+   "year": "1928（昭和3）",
+   "yearEn": "1928",
+   "holder": "国立国会図書館デジタルコレクション",
+   "holderEn": "National Diet Library Digital Collections",
+   "license": "保護期間満了（インターネット公開）",
+   "credit": "荒井友三郎 編『逗子町誌』,逗子町,昭和3. 国立国会図書館デジタルコレクション https://dl.ndl.go.jp/pid/1175673 (参照 2026-11-01)"
+  }
+ },
+ {
+  "id": "zushi-jimmuji",
+  "ready": false,
+  "name": "神武寺（逗子）",
+  "nameEn": "Jimmuji Temple, Zushi",
+  "target": {
+   "lat": 35.3063,
+   "lon": 139.6075
+  },
+  "photos": [
+   {
+    "src": "https://dl.ndl.go.jp/api/iiif/1175673/R0000103/full/1200,/0/default.jpg",
+    "thumb": "https://dl.ndl.go.jp/api/iiif/1175673/R0000103/full/400,/0/default.jpg",
+    "page": "https://dl.ndl.go.jp/pid/1175673/1/103",
+    "title": "『逗子町誌』より 神武寺客殿及庫裏・薬師堂",
+    "titleEn": "From Zushi Choshi: Jimmuji",
+    "year": "1928（昭和3）",
+    "yearEn": "1928",
+    "holder": "国立国会図書館デジタルコレクション",
+    "holderEn": "National Diet Library Digital Collections",
+    "license": "保護期間満了（インターネット公開）",
+    "credit": "荒井友三郎 編『逗子町誌』,逗子町,昭和3. 国立国会図書館デジタルコレクション https://dl.ndl.go.jp/pid/1175673 (参照 2026-11-01)"
+   },
+   {
+    "src": "https://dl.ndl.go.jp/api/iiif/953212/R0000008/full/1200,/0/default.jpg",
+    "thumb": "https://dl.ndl.go.jp/api/iiif/953212/R0000008/full/400,/0/default.jpg",
+    "page": "https://dl.ndl.go.jp/pid/953212/1/8",
+    "title": "『三浦郡誌』より 神武寺",
+    "titleEn": "From Miura-gunshi: Jimmuji",
+    "year": "1918（大正7）",
+    "yearEn": "1918",
+    "holder": "国立国会図書館デジタルコレクション",
+    "holderEn": "National Diet Library Digital Collections",
+    "license": "保護期間満了（インターネット公開）",
+    "credit": "神奈川県三浦郡教育会 編『三浦郡誌』,横須賀印刷,大正7. 国立国会図書館デジタルコレクション https://dl.ndl.go.jp/pid/953212 (参照 2026-11-01)"
+   }
+  ],
+  "photo": {
+   "src": "https://dl.ndl.go.jp/api/iiif/1175673/R0000103/full/1200,/0/default.jpg",
+   "thumb": "https://dl.ndl.go.jp/api/iiif/1175673/R0000103/full/400,/0/default.jpg",
+   "page": "https://dl.ndl.go.jp/pid/1175673/1/103",
+   "title": "『逗子町誌』より 神武寺客殿及庫裏・薬師堂",
+   "titleEn": "From Zushi Choshi: Jimmuji",
+   "year": "1928（昭和3）",
+   "yearEn": "1928",
+   "holder": "国立国会図書館デジタルコレクション",
+   "holderEn": "National Diet Library Digital Collections",
+   "license": "保護期間満了（インターネット公開）",
+   "credit": "荒井友三郎 編『逗子町誌』,逗子町,昭和3. 国立国会図書館デジタルコレクション https://dl.ndl.go.jp/pid/1175673 (参照 2026-11-01)"
+  }
+ },
+ {
+  "id": "zushi-hoshoji",
+  "ready": false,
+  "name": "法性寺（逗子・名越）",
+  "nameEn": "Hoshoji Temple, Zushi",
+  "target": {
+   "lat": 35.3108,
+   "lon": 139.568
+  },
+  "photos": [
+   {
+    "src": "https://dl.ndl.go.jp/api/iiif/1175673/R0000159/full/1200,/0/default.jpg",
+    "thumb": "https://dl.ndl.go.jp/api/iiif/1175673/R0000159/full/400,/0/default.jpg",
+    "page": "https://dl.ndl.go.jp/pid/1175673/1/159",
+    "title": "『逗子町誌』より 法性寺岩窟",
+    "titleEn": "From Zushi Choshi: Hoshoji cave",
+    "year": "1928（昭和3）",
+    "yearEn": "1928",
+    "holder": "国立国会図書館デジタルコレクション",
+    "holderEn": "National Diet Library Digital Collections",
+    "license": "保護期間満了（インターネット公開）",
+    "credit": "荒井友三郎 編『逗子町誌』,逗子町,昭和3. 国立国会図書館デジタルコレクション https://dl.ndl.go.jp/pid/1175673 (参照 2026-11-01)"
+   }
+  ],
+  "photo": {
+   "src": "https://dl.ndl.go.jp/api/iiif/1175673/R0000159/full/1200,/0/default.jpg",
+   "thumb": "https://dl.ndl.go.jp/api/iiif/1175673/R0000159/full/400,/0/default.jpg",
+   "page": "https://dl.ndl.go.jp/pid/1175673/1/159",
+   "title": "『逗子町誌』より 法性寺岩窟",
+   "titleEn": "From Zushi Choshi: Hoshoji cave",
+   "year": "1928（昭和3）",
+   "yearEn": "1928",
+   "holder": "国立国会図書館デジタルコレクション",
+   "holderEn": "National Diet Library Digital Collections",
+   "license": "保護期間満了（インターネット公開）",
+   "credit": "荒井友三郎 編『逗子町誌』,逗子町,昭和3. 国立国会図書館デジタルコレクション https://dl.ndl.go.jp/pid/1175673 (参照 2026-11-01)"
+  }
+ },
+ {
+  "id": "zushi-kaihoin",
+  "ready": false,
+  "name": "海宝院（逗子・沼間）",
+  "nameEn": "Kaihoin Temple, Zushi",
+  "target": {
+   "lat": 35.303,
+   "lon": 139.596
+  },
+  "photos": [
+   {
+    "src": "https://dl.ndl.go.jp/api/iiif/1175673/R0000105/full/1200,/0/default.jpg",
+    "thumb": "https://dl.ndl.go.jp/api/iiif/1175673/R0000105/full/400,/0/default.jpg",
+    "page": "https://dl.ndl.go.jp/pid/1175673/1/105",
+    "title": "『逗子町誌』より 宝門山海宝院",
+    "titleEn": "From Zushi Choshi: Kaihoin",
+    "year": "1928（昭和3）",
+    "yearEn": "1928",
+    "holder": "国立国会図書館デジタルコレクション",
+    "holderEn": "National Diet Library Digital Collections",
+    "license": "保護期間満了（インターネット公開）",
+    "credit": "荒井友三郎 編『逗子町誌』,逗子町,昭和3. 国立国会図書館デジタルコレクション https://dl.ndl.go.jp/pid/1175673 (参照 2026-11-01)"
+   }
+  ],
+  "photo": {
+   "src": "https://dl.ndl.go.jp/api/iiif/1175673/R0000105/full/1200,/0/default.jpg",
+   "thumb": "https://dl.ndl.go.jp/api/iiif/1175673/R0000105/full/400,/0/default.jpg",
+   "page": "https://dl.ndl.go.jp/pid/1175673/1/105",
+   "title": "『逗子町誌』より 宝門山海宝院",
+   "titleEn": "From Zushi Choshi: Kaihoin",
+   "year": "1928（昭和3）",
+   "yearEn": "1928",
+   "holder": "国立国会図書館デジタルコレクション",
+   "holderEn": "National Diet Library Digital Collections",
+   "license": "保護期間満了（インターネット公開）",
+   "credit": "荒井友三郎 編『逗子町誌』,逗子町,昭和3. 国立国会図書館デジタルコレクション https://dl.ndl.go.jp/pid/1175673 (参照 2026-11-01)"
   }
  },
  {
@@ -4613,6 +4912,15 @@
     s.ready = !!s.photo.standAt;
   });
 
+  // ===== 今はないもの（写真ごと・出どころを確かめた一言だけ）=====
+  // キー＝"場所のid:写真の番号"。調べがついたものから足す（drafts/gone-check-*.json）
+  const GONE = {};
+  SPOTS.concat(SOON).forEach((s) => {
+    (s.photos || [s.photo]).forEach((ph, i) => { const g = GONE[s.id + ":" + i]; if (g) ph.gone = g; });
+    s.gone = (s.photos || [s.photo]).some((ph) => ph && ph.gone);
+  });
+  const goneBox = (g) => { const p = document.createElement("p"); p.className = "goneNote"; const b = document.createElement("b"); b.textContent = t("goneTag"); p.append(b, pick(g.ja, g.en)); return p; };
+
   // ===== 日本語／英語 =====
   const T = {
     tagline:     ["先人が立った場所で、昔の景色を旅する。", "Stand where they stood. Travel through the old views."],
@@ -4625,6 +4933,8 @@
     nearMsg:     ["今いる場所から近い順です。", "Closest places to you."],
     ready:       ["撮影地点あり", "Photo spot set"],
     soonTag:     ["撮影地点は調査中", "Spot not set"],
+    goneTag:     ["今はない", "Gone now"],
+    goneSave:    ["今はないもの：", "No longer here: "],
     photoCount:  ["古写真 {n} 枚", "{n} old photos"],
     stampCount:  ["スタンプ {s} / {n} か所", "Stamps {s} / {n} places"],
     stampMark:   ["済", "Done"],
@@ -4809,6 +5119,10 @@
     if ($("old").getAttribute("src") !== p.src) { $("old").src = p.src; $("pip").src = p.src; }
     $("old").alt = pick(p.title, p.titleEn);
     $("pip").alt = pick(p.title, p.titleEn);
+    const gn = $("goneNote");
+    gn.innerHTML = ""; gn.classList.toggle("hidden", !p.gone);
+    if (p.gone) { const b = document.createElement("b"); b.textContent = t("goneTag"); gn.append(b, pick(p.gone.ja, p.gone.en)); }
+    $("viewGone").textContent = p.gone ? t("goneTag") + "：" + pick(p.gone.ja, p.gone.en) + " " : "";
     const c = $("credit");
     c.innerHTML = "";
     c.append(pick(p.title, p.titleEn) + " / " + pick(p.year, p.yearEn) + (p.by ? " / " + pick(p.by, p.byEn) : ""), document.createElement("br"),
@@ -4817,7 +5131,7 @@
     const a = document.createElement("a");
     a.href = p.page; a.target = "_blank"; a.rel = "noopener"; a.textContent = t("seeSource");
     c.append(a);
-    $("viewCredit").textContent = t("oldPhotoCap") + ": " + pick(p.title, p.titleEn) + " (" + pick(p.year, p.yearEn) + ") " + pick(p.holder, p.holderEn) + " · " + p.license;
+    $("viewCreditText").textContent = t("oldPhotoCap") + ": " + pick(p.title, p.titleEn) + " (" + pick(p.year, p.yearEn) + ") " + pick(p.holder, p.holderEn) + " · " + p.license;
     miniFitted = false;
     if (here) render();
     renderAim();
@@ -4860,7 +5174,9 @@
       b.addEventListener("click", () => { closeGallery(); chooseSpot(s); applySpot(s, i); });
       im.addEventListener("click", () => openZoom(ph.src, im.alt));
       const zh = document.createElement("p"); zh.className = "galZoomHint"; zh.textContent = t("zoomHint");
-      pg.append(im, zh, cap, b);
+      pg.append(im, zh);
+      if (ph.gone) pg.append(goneBox(ph.gone));
+      pg.append(cap, b);
       tr.append(pg);
     });
     $("gallery").classList.remove("hidden");
@@ -4991,6 +5307,7 @@
         cr.style.fontSize = "11px"; cr.style.margin = "0 0 6px";
         cr.textContent = pick(ph.year, ph.yearEn) + " · " + pick(ph.holder, ph.holderEn) + " · " + ph.license;
         box.append(cr);
+        if (ph.gone) { const gp = goneBox(ph.gone); gp.classList.add("gone"); box.append(gp); }
       });
       if (!ready) { const p = document.createElement("p"); p.textContent = t("soonText"); box.append(p); }
       box.append(galButton(s));
@@ -5034,6 +5351,7 @@
       const tag = document.createElement("i"); tag.className = "tag"; tag.textContent = s.ready ? t("ready") : t("soonTag");
       if (stamps[s.id]) { const st = document.createElement("i"); st.className = "stamp"; st.textContent = t("stampMark") + " " + stamps[s.id].date.slice(5).replace("-", "/"); sp.append(st); }
       sp.append(tag);
+      if (s.gone) { const g = document.createElement("i"); g.className = "tag gone"; g.textContent = t("goneTag"); sp.append(g); }
       if (d !== null) sp.append(t("away", { m: fmt(d), t: Math.max(1, Math.round(d / 80)) }));
       tx.append(b, sp);
       if (s.photo) {   // 写真の出典（出典表示が必要な写真があるため一覧にも出す）
@@ -5510,6 +5828,8 @@
       }
       if (line) lines.push(line);
     };
+    if (p.gone) wrap(t("goneSave") + pick(p.gone.ja, p.gone.en));
+    const goneLines = lines.length;
     wrap("昔の写真：" + (p.credit || (p.title + " " + p.year + (p.by ? "・" + p.by : "") + "・" + p.holder + (p.id ? "（" + p.id + "）" : "")) ) + "・" + p.license);
     wrap("Old photo: " + (p.titleEn || p.title) + ", " + (p.yearEn || p.year) + ", " + (p.holderEn || p.holder) + " (" + p.license + ")");
     const need = top + H + 30 + lines.length * 36 + 20;
@@ -5520,8 +5840,7 @@
       x.putImageData(img, 0, 0);
       x.font = "24px " + font;
     }
-    x.fillStyle = "#6B6B6B";
-    lines.forEach((ln, i) => x.fillText(ln, pad, top + H + 50 + i * 36));
+    lines.forEach((ln, i) => { x.fillStyle = i < goneLines ? "#8B6B4A" : "#6B6B6B"; x.fillText(ln, pad, top + H + 50 + i * 36); });
     return c;
   }
   $("shutter").addEventListener("click", () => {

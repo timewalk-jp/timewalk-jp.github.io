@@ -110,6 +110,8 @@
   #stampMsg.miss { color: var(--muted); font-weight: 400; }
   #walkBox { background: var(--card, #fff); border: 1px solid #E5DccF; border-left: 4px solid #C0392B; border-radius: 10px; padding: 8px 12px; margin: 0 0 10px; font-size: 13px; color: var(--text); }
   #walkBox b { font-size: 15px; }
+  #wakeRow { font-size: 13px; color: var(--muted); margin: 6px 0 0; display: flex; align-items: center; gap: 8px; }
+  #wakeRow button { width: auto; padding: 4px 12px; font-size: 13px; margin: 0; }
   #walkBox small { display: block; color: var(--muted); font-size: 11px; margin-top: 2px; }
   #walkBox ol { margin: 4px 0 0; padding-left: 20px; }
   #map { height: 40vh; min-height: 280px; border-radius: 14px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,.12); margin-bottom: 8px; }
@@ -273,6 +275,7 @@
   <p class="lead"><span data-t="s1Lead"></span><small data-t="s1Sub"></small></p>
 
   <button id="start" data-t="startBtn"></button>
+  <p id="wakeRow" class="hidden"><span id="wakeText"></span><button id="wakeBtn" class="secondary" type="button"></button></p>
   <p id="msg" class="msg hidden"></p>
 
   <div class="card">
@@ -4625,6 +4628,11 @@
     s1Sub:       ["古写真を撮った場所まで、距離と方向で案内します", "Distance and direction to the old photo spot"],
     startBtn:    ["案内を始める", "Start guide"],
     guiding:     ["案内中…", "Guiding…"],
+    wakeOn:      ["画面を消さない：オン（歩いた距離を測り続けます）", "Screen stays on (keeps measuring your walk)"],
+    wakeOff:     ["画面を消さない：オフ（画面が消えると測れません）", "Screen may turn off (measuring stops when it does)"],
+    wakeNo:      ["この端末では画面を消さない設定が使えません", "Keeping the screen on is not supported here"],
+    wakeBtnOff:  ["オフにする", "Turn off"],
+    wakeBtnOn:   ["オンにする", "Turn on"],
     toLabel:     ["{n}・先人が立った場所まで", "To the photo spot: {n}"],
     pressStart:  ["ボタンを押すと案内が出ます", "Press the button to start"],
     finding:     ["位置を探しています…", "Finding your location…"],
@@ -4750,6 +4758,7 @@
     buildMarkers();
     renderList();
     renderWalk();
+    if (watchId !== null) showWake();
   }
   $("langBtn").addEventListener("click", () => {
     lang = lang === "ja" ? "en" : "ja";
@@ -5193,7 +5202,28 @@
     $("dirText").textContent = t("finding");
     watchId = navigator.geolocation.watchPosition(onPosition, onError, { enableHighAccuracy: true, maximumAge: 0, timeout: 20000 });
   }
-  $("start").addEventListener("click", startLocation);
+  $("start").addEventListener("click", () => { startLocation(); wantWake = true; try { localStorage.getItem("tw-wake") === "off" && (wantWake = false); } catch (e) {} lockWake(); });
+  // ===== 画面を消さない（案内中だけ。裏に回ると自動で外れるので、戻ったら付け直す） =====
+  let wakeLock = null, wantWake = false;
+  function showWake() {
+    $("wakeRow").classList.remove("hidden");
+    if (!("wakeLock" in navigator)) { $("wakeText").textContent = t("wakeNo"); $("wakeBtn").classList.add("hidden"); return; }
+    $("wakeText").textContent = t(wakeLock ? "wakeOn" : "wakeOff");
+    $("wakeBtn").textContent = t(wantWake ? "wakeBtnOff" : "wakeBtnOn");
+  }
+  async function lockWake() {
+    if (wantWake && !wakeLock && "wakeLock" in navigator && document.visibilityState === "visible") {
+      try { wakeLock = await navigator.wakeLock.request("screen"); wakeLock.addEventListener("release", () => { wakeLock = null; showWake(); }); } catch (e) { wakeLock = null; }
+    }
+    showWake();
+  }
+  $("wakeBtn").addEventListener("click", async () => {
+    wantWake = !wantWake;
+    try { localStorage.setItem("tw-wake", wantWake ? "on" : "off"); } catch (e) {}
+    if (!wantWake && wakeLock) { try { await wakeLock.release(); } catch (e) {} wakeLock = null; }
+    lockWake();
+  });
+  document.addEventListener("visibilitychange", () => { if (document.visibilityState === "visible" && watchId !== null) lockWake(); });
   $("reset").addEventListener("click", () => { first = null; maxDrift = 0; $("drift").textContent = "0 m"; });
 
   // ===== ② 覗く =====

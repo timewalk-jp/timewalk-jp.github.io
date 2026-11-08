@@ -168,6 +168,10 @@
   .phIcon { width: 52px; height: 52px; border-radius: 50%; background: #ddd center/cover no-repeat;
             border: 3px solid #2A9D8F; box-shadow: 0 2px 6px rgba(0,0,0,.45); }
   .phIcon.soon { border-color: #9AA3AD; }
+  /* 地図を動かしたら「このエリアから探す」（BOSS 11/9） */
+  #areaSearch { position: absolute; top: 10px; left: 50%; transform: translateX(-50%); z-index: 1000; width: auto; margin: 0;
+                padding: 8px 16px; font-size: 14px; border-radius: 20px; background: #fff; color: var(--navy); border: 2px solid var(--navy);
+                box-shadow: 0 2px 8px rgba(0,0,0,.3); }
   .phIcon.stamped { border-color: #C0392B; }
   .pop p { margin: 4px 0 8px; font-size: 13px; color: var(--muted); }
   .pop img { display: block; max-width: 180px; max-height: 120px; width: auto; height: auto; margin: 4px 0; border-radius: 4px; }
@@ -5658,6 +5662,8 @@
     goneSave:    ["今はないもの：", "No longer here: "],
     photoCount:  ["古写真 {n} 枚", "{n} old photos"],
     mapHint:     ["地図は2本指で動かせます", "Use two fingers to move the map"],
+    areaSearch:  ["このエリアから探す", "Search this area"],
+    areaMsg:     ["地図の真ん中から近い古写真を出しています。「近くにある？」を押すと今いる場所に戻ります。", "Showing old photos near the map centre. Tap \"Anything nearby?\" to go back to your location."],
     nearIconMsg: ["近くの古写真を地図に出しています。写真を押すと選べます。", "Nearby old photos are on the map. Tap one to choose it."],
     stampCount:  ["スタンプ {s} / {n} か所", "Stamps {s} / {n} places"],
     stampMark:   ["済", "Done"],
@@ -6008,7 +6014,7 @@
   $("old").addEventListener("click", () => { if (spot) openGallery(spot, photoIdx); });
 
   // ===== 旅の地図 =====
-  let map = null, markerLayer = null, youMarker = null;
+  let map = null, markerLayer = null, youMarker = null, lastView = null;
   // スマホ（指で触る画面）では、1本指＝ページを送る／2本指＝地図を動かす・広げる。点を押すのはそのまま
   function twoFinger(m, id) {
     if (!window.L.Browser.touch || !window.matchMedia("(pointer: coarse)").matches) return;
@@ -6035,6 +6041,24 @@
     }).addTo(map);
     markerLayer = window.L.layerGroup().addTo(map);
     twoFinger(map, "map");
+    const as = document.createElement("button"); as.id = "areaSearch"; as.type = "button"; as.className = "hidden";
+    $("map").appendChild(as);
+    window.L.DomEvent.disableClickPropagation(as);
+    as.addEventListener("click", () => {
+      const c = map.getCenter(); nearCenter = { lat: c.lat, lon: c.lng };
+      as.classList.add("hidden");
+      lastView = { c, z: map.getZoom() };
+      updateNear(); renderList();
+    });
+    // 地図を大きく動かした時だけ出す（写真の吹き出しを開いた時の小さなずれでは出さない）：
+    // 前に探した時の真ん中から地図の幅の1/4以上動いたか、縮尺が1段以上変わった時
+    map.on("moveend", () => {
+      if (progMove) { progMove = false; lastView = { c: map.getCenter(), z: map.getZoom() }; return; }
+      if (mode !== "near") return;
+      const b = map.getBounds(), w = map.distance(b.getNorthWest(), b.getNorthEast());
+      const far = !lastView || map.distance(lastView.c, map.getCenter()) > w / 4 || Math.abs(map.getZoom() - lastView.z) >= 1;
+      if (far) { as.textContent = t("areaSearch"); as.classList.remove("hidden"); }
+    });
     buildMarkers();
     const all = SPOTS.concat(SOON).map((s) => [s.target.lat, s.target.lon]);
     if (all.length > 1) map.fitBounds(all, { padding: [30, 30], maxZoom: 15 });
@@ -6053,8 +6077,11 @@
     const cls = "phIcon" + (stamps[s.id] ? " stamped" : s.ready ? "" : " soon");
     return window.L.divIcon({ className: "", html: '<div class="' + cls + '" style="background-image:url(\'' + (ph.thumb || ph.src || "") + '\')"></div>', iconSize: [58, 58], iconAnchor: [29, 29], popupAnchor: [0, -26] });
   }
+  // 探す中心＝「このエリアから探す」で選んだ地図の真ん中、なければ今いる場所
+  let nearCenter = null, progMove = false;
   function updateNear() {
-    const ids = mode === "near" && here ? SPOTS.concat(SOON).map((s) => ({ s, d: distanceM(here, s.standAt || s.target) })).sort((a, b) => a.d - b.d).slice(0, 10).map((x) => x.s.id) : [];
+    const c = nearCenter || here;
+    const ids = mode === "near" && c ? SPOTS.concat(SOON).map((s) => ({ s, d: distanceM(c, s.standAt || s.target) })).sort((a, b) => a.d - b.d).slice(0, 10).map((x) => x.s.id) : [];
     const key = ids.join();
     if (key === nearKey) return;
     nearKey = key; nearIds = new Set(ids);
@@ -6182,7 +6209,7 @@
     if (mode === "near" && here) items.sort((a, b) => a.d - b.d);
     else items.sort((a, b) => rank(b.s) - rank(a.s));
     $("listMsg").textContent = t("planMsg", { n: all.length, r: all.filter((s) => s.ready).length }) + "　" + t("stampCount", { s: Object.keys(stamps).length, n: all.length });
-    $("nearMsg").textContent = here ? t("nearIconMsg") : t("nearFinding");
+    $("nearMsg").textContent = nearCenter ? t("areaMsg") : here ? t("nearIconMsg") : t("nearFinding");
     $("nearMsg").classList.toggle("hidden", mode !== "near");
     $("spotList").innerHTML = ""; $("nearList").innerHTML = "";
     renderChips(all);
@@ -6220,6 +6247,7 @@
   }
   function setMode(m) {
     mode = m;
+    nearCenter = null; lastView = null; if ($("areaSearch")) $("areaSearch").classList.add("hidden");
     updateNear();
     $("modePlan").classList.toggle("on", false);
     $("modeNear").classList.toggle("on", m === "near");
@@ -6237,11 +6265,15 @@
   function fitNear() {
     const near = SPOTS.concat(SOON).map((s) => ({ s, d: distanceM(here, s.target) })).sort((a, b) => a.d - b.d).slice(0, 5);
     const pts = [[here.lat, here.lon]].concat(near.map((x) => [x.s.target.lat, x.s.target.lon]));
+    progMove = true;
     map.fitBounds(pts, { padding: [30, 30], maxZoom: 16 });
     fittedNear = true;
   }
   $("modePlan").addEventListener("click", () => { if (mode === "near") setMode("plan"); showScr("places"); });
-  $("modeNear").addEventListener("click", () => setMode(mode === "near" ? "plan" : "near"));
+  $("modeNear").addEventListener("click", () => {
+    if (mode === "near" && nearCenter) { nearCenter = null; $("areaSearch").classList.add("hidden"); updateNear(); renderList(); if (map && here) fitNear(); return; }   // エリア検索中→今いる場所に戻す
+    setMode(mode === "near" ? "plan" : "near");
+  });
   // ① 立つの小さな地図：目的地（朱色・名前つき）と自分（青）と、その間の点線。両方が入る縮尺に合わせる
   let mini = null, miniDest = null, miniYou = null, miniLine = null, selMarker = null;
   function updateMini() {

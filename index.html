@@ -85,6 +85,12 @@
   button.secondary { background: #fff; color: var(--brown); border: 2px solid var(--brown); font-size: 15px; padding: 12px; }
   .msg { font-size: 14px; color: var(--warn); margin: 0 0 10px; }
   .hidden { display: none !important; }
+  /* 古写真の明るさ（BOSS 11/9「写真が暗くてわかりずらい。もう少し明るくならんか」）。画像そのものは変えず、見せ方だけ */
+  .bri1 #old, .bri1 #pip, .bri1 #zoomImg, .bri1 #galTrack img, .bri1 .phCard img { filter: brightness(1.2) contrast(0.85); }
+  .bri2 #old, .bri2 #pip, .bri2 #zoomImg, .bri2 #galTrack img, .bri2 .phCard img { filter: brightness(1.45) contrast(0.7); }
+  .briBtn { width: auto; display: inline-block; margin: 6px 0; padding: 6px 14px; font-size: 14px; border-radius: 18px; background: #fff; color: var(--indigo); border: 1.5px solid var(--indigo); }
+  #view .briBtn { position: absolute; right: 12px; top: calc(64px + env(safe-area-inset-top)); margin: 0; background: rgba(0,0,0,.55); color: #fff; border-color: #fff; z-index: 3; }
+  #zoomBar .briBtn { margin: 0 0 0 10px; background: rgba(0,0,0,.55); color: #fff; border-color: #fff; }
   /* 画面の切り替え（BOSS 11/3「TOPページ…シンプルで使いやすいものに」） */
   .back { display: inline-block; width: auto; margin: 0 0 10px; padding: 8px 14px; font-size: 15px;
           background: transparent; color: var(--indigo, #3D5A80); border: 1px solid currentColor; border-radius: 20px; }
@@ -355,6 +361,7 @@
   <p id="placeArea" class="note"></p>
   <h2 class="scrTitle" id="placeName"></h2>
   <p id="placeTags" class="item"></p>
+  <button class="briBtn" type="button"></button>
   <div id="placePhotos"></div>
   <div id="placeAbout"></div>
   <button id="placeGo" type="button" data-t="goThere"></button>
@@ -411,6 +418,7 @@
   <div class="card photo">
     <p class="label" data-t="oldPhoto"></p>
     <img id="old" alt="" crossorigin="anonymous">
+    <button class="briBtn" type="button"></button>
     <div id="picker" class="hidden"></div>
     <p class="goneNote hidden" id="goneNote"></p>
     <p class="credit" id="credit"></p>
@@ -434,6 +442,7 @@
   <div id="hud">
     <p id="tip" data-t="viewTip"></p>
     <div id="aim"></div>
+    <button class="briBtn" type="button"></button>
     <p id="viewCredit"><span id="viewGone"></span><span id="viewCreditText"></span></p>
   </div>
   <button id="shutter" aria-label="shutter"></button>
@@ -449,7 +458,7 @@
 <div id="zoom" class="hidden">
   <img id="zoomImg" alt="">
   <button id="zoomClose" type="button" aria-label="close">×</button>
-  <div id="zoomBar"><button id="zoomOut" type="button" aria-label="zoom out">−</button><span id="zoomPct"></span><button id="zoomIn" type="button" aria-label="zoom in">＋</button></div>
+  <div id="zoomBar"><button id="zoomOut" type="button" aria-label="zoom out">−</button><span id="zoomPct"></span><button id="zoomIn" type="button" aria-label="zoom in">＋</button><button class="briBtn" type="button"></button></div>
 </div>
 
 <!-- ③ 残す：撮った1枚の確認と保存 -->
@@ -5631,6 +5640,9 @@
     tagline:     ["先人が立った場所で、昔の景色を旅する。", "Stand where they stood. Travel through the old views."],
     modePlan:    ["どこへ行こう？", "Where to go?"],
     back:        ["← もどる", "← Back"],
+    bri0:        ["明るさ：元のまま", "Brightness: original"],
+    bri1:        ["明るさ：明るく", "Brightness: brighter"],
+    bri2:        ["明るさ：もっと明るく", "Brightness: brightest"],
     areaAll:     ["すべて", "All"],
     goThere:     ["ここへ行く（立つ・覗く・残す）", "Go here (stand, look, keep)"],
     tapToZoom:   ["写真を押すと大きく見られます", "Tap a photo to see it large"],
@@ -6089,6 +6101,19 @@
     if (map) map.closePopup();
     showScr("spot");
   }
+  // ===== 古写真の明るさ：元のまま→明るく→もっと明るく（どこで押しても同じ・スマホに覚える）。保存する1枚は元のまま =====
+  let bri = 0;
+  try { bri = Number(localStorage.getItem("tw-bri") || 0) || 0; } catch (_) {}
+  function applyBri() {
+    document.documentElement.classList.toggle("bri1", bri === 1);
+    document.documentElement.classList.toggle("bri2", bri === 2);
+    document.querySelectorAll(".briBtn").forEach((b) => { b.textContent = "☀ " + t("bri" + bri); });
+  }
+  document.querySelectorAll(".briBtn").forEach((b) => b.addEventListener("click", (e) => {
+    e.stopPropagation();
+    bri = (bri + 1) % 3; try { localStorage.setItem("tw-bri", String(bri)); } catch (_) {}
+    applyBri();
+  }));
   // ===== 画面の切り替え：home（地図）／places（どこへ行こう？）／spot（立つ・覗く・残す）=====
   // iPhoneの「戻る」（左端から右へ引く）でも前の画面へ戻れるよう、履歴に積む
   let scr = "home";
@@ -6748,6 +6773,7 @@
     try { localStorage.setItem("tw-stamps", JSON.stringify(stamps)); } catch (e) {}
     box.textContent = t("stampGot", { n, c: Object.keys(stamps).length });
     renderList(); buildMarkers(); renderWalk();
+    applyBri();
   }
   $("saveBtn").addEventListener("click", async () => {
     if (!shotBlob) return;

@@ -509,6 +509,8 @@
   ];
   // 鎌倉大仏の追加写真（国内の保管先・2026-11-02）。1枚目は撮影地点を推定した元の写真
   SPOTS[0].photos = [SPOTS[0].photo].concat([{"src": "https://iiif.adeac.jp/iiif/3/1392015100%2F054-088%2F001.tif/full/max/0/default.jpg", "thumb": "https://iiif.adeac.jp/iiif/3/1392015100%2F054-088%2F001.tif/full/400,/0/default.jpg", "page": "https://adeac.jp/tamashin/catalog/mp2020e054088-200010", "title": "絵はがき「(国宝)鎌倉の大仏」", "titleEn": "Daibutsu of Kamakura (postcard)", "year": "年不明（絵はがき・戦前）", "yearEn": "undated (pre-war postcard)", "holder": "たましん地域文化財団（ADEAC）", "holderEn": "Tamashin Regional Culture Foundation (ADEAC)", "license": "CC BY 4.0", "credit": "たましん地域文化財団 所蔵（CC BY 4.0）"}]);
+  // 11/9 追加（drafts/morephotos-all.json）
+  SPOTS[0].photos = SPOTS[0].photos.concat([{"src": "https://dl.ndl.go.jp/api/iiif/762832/R0000047/1110,930,2160,1640/1200,/0/default.jpg", "thumb": "https://dl.ndl.go.jp/api/iiif/762832/R0000047/1110,930,2160,1640/400,/0/default.jpg", "page": "https://dl.ndl.go.jp/pid/762832/1/47", "pageSrc": "https://dl.ndl.go.jp/api/iiif/762832/R0000047/full/full/0/default.jpg", "rot": -90, "title": "鎌倉 長谷の大仏（写真帖の題「鎌倉 長谷の大仏」）", "titleEn": "Kamakura, the Great Buddha at Hase", "year": "1912（明治45）", "yearEn": "1912", "holder": "国立国会図書館デジタルコレクション", "holderEn": "National Diet Library Digital Collections", "license": "インターネット公開（保護期間満了）／IIIF Access Restrictions: PDM", "credit": "西田繁造 編『日本名勝旧蹟産業写真帖 : 国定小学校教科書準拠. 天』,西田耕雲堂,1912. 国立国会図書館デジタルコレクション https://dl.ndl.go.jp/pid/762832 （コマ47）(参照 2026-11-09)"}, {"src": "https://dl.ndl.go.jp/api/iiif/966765/R0000064/1880,410,1230,1630/1200,/0/default.jpg", "thumb": "https://dl.ndl.go.jp/api/iiif/966765/R0000064/1880,410,1230,1630/400,/0/default.jpg", "page": "https://dl.ndl.go.jp/pid/966765/1/64", "pageSrc": "https://dl.ndl.go.jp/api/iiif/966765/R0000064/full/full/0/default.jpg", "title": "長谷大仏の揺り出し（表面）", "titleEn": "The Great Buddha at Hase shifted by the earthquake (front)", "year": "1923（大正12）撮影・1926（大正15）刊", "yearEn": "1923", "holder": "国立国会図書館デジタルコレクション", "holderEn": "National Diet Library Digital Collections", "license": "インターネット公開（保護期間満了）／IIIF Access Restrictions: PDM", "credit": "内務省社会局 編『大正震災志写真帖』,内務省社会局,1926. 国立国会図書館デジタルコレクション https://dl.ndl.go.jp/pid/966765 （コマ64）(参照 2026-11-09)"}, {"src": "https://touda.tohoku.ac.jp/iiif/2/public%2Flibrary%2Fkano%2Fpostcard%2F137-00175L.tif/full/full/0/default.jpg", "thumb": "https://touda.tohoku.ac.jp/iiif/2/public%2Flibrary%2Fkano%2Fpostcard%2F137-00175L.tif/full/400,/0/default.jpg", "page": "https://touda.tohoku.ac.jp/portal/item/10010030004118", "title": "絵はがき「淑徳高等女學校家政女學校春季修學旅行（長谷大佛）」", "titleEn": "Shukutoku girls' school trip (Great Buddha) (postcard)", "year": "年不明（絵はがき）", "yearEn": "undated (postcard)", "holder": "東北大学附属図書館（狩野文庫）", "holderEn": "Tohoku University Library (Kano Collection)", "license": "CC BY（「特段の許可なく利用できます」）", "credit": "「淑徳高等女學校家政女學校春季修學旅行（長谷大佛）」東北大学附属図書館所蔵（狩野文庫 請求記号 137-1-175）CC BY https://touda.tohoku.ac.jp/portal/item/10010030004118 （参照 2026-11-09）"}]);
   // 準備中の場所：位置はOpenStreetMap等。古写真と撮影地点は調査中
   const SOON = [
  {
@@ -531,6 +533,88 @@
     "holder": "アムステルダム国立美術館",
     "holderEn": "Rijksmuseum, Amsterdam",
     "license": "CC0"
+   },
+   {
+    "src": "https://dl.ndl.go.jp/api/iiif/762832/R0000043/1070,930,2140,1600/1200,/0/default.jpg",
+    "thumb": "https://dl.ndl.go.jp/api/iiif/762832/R0000043/1070,930,2140,1600/400,/0/default.jpg",
+    "page": "https://dl.ndl.go.jp/pid/762832/1/43",
+    "pageSrc": "https://dl.ndl.go.jp/api/iiif/762832/R0000043/full/full/0/default.jpg",
+    "rot": -90,
+    "title": "国幣中社 鶴ヶ岡八幡宮",
+    "titleEn": "Tsurugaoka Hachimangu (national shrine)",
+    "year": "1912（明治45）",
+    "yearEn": "1912",
+    "holder": "国立国会図書館デジタルコレクション",
+    "holderEn": "National Diet Library Digital Collections",
+    "license": "インターネット公開（保護期間満了）／IIIF Access Restrictions: PDM",
+    "credit": "西田繁造 編『日本名勝旧蹟産業写真帖 : 国定小学校教科書準拠. 天』,西田耕雲堂,1912. 国立国会図書館デジタルコレクション https://dl.ndl.go.jp/pid/762832 （コマ43）(参照 2026-11-09)"
+   },
+   {
+    "src": "https://dl.ndl.go.jp/api/iiif/966765/R0000061/1600,310,1550,1070/1200,/0/default.jpg",
+    "thumb": "https://dl.ndl.go.jp/api/iiif/966765/R0000061/1600,310,1550,1070/400,/0/default.jpg",
+    "page": "https://dl.ndl.go.jp/pid/966765/1/61",
+    "pageSrc": "https://dl.ndl.go.jp/api/iiif/966765/R0000061/full/full/0/default.jpg",
+    "title": "鎌倉八幡宮舞殿の倒潰",
+    "titleEn": "Collapse of the Maiden stage, Tsurugaoka Hachimangu",
+    "year": "1923（大正12）撮影・1926（大正15）刊",
+    "yearEn": "1923",
+    "holder": "国立国会図書館デジタルコレクション",
+    "holderEn": "National Diet Library Digital Collections",
+    "license": "インターネット公開（保護期間満了）／IIIF Access Restrictions: PDM",
+    "credit": "内務省社会局 編『大正震災志写真帖』,内務省社会局,1926. 国立国会図書館デジタルコレクション https://dl.ndl.go.jp/pid/966765 （コマ61）(参照 2026-11-09)"
+   },
+   {
+    "src": "https://touda.tohoku.ac.jp/iiif/2/public%2Flibrary%2Fkano%2Fpostcard%2F137-00176L.tif/full/full/0/default.jpg",
+    "thumb": "https://touda.tohoku.ac.jp/iiif/2/public%2Flibrary%2Fkano%2Fpostcard%2F137-00176L.tif/full/400,/0/default.jpg",
+    "page": "https://touda.tohoku.ac.jp/portal/item/10010030004119",
+    "title": "絵はがき「淑徳高等女學校家政女學校春季修學旅行（鎌倉八幡）」",
+    "titleEn": "Shukutoku girls' school trip (Hachimangu) (postcard)",
+    "year": "年不明（絵はがき）",
+    "yearEn": "undated (postcard)",
+    "holder": "東北大学附属図書館（狩野文庫）",
+    "holderEn": "Tohoku University Library (Kano Collection)",
+    "license": "CC BY（「特段の許可なく利用できます」）",
+    "credit": "「淑徳高等女學校家政女學校春季修學旅行（鎌倉八幡）」東北大学附属図書館所蔵（狩野文庫 請求記号 137-1-176）CC BY https://touda.tohoku.ac.jp/portal/item/10010030004119 （参照 2026-11-09）"
+   },
+   {
+    "src": "https://iiif.adeac.jp/iiif/3/1392015100%2F054-073%2F001.tif/full/1200,/0/default.jpg",
+    "thumb": "https://iiif.adeac.jp/iiif/3/1392015100%2F054-073%2F001.tif/full/400,/0/default.jpg",
+    "page": "https://adeac.jp/tamashin/catalog/mp2020e054073-200010",
+    "title": "絵はがき「鶴岡八幡宮流鏑馬神事 流鏑馬」",
+    "titleEn": "Yabusame at Tsurugaoka Hachimangu (postcard)",
+    "year": "年不明（絵はがき・戦前）",
+    "yearEn": "undated (pre-war postcard)",
+    "holder": "たましん地域文化財団（ADEAC）",
+    "holderEn": "Tamashin Regional Culture Foundation (ADEAC)",
+    "license": "CC BY 4.0（「クリエイティブ・コモンズ 表示 4.0 国際 ライセンスの下に提供」）",
+    "credit": "「鶴岡八幡宮流鏑馬神事 流鏑馬」たましん地域文化財団 所蔵 ADEAC https://adeac.jp/tamashin/catalog/mp2020e054073-200010 CC BY 4.0 （参照 2026-11-09）"
+   },
+   {
+    "src": "https://iiif.adeac.jp/iiif/3/1392015100%2F054-074%2F001.tif/full/1200,/0/default.jpg",
+    "thumb": "https://iiif.adeac.jp/iiif/3/1392015100%2F054-074%2F001.tif/full/400,/0/default.jpg",
+    "page": "https://adeac.jp/tamashin/catalog/mp2020e054074-200010",
+    "title": "絵はがき「鶴岡八幡宮流鏑馬神事 弓渡式」",
+    "titleEn": "Yumi-watashi rite, yabusame at Hachimangu (postcard)",
+    "year": "年不明（絵はがき・戦前）",
+    "yearEn": "undated (pre-war postcard)",
+    "holder": "たましん地域文化財団（ADEAC）",
+    "holderEn": "Tamashin Regional Culture Foundation (ADEAC)",
+    "license": "CC BY 4.0（「クリエイティブ・コモンズ 表示 4.0 国際 ライセンスの下に提供」）",
+    "credit": "「鶴岡八幡宮流鏑馬神事 弓渡式」たましん地域文化財団 所蔵 ADEAC https://adeac.jp/tamashin/catalog/mp2020e054074-200010 CC BY 4.0 （参照 2026-11-09）",
+    "weak": true
+   },
+   {
+    "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0f/Brug_in_Kamakura_Kamakura_%28titel_op_object%29%2C_RP-F-F01102-AM.jpg/1280px-Brug_in_Kamakura_Kamakura_%28titel_op_object%29%2C_RP-F-F01102-AM.jpg",
+    "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0f/Brug_in_Kamakura_Kamakura_%28titel_op_object%29%2C_RP-F-F01102-AM.jpg/330px-Brug_in_Kamakura_Kamakura_%28titel_op_object%29%2C_RP-F-F01102-AM.jpg",
+    "page": "https://commons.wikimedia.org/wiki/File:Brug_in_Kamakura_Kamakura_%28titel_op_object%29%2C_RP-F-F01102-AM.jpg",
+    "title": "鎌倉の橋（鶴岡八幡宮の太鼓橋）",
+    "titleEn": "Bridge in Kamakura",
+    "year": "1870頃–1900頃（明治）",
+    "yearEn": "c. 1870–1900",
+    "holder": "アムステルダム国立美術館",
+    "holderEn": "Rijksmuseum, Amsterdam",
+    "license": "CC0（パブリックドメイン）",
+    "credit": "Brug in Kamakura, RP-F-F01102-AM, Rijksmuseum, CC0. Wikimedia Commons https://commons.wikimedia.org/wiki/File:Brug_in_Kamakura_Kamakura_(titel_op_object),_RP-F-F01102-AM.jpg / https://hdl.handle.net/10934/RM0001.COLLECT.276281 (参照 2026-11-09)"
    }
   ],
   "photo": {
@@ -627,6 +711,35 @@
     "holderEn": "Tamashin Regional Culture Foundation (ADEAC)",
     "license": "CC BY 4.0",
     "credit": "たましん地域文化財団 所蔵（CC BY 4.0）"
+   },
+   {
+    "src": "https://dl.ndl.go.jp/api/iiif/762832/R0000046/1040,940,2200,1610/1200,/0/default.jpg",
+    "thumb": "https://dl.ndl.go.jp/api/iiif/762832/R0000046/1040,940,2200,1610/400,/0/default.jpg",
+    "page": "https://dl.ndl.go.jp/pid/762832/1/46",
+    "pageSrc": "https://dl.ndl.go.jp/api/iiif/762832/R0000046/full/full/0/default.jpg",
+    "title": "鎌倉 円覚寺 仏殿",
+    "titleEn": "Engaku-ji, Butsuden hall",
+    "year": "1912（明治45）",
+    "yearEn": "1912",
+    "holder": "国立国会図書館デジタルコレクション",
+    "holderEn": "National Diet Library Digital Collections",
+    "license": "インターネット公開（保護期間満了）／IIIF Access Restrictions: PDM",
+    "credit": "西田繁造 編『日本名勝旧蹟産業写真帖 : 国定小学校教科書準拠. 天』,西田耕雲堂,1912. 国立国会図書館デジタルコレクション https://dl.ndl.go.jp/pid/762832 （コマ46）(参照 2026-11-09)"
+   },
+   {
+    "src": "https://dl.ndl.go.jp/api/iiif/966765/R0000063/770,970,1660,1110/1200,/0/default.jpg",
+    "thumb": "https://dl.ndl.go.jp/api/iiif/966765/R0000063/770,970,1660,1110/400,/0/default.jpg",
+    "page": "https://dl.ndl.go.jp/pid/966765/1/63",
+    "pageSrc": "https://dl.ndl.go.jp/api/iiif/966765/R0000063/full/full/0/default.jpg",
+    "title": "鎌倉円覚寺山門の倒潰",
+    "titleEn": "Collapse of the Sanmon gate, Engaku-ji",
+    "year": "1923（大正12）撮影・1926（大正15）刊",
+    "yearEn": "1923",
+    "holder": "国立国会図書館デジタルコレクション",
+    "holderEn": "National Diet Library Digital Collections",
+    "license": "インターネット公開（保護期間満了）／IIIF Access Restrictions: PDM",
+    "credit": "内務省社会局 編『大正震災志写真帖』,内務省社会局,1926. 国立国会図書館デジタルコレクション https://dl.ndl.go.jp/pid/966765 （コマ63）(参照 2026-11-09)",
+    "weak": true
    }
   ],
   "photo": {
@@ -674,6 +787,35 @@
     "holderEn": "Tamashin Regional Culture Foundation (ADEAC)",
     "license": "CC BY 4.0",
     "credit": "たましん地域文化財団 所蔵（CC BY 4.0）"
+   },
+   {
+    "src": "https://dl.ndl.go.jp/api/iiif/762832/R0000045/1030,900,2200,1630/1200,/0/default.jpg",
+    "thumb": "https://dl.ndl.go.jp/api/iiif/762832/R0000045/1030,900,2200,1630/400,/0/default.jpg",
+    "page": "https://dl.ndl.go.jp/pid/762832/1/45",
+    "pageSrc": "https://dl.ndl.go.jp/api/iiif/762832/R0000045/full/full/0/default.jpg",
+    "title": "鎌倉 建長寺 山門",
+    "titleEn": "Kencho-ji, Sanmon gate",
+    "year": "1912（明治45）",
+    "yearEn": "1912",
+    "holder": "国立国会図書館デジタルコレクション",
+    "holderEn": "National Diet Library Digital Collections",
+    "license": "インターネット公開（保護期間満了）／IIIF Access Restrictions: PDM",
+    "credit": "西田繁造 編『日本名勝旧蹟産業写真帖 : 国定小学校教科書準拠. 天』,西田耕雲堂,1912. 国立国会図書館デジタルコレクション https://dl.ndl.go.jp/pid/762832 （コマ45）(参照 2026-11-09)"
+   },
+   {
+    "src": "https://dl.ndl.go.jp/api/iiif/966765/R0000062/720,980,1560,1150/1200,/0/default.jpg",
+    "thumb": "https://dl.ndl.go.jp/api/iiif/966765/R0000062/720,980,1560,1150/400,/0/default.jpg",
+    "page": "https://dl.ndl.go.jp/pid/966765/1/62",
+    "pageSrc": "https://dl.ndl.go.jp/api/iiif/966765/R0000062/full/full/0/default.jpg",
+    "title": "崩壊せる鎌倉建長寺本堂",
+    "titleEn": "Collapsed main hall of Kencho-ji",
+    "year": "1923（大正12）撮影・1926（大正15）刊",
+    "yearEn": "1923",
+    "holder": "国立国会図書館デジタルコレクション",
+    "holderEn": "National Diet Library Digital Collections",
+    "license": "インターネット公開（保護期間満了）／IIIF Access Restrictions: PDM",
+    "credit": "内務省社会局 編『大正震災志写真帖』,内務省社会局,1926. 国立国会図書館デジタルコレクション https://dl.ndl.go.jp/pid/966765 （コマ62）(参照 2026-11-09)",
+    "weak": true
    }
   ],
   "photo": {
@@ -708,6 +850,20 @@
     "holder": "ライデン大学図書館（KITLV）",
     "holderEn": "Leiden University Libraries (KITLV)",
     "license": "CC BY 4.0"
+   },
+   {
+    "src": "https://dl.ndl.go.jp/api/iiif/762832/R0000044/1040,940,2190,1620/1200,/0/default.jpg",
+    "thumb": "https://dl.ndl.go.jp/api/iiif/762832/R0000044/1040,940,2190,1620/400,/0/default.jpg",
+    "page": "https://dl.ndl.go.jp/pid/762832/1/44",
+    "pageSrc": "https://dl.ndl.go.jp/api/iiif/762832/R0000044/full/full/0/default.jpg",
+    "title": "官幣中社 鎌倉宮",
+    "titleEn": "Kamakura-gu (government shrine)",
+    "year": "1912（明治45）",
+    "yearEn": "1912",
+    "holder": "国立国会図書館デジタルコレクション",
+    "holderEn": "National Diet Library Digital Collections",
+    "license": "インターネット公開（保護期間満了）／IIIF Access Restrictions: PDM",
+    "credit": "西田繁造 編『日本名勝旧蹟産業写真帖 : 国定小学校教科書準拠. 天』,西田耕雲堂,1912. 国立国会図書館デジタルコレクション https://dl.ndl.go.jp/pid/762832 （コマ44）(参照 2026-11-09)"
    }
   ],
   "photo": {
@@ -742,6 +898,20 @@
     "holder": "ライデン大学図書館（KITLV）",
     "holderEn": "Leiden University Libraries (KITLV)",
     "license": "CC BY 4.0"
+   },
+   {
+    "src": "https://dl.ndl.go.jp/api/iiif/762832/R0000049/1050,950,2210,1670/1200,/0/default.jpg",
+    "thumb": "https://dl.ndl.go.jp/api/iiif/762832/R0000049/1050,950,2210,1670/400,/0/default.jpg",
+    "page": "https://dl.ndl.go.jp/pid/762832/1/49",
+    "pageSrc": "https://dl.ndl.go.jp/api/iiif/762832/R0000049/full/full/0/default.jpg",
+    "title": "鎌倉 源頼朝公の墓",
+    "titleEn": "Kamakura, tomb of Minamoto no Yoritomo",
+    "year": "1912（明治45）",
+    "yearEn": "1912",
+    "holder": "国立国会図書館デジタルコレクション",
+    "holderEn": "National Diet Library Digital Collections",
+    "license": "インターネット公開（保護期間満了）／IIIF Access Restrictions: PDM",
+    "credit": "西田繁造 編『日本名勝旧蹟産業写真帖 : 国定小学校教科書準拠. 天』,西田耕雲堂,1912. 国立国会図書館デジタルコレクション https://dl.ndl.go.jp/pid/762832 （コマ49）(参照 2026-11-09)"
    }
   ],
   "photo": {
@@ -803,6 +973,20 @@
     "license": "保護期間満了（インターネット公開）",
     "credit": "『日本名勝旧蹟産業写真帖』天,明治45. 国立国会図書館デジタルコレクション https://dl.ndl.go.jp/pid/762832 (参照 2026-11-02)",
     "pageSrc": "https://dl.ndl.go.jp/api/iiif/762832/R0000048/full/1200,/0/default.jpg"
+   },
+   {
+    "src": "https://dl.ndl.go.jp/api/iiif/966765/R0000147/1530,400,1580,1030/1200,/0/default.jpg",
+    "thumb": "https://dl.ndl.go.jp/api/iiif/966765/R0000147/1530,400,1580,1030/400,/0/default.jpg",
+    "page": "https://dl.ndl.go.jp/pid/966765/1/147",
+    "pageSrc": "https://dl.ndl.go.jp/api/iiif/966765/R0000147/full/full/0/default.jpg",
+    "title": "鎌倉稲村ヶ崎より坂の下方面に亘る海嘯襲来の跡",
+    "titleEn": "Tsunami damage from Inamuragasaki toward Sakanoshita, Kamakura",
+    "year": "1923（大正12）撮影・1926（大正15）刊",
+    "yearEn": "1923",
+    "holder": "国立国会図書館デジタルコレクション",
+    "holderEn": "National Diet Library Digital Collections",
+    "license": "インターネット公開（保護期間満了）／IIIF Access Restrictions: PDM",
+    "credit": "内務省社会局 編『大正震災志写真帖』,内務省社会局,1926. 国立国会図書館デジタルコレクション https://dl.ndl.go.jp/pid/966765 （コマ147）(参照 2026-11-09)"
    }
   ],
   "photo": {
@@ -837,6 +1021,33 @@
     "holder": "同盟通信社『同盟写真ニュース』",
     "holderEn": "Domei News Agency, \"Domei Photo News\"",
     "license": "Public domain（日本の旧著作権法による）",
+    "weak": true
+   },
+   {
+    "src": "https://touda.tohoku.ac.jp/iiif/2/public%2Flibrary%2Fkano%2Fpostcard%2F137-00229L.tif/full/full/0/default.jpg",
+    "thumb": "https://touda.tohoku.ac.jp/iiif/2/public%2Flibrary%2Fkano%2Fpostcard%2F137-00229L.tif/full/400,/0/default.jpg",
+    "page": "https://touda.tohoku.ac.jp/portal/item/10010030004172",
+    "title": "絵はがき「鎌倉由井ヶ濱地引網」",
+    "titleEn": "Seine-net hauling, Yuigahama (postcard)",
+    "year": "年不明（絵はがき）",
+    "yearEn": "undated (postcard)",
+    "holder": "東北大学附属図書館（狩野文庫）",
+    "holderEn": "Tohoku University Library (Kano Collection)",
+    "license": "CC BY（「特段の許可なく利用できます」）",
+    "credit": "「鎌倉由井ヶ濱地引網」東北大学附属図書館所蔵（狩野文庫 請求記号 137-1-229）CC BY https://touda.tohoku.ac.jp/portal/item/10010030004172 （参照 2026-11-09）"
+   },
+   {
+    "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/Collectie_Wereldmuseum%2C_RV-A130-7-9%2C_Prentbriefkaart%2C_%27Boten_op_het_strand_bij_Yuigahama_in_Kamakura%2C_Kanagawa%27%2C_maker_onbekend-unknown%2C_ca._1900.jpg/1280px-Collectie_Wereldmuseum%2C_RV-A130-7-9%2C_Prentbriefkaart%2C_%27Boten_op_het_strand_bij_Yuigahama_in_Kamakura%2C_Kanagawa%27%2C_maker_onbekend-unknown%2C_ca._1900.jpg",
+    "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/Collectie_Wereldmuseum%2C_RV-A130-7-9%2C_Prentbriefkaart%2C_%27Boten_op_het_strand_bij_Yuigahama_in_Kamakura%2C_Kanagawa%27%2C_maker_onbekend-unknown%2C_ca._1900.jpg/330px-Collectie_Wereldmuseum%2C_RV-A130-7-9%2C_Prentbriefkaart%2C_%27Boten_op_het_strand_bij_Yuigahama_in_Kamakura%2C_Kanagawa%27%2C_maker_onbekend-unknown%2C_ca._1900.jpg",
+    "page": "https://commons.wikimedia.org/wiki/File:Collectie_Wereldmuseum%2C_RV-A130-7-9%2C_Prentbriefkaart%2C_%27Boten_op_het_strand_bij_Yuigahama_in_Kamakura%2C_Kanagawa%27%2C_maker_onbekend-unknown%2C_ca._1900.jpg",
+    "title": "絵はがき「鎌倉 由井ヶ濱」",
+    "titleEn": "Yuigahama of Kamakura (postcard)",
+    "year": "1900年頃",
+    "yearEn": "c. 1900",
+    "holder": "オランダ国立世界文化博物館（Wereldmuseum）",
+    "holderEn": "Wereldmuseum (Nationaal Museum van Wereldculturen)",
+    "license": "パブリックドメイン（コモンズ表示）",
+    "credit": "Collectie Wereldmuseum, RV-A130-7-9, Prentbriefkaart, 'Boten op het strand bij Yuigahama in Kamakura, Kanagawa', ca. 1900. Wikimedia Commons https://commons.wikimedia.org/wiki/File:Collectie_Wereldmuseum,_RV-A130-7-9,_Prentbriefkaart,_'Boten_op_het_strand_bij_Yuigahama_in_Kamakura,_Kanagawa',_maker_onbekend-unknown,_ca._1900.jpg / https://hdl.handle.net/20.500.11840/896291 (参照 2026-11-09)",
     "weak": true
    }
   ],
@@ -889,6 +1100,33 @@
     "pageSrc": "https://dl.ndl.go.jp/api/iiif/1175673/R0000207/full/1200,/0/default.jpg",
     "weak": true,
     "rot": -90
+   },
+   {
+    "src": "https://touda.tohoku.ac.jp/iiif/2/public%2Flibrary%2Fkano%2Fpostcard%2F137-00296L.tif/full/full/0/default.jpg",
+    "thumb": "https://touda.tohoku.ac.jp/iiif/2/public%2Flibrary%2Fkano%2Fpostcard%2F137-00296L.tif/full/400,/0/default.jpg",
+    "page": "https://touda.tohoku.ac.jp/portal/item/10010030004239",
+    "title": "絵はがき「海水浴場」",
+    "titleEn": "Bathing beach, Zushi (postcard)",
+    "year": "年不明（絵はがき）",
+    "yearEn": "undated (postcard)",
+    "holder": "東北大学附属図書館（狩野文庫）",
+    "holderEn": "Tohoku University Library (Kano Collection)",
+    "license": "CC BY（「特段の許可なく利用できます」）",
+    "credit": "「海水浴場」東北大学附属図書館所蔵（狩野文庫 請求記号 137-1-296）CC BY https://touda.tohoku.ac.jp/portal/item/10010030004239 （参照 2026-11-09）"
+   },
+   {
+    "src": "https://touda.tohoku.ac.jp/iiif/2/public%2Flibrary%2Fkano%2Fpostcard%2F137-00303L.tif/full/full/0/default.jpg",
+    "thumb": "https://touda.tohoku.ac.jp/iiif/2/public%2Flibrary%2Fkano%2Fpostcard%2F137-00303L.tif/full/400,/0/default.jpg",
+    "page": "https://touda.tohoku.ac.jp/portal/item/10010030004246",
+    "title": "絵はがき「東郷濱全景と海軍飛行機」",
+    "titleEn": "Togo beach and a navy airplane (postcard)",
+    "year": "年不明（絵はがき）",
+    "yearEn": "undated (postcard)",
+    "holder": "東北大学附属図書館（狩野文庫）",
+    "holderEn": "Tohoku University Library (Kano Collection)",
+    "license": "CC BY（「特段の許可なく利用できます」）",
+    "credit": "「東郷濱全景と海軍飛行機」東北大学附属図書館所蔵（狩野文庫 請求記号 137-1-303）CC BY https://touda.tohoku.ac.jp/portal/item/10010030004246 （参照 2026-11-09）",
+    "weak": true
    }
   ],
   "photo": {
@@ -970,6 +1208,46 @@
     "license": "保護期間満了（インターネット公開）",
     "credit": "神奈川県三浦郡教育会 編『三浦郡誌』,横須賀印刷,大正7. 国立国会図書館デジタルコレクション https://dl.ndl.go.jp/pid/953212 (参照 2026-11-01)",
     "pageSrc": "https://dl.ndl.go.jp/api/iiif/953212/R0000008/full/1200,/0/default.jpg"
+   },
+   {
+    "src": "https://touda.tohoku.ac.jp/iiif/2/public%2Flibrary%2Fkano%2Fpostcard%2F137-00292L.tif/full/full/0/default.jpg",
+    "thumb": "https://touda.tohoku.ac.jp/iiif/2/public%2Flibrary%2Fkano%2Fpostcard%2F137-00292L.tif/full/400,/0/default.jpg",
+    "page": "https://touda.tohoku.ac.jp/portal/item/10010030004235",
+    "title": "絵はがき「逗子冨士見橋ノ景」",
+    "titleEn": "Fujimi Bridge, Zushi (postcard)",
+    "year": "年不明（絵はがき）",
+    "yearEn": "undated (postcard)",
+    "holder": "東北大学附属図書館（狩野文庫）",
+    "holderEn": "Tohoku University Library (Kano Collection)",
+    "license": "CC BY（「特段の許可なく利用できます」）",
+    "credit": "「逗子冨士見橋ノ景」東北大学附属図書館所蔵（狩野文庫 請求記号 137-1-292）CC BY https://touda.tohoku.ac.jp/portal/item/10010030004235 （参照 2026-11-09）"
+   },
+   {
+    "src": "https://touda.tohoku.ac.jp/iiif/2/public%2Flibrary%2Fkano%2Fpostcard%2F137-00297L.tif/full/full/0/default.jpg",
+    "thumb": "https://touda.tohoku.ac.jp/iiif/2/public%2Flibrary%2Fkano%2Fpostcard%2F137-00297L.tif/full/400,/0/default.jpg",
+    "page": "https://touda.tohoku.ac.jp/portal/item/10010030004240",
+    "title": "絵はがき「逗子海岸」",
+    "titleEn": "Zushi coast (postcard)",
+    "year": "年不明（絵はがき）",
+    "yearEn": "undated (postcard)",
+    "holder": "東北大学附属図書館（狩野文庫）",
+    "holderEn": "Tohoku University Library (Kano Collection)",
+    "license": "CC BY（「特段の許可なく利用できます」）",
+    "credit": "「逗子海岸」東北大学附属図書館所蔵（狩野文庫 請求記号 137-1-297）CC BY https://touda.tohoku.ac.jp/portal/item/10010030004240 （参照 2026-11-09）",
+    "weak": true
+   },
+   {
+    "src": "https://touda.tohoku.ac.jp/iiif/2/public%2Flibrary%2Fkano%2Fpostcard%2F137-00298L.tif/full/full/0/default.jpg",
+    "thumb": "https://touda.tohoku.ac.jp/iiif/2/public%2Flibrary%2Fkano%2Fpostcard%2F137-00298L.tif/full/400,/0/default.jpg",
+    "page": "https://touda.tohoku.ac.jp/portal/item/10010030004241",
+    "title": "絵はがき「田越橋の絶景」",
+    "titleEn": "Tagoe Bridge (postcard)",
+    "year": "年不明（絵はがき）",
+    "yearEn": "undated (postcard)",
+    "holder": "東北大学附属図書館（狩野文庫）",
+    "holderEn": "Tohoku University Library (Kano Collection)",
+    "license": "CC BY（「特段の許可なく利用できます」）",
+    "credit": "「田越橋の絶景」東北大学附属図書館所蔵（狩野文庫 請求記号 137-1-298）CC BY https://touda.tohoku.ac.jp/portal/item/10010030004241 （参照 2026-11-09）"
    }
   ],
   "photo": {
@@ -1635,6 +1913,21 @@
     "license": "保護期間満了（インターネット公開）",
     "credit": "『日本名勝旧蹟産業写真帖』天,明治45. 国立国会図書館デジタルコレクション https://dl.ndl.go.jp/pid/762832 (参照 2026-11-02)",
     "pageSrc": "https://dl.ndl.go.jp/api/iiif/762832/R0000050/full/1200,/0/default.jpg"
+   },
+   {
+    "src": "https://dl.ndl.go.jp/api/iiif/966765/R0000147/680,1010,1550,1020/1200,/0/default.jpg",
+    "thumb": "https://dl.ndl.go.jp/api/iiif/966765/R0000147/680,1010,1550,1020/400,/0/default.jpg",
+    "page": "https://dl.ndl.go.jp/pid/966765/1/147",
+    "pageSrc": "https://dl.ndl.go.jp/api/iiif/966765/R0000147/full/full/0/default.jpg",
+    "title": "七里ヶ浜海嘯襲来の跡",
+    "titleEn": "Tsunami damage at Shichirigahama",
+    "year": "1923（大正12）撮影・1926（大正15）刊",
+    "yearEn": "1923",
+    "holder": "国立国会図書館デジタルコレクション",
+    "holderEn": "National Diet Library Digital Collections",
+    "license": "インターネット公開（保護期間満了）／IIIF Access Restrictions: PDM",
+    "credit": "内務省社会局 編『大正震災志写真帖』,内務省社会局,1926. 国立国会図書館デジタルコレクション https://dl.ndl.go.jp/pid/966765 （コマ147）(参照 2026-11-09)",
+    "weak": true
    }
   ],
   "photo": {
@@ -2043,6 +2336,19 @@
     "license": "保護期間満了（インターネット公開）",
     "credit": "岩波書店編集部 編『岩波写真文庫』156,岩波書店,1955. 国立国会図書館デジタルコレクション https://dl.ndl.go.jp/pid/14278949 (参照 2026-10-24)",
     "pageSrc": "https://dl.ndl.go.jp/api/iiif/14278949/R0000022/full/1200,/0/default.jpg"
+   },
+   {
+    "src": "https://iiif.adeac.jp/iiif/3/1392015100%2F054-072%2F001.tif/full/max/0/default.jpg",
+    "thumb": "https://iiif.adeac.jp/iiif/3/1392015100%2F054-072%2F001.tif/full/400,/0/default.jpg",
+    "page": "https://adeac.jp/tamashin/catalog/mp2020e054072-200010",
+    "title": "絵はがき「鎌倉五山ノ内 浄妙寺」",
+    "titleEn": "Jomyoji, one of Kamakura's Five Great Zen Temples (postcard)",
+    "year": "年不明（絵はがき・戦前）",
+    "yearEn": "undated (pre-war postcard)",
+    "holder": "たましん地域文化財団（ADEAC）",
+    "holderEn": "Tamashin Regional Culture Foundation (ADEAC)",
+    "license": "CC BY 4.0（「クリエイティブ・コモンズ 表示 4.0 国際 ライセンスの下に提供」）",
+    "credit": "「鎌倉五山ノ内 浄妙寺」たましん地域文化財団 所蔵 ADEAC https://adeac.jp/tamashin/catalog/mp2020e054072-200010 CC BY 4.0 （参照 2026-11-09）"
    }
   ],
   "photo": {
@@ -2097,6 +2403,19 @@
     "license": "保護期間満了（インターネット公開）",
     "credit": "岩波書店編集部 編『岩波写真文庫』156,岩波書店,1955. 国立国会図書館デジタルコレクション https://dl.ndl.go.jp/pid/14278949 (参照 2026-10-24)",
     "pageSrc": "https://dl.ndl.go.jp/api/iiif/14278949/R0000022/full/1200,/0/default.jpg"
+   },
+   {
+    "src": "https://iiif.adeac.jp/iiif/3/1392015100%2F054-071%2F001.tif/full/1200,/0/default.jpg",
+    "thumb": "https://iiif.adeac.jp/iiif/3/1392015100%2F054-071%2F001.tif/full/400,/0/default.jpg",
+    "page": "https://adeac.jp/tamashin/catalog/mp2020e054071-200010",
+    "title": "絵はがき「鎌倉五山ノ内 浄智寺」",
+    "titleEn": "Jochiji, one of Kamakura's Five Great Zen Temples (postcard)",
+    "year": "年不明（絵はがき・戦前）",
+    "yearEn": "undated (pre-war postcard)",
+    "holder": "たましん地域文化財団（ADEAC）",
+    "holderEn": "Tamashin Regional Culture Foundation (ADEAC)",
+    "license": "CC BY 4.0（「クリエイティブ・コモンズ 表示 4.0 国際 ライセンスの下に提供」）",
+    "credit": "「鎌倉五山ノ内 浄智寺」たましん地域文化財団 所蔵 ADEAC https://adeac.jp/tamashin/catalog/mp2020e054071-200010 CC BY 4.0 （参照 2026-11-09）"
    }
   ],
   "photo": {
@@ -2248,6 +2567,33 @@
     "license": "保護期間満了（インターネット公開）",
     "credit": "岩波書店編集部 編『岩波写真文庫』156,岩波書店,1955. 国立国会図書館デジタルコレクション https://dl.ndl.go.jp/pid/14278949 (参照 2026-10-24)",
     "pageSrc": "https://dl.ndl.go.jp/api/iiif/14278949/R0000025/full/1200,/0/default.jpg"
+   },
+   {
+    "src": "https://dl.ndl.go.jp/api/iiif/762832/R0000051/1090,950,2200,1670/1200,/0/default.jpg",
+    "thumb": "https://dl.ndl.go.jp/api/iiif/762832/R0000051/1090,950,2200,1670/400,/0/default.jpg",
+    "page": "https://dl.ndl.go.jp/pid/762832/1/51",
+    "pageSrc": "https://dl.ndl.go.jp/api/iiif/762832/R0000051/full/full/0/default.jpg",
+    "title": "ペルリ上陸紀念碑",
+    "titleEn": "Monument to Perry's landing",
+    "year": "1912（明治45）",
+    "yearEn": "1912",
+    "holder": "国立国会図書館デジタルコレクション",
+    "holderEn": "National Diet Library Digital Collections",
+    "license": "インターネット公開（保護期間満了）／IIIF Access Restrictions: PDM",
+    "credit": "西田繁造 編『日本名勝旧蹟産業写真帖 : 国定小学校教科書準拠. 天』,西田耕雲堂,1912. 国立国会図書館デジタルコレクション https://dl.ndl.go.jp/pid/762832 （コマ51）(参照 2026-11-09)"
+   },
+   {
+    "src": "https://touda.tohoku.ac.jp/iiif/2/public%2Flibrary%2Fkano%2Fpostcard%2F137-00912L.tif/full/full/0/default.jpg",
+    "thumb": "https://touda.tohoku.ac.jp/iiif/2/public%2Flibrary%2Fkano%2Fpostcard%2F137-00912L.tif/full/400,/0/default.jpg",
+    "page": "https://touda.tohoku.ac.jp/portal/item/10010030004855",
+    "title": "絵はがき「浦賀ペルリ紀念碑」",
+    "titleEn": "Perry monument (postcard)",
+    "year": "年不明（絵はがき）",
+    "yearEn": "undated (postcard)",
+    "holder": "東北大学附属図書館（狩野文庫）",
+    "holderEn": "Tohoku University Library (Kano Collection)",
+    "license": "CC BY（「特段の許可なく利用できます」）",
+    "credit": "「浦賀ペルリ紀念碑」東北大学附属図書館所蔵（狩野文庫 請求記号 137-4-912）CC BY https://touda.tohoku.ac.jp/portal/item/10010030004855 （参照 2026-11-09）"
    }
   ],
   "photo": {
@@ -2288,6 +2634,20 @@
     "license": "保護期間満了（インターネット公開）",
     "credit": "瀬川光行 編『日本之名勝』,史伝編纂所,明33.12. 国立国会図書館デジタルコレクション https://dl.ndl.go.jp/pid/762809 (参照 2026-10-24)",
     "pageSrc": "https://dl.ndl.go.jp/api/iiif/762809/R0000170/full/1200,/0/default.jpg"
+   },
+   {
+    "src": "https://touda.tohoku.ac.jp/iiif/2/public%2Flibrary%2Fkano%2Fpostcard%2F137-00308L.tif/full/full/0/default.jpg",
+    "thumb": "https://touda.tohoku.ac.jp/iiif/2/public%2Flibrary%2Fkano%2Fpostcard%2F137-00308L.tif/full/400,/0/default.jpg",
+    "page": "https://touda.tohoku.ac.jp/portal/item/10010030004251",
+    "title": "絵はがき「葉山御用邸海岸」",
+    "titleEn": "Coast by the Hayama Imperial Villa (postcard)",
+    "year": "年不明（絵はがき）",
+    "yearEn": "undated (postcard)",
+    "holder": "東北大学附属図書館（狩野文庫）",
+    "holderEn": "Tohoku University Library (Kano Collection)",
+    "license": "CC BY（「特段の許可なく利用できます」）",
+    "credit": "「葉山御用邸海岸」東北大学附属図書館所蔵（狩野文庫 請求記号 137-1-308）CC BY https://touda.tohoku.ac.jp/portal/item/10010030004251 （参照 2026-11-09）",
+    "weak": true
    }
   ],
   "photo": {
@@ -2619,6 +2979,20 @@
     "credit": "岩波書店編集部 編『岩波写真文庫』156,岩波書店,1955. 国立国会図書館デジタルコレクション https://dl.ndl.go.jp/pid/14278949 (参照 2026-10-24)",
     "pageSrc": "https://dl.ndl.go.jp/api/iiif/14278949/R0000008/full/1200,/0/default.jpg",
     "weak": true
+   },
+   {
+    "src": "https://touda.tohoku.ac.jp/iiif/2/public%2Flibrary%2Fkano%2Fpostcard%2F137-00811L.tif/full/full/0/default.jpg",
+    "thumb": "https://touda.tohoku.ac.jp/iiif/2/public%2Flibrary%2Fkano%2Fpostcard%2F137-00811L.tif/full/400,/0/default.jpg",
+    "page": "https://touda.tohoku.ac.jp/portal/item/10010030004754",
+    "title": "絵はがき「漁船の集合」",
+    "titleEn": "Fishing boats gathered (postcard)",
+    "year": "年不明（絵はがき）",
+    "yearEn": "undated (postcard)",
+    "holder": "東北大学附属図書館（狩野文庫）",
+    "holderEn": "Tohoku University Library (Kano Collection)",
+    "license": "CC BY（「特段の許可なく利用できます」）",
+    "credit": "「漁船の集合」東北大学附属図書館所蔵（狩野文庫 請求記号 137-3-811）CC BY https://touda.tohoku.ac.jp/portal/item/10010030004754 （参照 2026-11-09）",
+    "weak": true
    }
   ],
   "photo": {
@@ -2731,6 +3105,19 @@
     "credit": "『横須賀研究：附・三浦半島誌』,大正6. 国立国会図書館デジタルコレクション https://dl.ndl.go.jp/pid/958183 (参照 2026-11-02)",
     "pageSrc": "https://dl.ndl.go.jp/api/iiif/958183/R0000008/full/1200,/0/default.jpg",
     "weak": true
+   },
+   {
+    "src": "https://touda.tohoku.ac.jp/iiif/2/public%2Flibrary%2Fkano%2Fpostcard%2F137-00801L.tif/full/full/0/default.jpg",
+    "thumb": "https://touda.tohoku.ac.jp/iiif/2/public%2Flibrary%2Fkano%2Fpostcard%2F137-00801L.tif/full/400,/0/default.jpg",
+    "page": "https://touda.tohoku.ac.jp/portal/item/10010030004744",
+    "title": "絵はがき「油壺の入口」",
+    "titleEn": "Entrance of Aburatsubo (postcard)",
+    "year": "年不明（絵はがき）",
+    "yearEn": "undated (postcard)",
+    "holder": "東北大学附属図書館（狩野文庫）",
+    "holderEn": "Tohoku University Library (Kano Collection)",
+    "license": "CC BY（「特段の許可なく利用できます」）",
+    "credit": "「油壺の入口」東北大学附属図書館所蔵（狩野文庫 請求記号 137-3-801）CC BY https://touda.tohoku.ac.jp/portal/item/10010030004744 （参照 2026-11-09）"
    }
   ],
   "photo": {
@@ -3117,6 +3504,20 @@
     "holderEn": "Wikimedia Commons (private postcard)",
     "license": "パブリックドメイン（日本の旧著作権法で保護期間満了）",
     "credit": "浦賀船渠株式会社 本工場全景（其一）, 絵はがき, 1910年ごろ, 作者不明. Wikimedia Commons https://commons.wikimedia.org/wiki/File:Uraga_Dock_Company.jpg (参照 2026-11-03)"
+   },
+   {
+    "src": "https://touda.tohoku.ac.jp/iiif/2/public%2Flibrary%2Fkano%2Fpostcard%2F137-00967L.tif/full/full/0/default.jpg",
+    "thumb": "https://touda.tohoku.ac.jp/iiif/2/public%2Flibrary%2Fkano%2Fpostcard%2F137-00967L.tif/full/400,/0/default.jpg",
+    "page": "https://touda.tohoku.ac.jp/portal/item/10010030004910",
+    "title": "絵はがき「浦賀船渠株式會社　本工塲全景（其二）」",
+    "titleEn": "Uraga Dock Co., main works (2) (postcard)",
+    "year": "年不明（絵はがき）",
+    "yearEn": "undated (postcard)",
+    "holder": "東北大学附属図書館（狩野文庫）",
+    "holderEn": "Tohoku University Library (Kano Collection)",
+    "license": "CC BY（「特段の許可なく利用できます」）",
+    "credit": "「浦賀船渠株式會社　本工塲全景（其二）」東北大学附属図書館所蔵（狩野文庫 請求記号 137-4-967）CC BY https://touda.tohoku.ac.jp/portal/item/10010030004910 （参照 2026-11-09）",
+    "weak": true
    }
   ],
   "photo": {
@@ -3874,6 +4275,20 @@
     "license": "CC BY",
     "credit": "「横須賀停車塲」東北大学附属図書館所蔵",
     "weak": true
+   },
+   {
+    "src": "https://dl.ndl.go.jp/api/iiif/954952/R0000174/2290,520,1110,830/1200,/0/default.jpg",
+    "thumb": "https://dl.ndl.go.jp/api/iiif/954952/R0000174/2290,520,1110,830/400,/0/default.jpg",
+    "page": "https://dl.ndl.go.jp/pid/954952/1/174",
+    "pageSrc": "https://dl.ndl.go.jp/api/iiif/954952/R0000174/full/full/0/default.jpg",
+    "title": "横須賀駅",
+    "titleEn": "Yokosuka Station",
+    "year": "1915（大正4）",
+    "yearEn": "1915",
+    "holder": "国立国会図書館デジタルコレクション",
+    "holderEn": "National Diet Library Digital Collections",
+    "license": "インターネット公開（保護期間満了）／IIIF Access Restrictions: PDM",
+    "credit": "横須賀市 編『横須賀案内記』,横須賀開港五十年祝賀会,1915. 国立国会図書館デジタルコレクション https://dl.ndl.go.jp/pid/954952 （コマ174）(参照 2026-11-09)"
    }
   ],
   "photo": {
@@ -4038,6 +4453,20 @@
     "license": "保護期間満了（インターネット公開）",
     "credit": "綾部虎治郎 著『鎌倉名勝誌』,松林堂本店,大正9. 国立国会図書館デジタルコレクション https://dl.ndl.go.jp/pid/960966 (参照 2026-10-24)",
     "pageSrc": "https://dl.ndl.go.jp/api/iiif/960966/R0000005/full/1200,/0/default.jpg"
+   },
+   {
+    "src": "https://dl.ndl.go.jp/api/iiif/966765/R0000062/1700,340,1480,1080/1200,/0/default.jpg",
+    "thumb": "https://dl.ndl.go.jp/api/iiif/966765/R0000062/1700,340,1480,1080/400,/0/default.jpg",
+    "page": "https://dl.ndl.go.jp/pid/966765/1/62",
+    "pageSrc": "https://dl.ndl.go.jp/api/iiif/966765/R0000062/full/full/0/default.jpg",
+    "title": "国宝 一の鳥居（鶴ヶ岡八幡宮華表）崩壊せる",
+    "titleEn": "Collapsed Ichi-no-torii (great gate of Tsurugaoka Hachimangu)",
+    "year": "1923（大正12）撮影・1926（大正15）刊",
+    "yearEn": "1923",
+    "holder": "国立国会図書館デジタルコレクション",
+    "holderEn": "National Diet Library Digital Collections",
+    "license": "インターネット公開（保護期間満了）／IIIF Access Restrictions: PDM",
+    "credit": "内務省社会局 編『大正震災志写真帖』,内務省社会局,1926. 国立国会図書館デジタルコレクション https://dl.ndl.go.jp/pid/966765 （コマ62）(参照 2026-11-09)"
    }
   ],
   "photo": {
@@ -4257,6 +4686,46 @@
     "credit": "『鎌倉大観』,明治35. 国立国会図書館デジタルコレクション https://dl.ndl.go.jp/pid/763757 (参照 2026-11-02)",
     "pageSrc": "https://dl.ndl.go.jp/api/iiif/763757/R0000013/full/1200,/0/default.jpg",
     "rot": -90
+   },
+   {
+    "src": "https://touda.tohoku.ac.jp/iiif/2/public%2Flibrary%2Fkano%2Fpostcard%2F137-00226L.tif/full/full/0/default.jpg",
+    "thumb": "https://touda.tohoku.ac.jp/iiif/2/public%2Flibrary%2Fkano%2Fpostcard%2F137-00226L.tif/full/400,/0/default.jpg",
+    "page": "https://touda.tohoku.ac.jp/portal/item/10010030004169",
+    "title": "絵はがき「龍口寺山ヨリ片瀨望ム」",
+    "titleEn": "Katase from the Ryukoji hill (postcard)",
+    "year": "年不明（絵はがき）",
+    "yearEn": "undated (postcard)",
+    "holder": "東北大学附属図書館（狩野文庫）",
+    "holderEn": "Tohoku University Library (Kano Collection)",
+    "license": "CC BY（「特段の許可なく利用できます」）",
+    "credit": "「龍口寺山ヨリ片瀨望ム」東北大学附属図書館所蔵（狩野文庫 請求記号 137-1-226）CC BY https://touda.tohoku.ac.jp/portal/item/10010030004169 （参照 2026-11-09）",
+    "weak": true
+   },
+   {
+    "src": "https://iiif.wellcomecollection.org/image/V0037391/full/1200,/0/default.jpg",
+    "thumb": "https://iiif.wellcomecollection.org/image/V0037391/full/400,/0/default.jpg",
+    "page": "https://wellcomecollection.org/works/u9q7kxd5",
+    "title": "片瀬の村（龍口寺の屋根越しに江の島）",
+    "titleEn": "Katasie, a Japanese village near Kamakura (W. P. Floyd)",
+    "year": "1873頃（明治6）",
+    "yearEn": "c. 1873",
+    "holder": "ウェルカム・コレクション",
+    "holderEn": "Wellcome Collection",
+    "license": "Public Domain Mark",
+    "credit": "Katasie, a Japanese village near Kamakura, in wooded country. Photograph by W.P. Floyd, ca. 1873. Wellcome Collection 30013i, Public Domain Mark. https://wellcomecollection.org/works/u9q7kxd5 (参照 2026-11-09)"
+   },
+   {
+    "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e3/Katase_Temple_LACMA_M.91.377.39.jpg/1280px-Katase_Temple_LACMA_M.91.377.39.jpg",
+    "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e3/Katase_Temple_LACMA_M.91.377.39.jpg/330px-Katase_Temple_LACMA_M.91.377.39.jpg",
+    "page": "https://commons.wikimedia.org/wiki/File:Katase_Temple_LACMA_M.91.377.39.jpg",
+    "title": "片瀬の寺（龍口寺）",
+    "titleEn": "Katase Temple (Ryūkō-ji)",
+    "year": "1865（慶応元）",
+    "yearEn": "1865",
+    "holder": "ロサンゼルス・カウンティ美術館（LACMA）",
+    "holderEn": "Los Angeles County Museum of Art",
+    "license": "パブリックドメイン（LACMA公開画像・コモンズ表示）",
+    "credit": "Katase Temple, 1865, albumen print, hand-colored, LACMA M.91.377.39, Gift of Mrs. Ruthe Feldman, public domain. Wikimedia Commons https://commons.wikimedia.org/wiki/File:Katase_Temple_LACMA_M.91.377.39.jpg (参照 2026-11-09)"
    }
   ],
   "photo": {
@@ -4479,6 +4948,46 @@
     "holderEn": "Tohoku University Library (Kano Collection)",
     "license": "CC BY",
     "credit": "「江ノ島入口」東北大学附属図書館所蔵"
+   },
+   {
+    "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d6/Collectie_Wereldmuseum%2C_RV-A180-1-22%2C_Foto%2C_%27De_ingang_van_de_hoofdstraat_van_Yenoshima%27%2C_maker_onbekend-unknown%2C_1896.jpg/1280px-Collectie_Wereldmuseum%2C_RV-A180-1-22%2C_Foto%2C_%27De_ingang_van_de_hoofdstraat_van_Yenoshima%27%2C_maker_onbekend-unknown%2C_1896.jpg",
+    "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d6/Collectie_Wereldmuseum%2C_RV-A180-1-22%2C_Foto%2C_%27De_ingang_van_de_hoofdstraat_van_Yenoshima%27%2C_maker_onbekend-unknown%2C_1896.jpg/330px-Collectie_Wereldmuseum%2C_RV-A180-1-22%2C_Foto%2C_%27De_ingang_van_de_hoofdstraat_van_Yenoshima%27%2C_maker_onbekend-unknown%2C_1896.jpg",
+    "page": "https://commons.wikimedia.org/wiki/File:Collectie_Wereldmuseum%2C_RV-A180-1-22%2C_Foto%2C_%27De_ingang_van_de_hoofdstraat_van_Yenoshima%27%2C_maker_onbekend-unknown%2C_1896.jpg",
+    "title": "江の島の目抜き通りの入口（鳥居）",
+    "titleEn": "Entrance to the main street of Yenoshima",
+    "year": "1896（明治29）",
+    "yearEn": "1896",
+    "holder": "オランダ国立世界文化博物館（Wereldmuseum）",
+    "holderEn": "Wereldmuseum (Nationaal Museum van Wereldculturen)",
+    "license": "パブリックドメイン（コモンズ表示）",
+    "credit": "Collectie Wereldmuseum, RV-A180-1-22, 'De ingang van de hoofdstraat van Yenoshima', 1896, maker onbekend. Wikimedia Commons https://commons.wikimedia.org/wiki/File:Collectie_Wereldmuseum,_RV-A180-1-22,_Foto,_'De_ingang_van_de_hoofdstraat_van_Yenoshima',_maker_onbekend-unknown,_1896.jpg / https://hdl.handle.net/20.500.11840/904346 (参照 2026-11-09)"
+   },
+   {
+    "src": "https://upload.wikimedia.org/wikipedia/commons/b/b3/Street_in_Yenoshima_%283110702532%29.jpg",
+    "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b3/Street_in_Yenoshima_%283110702532%29.jpg/330px-Street_in_Yenoshima_%283110702532%29.jpg",
+    "page": "https://commons.wikimedia.org/wiki/File:Street_in_Yenoshima_(3110702532).jpg",
+    "title": "江の島の通り（日下部金兵衛）",
+    "titleEn": "Street in Yenoshima (Kusakabe Kimbei)",
+    "year": "1880年代–1890年代（明治）",
+    "yearEn": "1880s–1890s",
+    "holder": "ニューヨーク公共図書館",
+    "holderEn": "The New York Public Library",
+    "license": "No known copyright restrictions（NYPL）",
+    "credit": "Kusakabe, Kimbei. Street in Yenoshima, 188-?–189-?, NYPL Photography Collection (Digital ID 110029), no known copyright restrictions. Wikimedia Commons https://commons.wikimedia.org/wiki/File:Street_in_Yenoshima_(3110702532).jpg (参照 2026-11-09)",
+    "weak": true
+   },
+   {
+    "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a8/KITLV_A955_-_Brug_tussen_Enoshima_en_Fujisawa_in_Japan%2C_KITLV_107918.tiff/lossy-page1-1280px-KITLV_A955_-_Brug_tussen_Enoshima_en_Fujisawa_in_Japan%2C_KITLV_107918.tiff.jpg",
+    "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a8/KITLV_A955_-_Brug_tussen_Enoshima_en_Fujisawa_in_Japan%2C_KITLV_107918.tiff/lossy-page1-330px-KITLV_A955_-_Brug_tussen_Enoshima_en_Fujisawa_in_Japan%2C_KITLV_107918.tiff.jpg",
+    "page": "https://commons.wikimedia.org/wiki/File:KITLV_A955_-_Brug_tussen_Enoshima_en_Fujisawa_in_Japan%2C_KITLV_107918.tiff",
+    "title": "絵はがき「江の島名勝 江の島入口全景」",
+    "titleEn": "Famous places at Enoshima: entrance (postcard)",
+    "year": "1930年頃（昭和初期）",
+    "yearEn": "c. 1930",
+    "holder": "ライデン大学図書館（KITLV）",
+    "holderEn": "Leiden University Libraries (KITLV)",
+    "license": "CC BY 4.0",
+    "credit": "KITLV A955 - Brug tussen Enoshima en Fujisawa in Japan, KITLV 107918, Leiden University Libraries, CC BY 4.0. http://hdl.handle.net/1887.1/item:730700 / Wikimedia Commons https://commons.wikimedia.org/wiki/File:KITLV_A955_-_Brug_tussen_Enoshima_en_Fujisawa_in_Japan,_KITLV_107918.tiff (参照 2026-11-09)"
    }
   ],
   "photo": {
@@ -5307,6 +5816,20 @@
     "license": "保護期間満了（インターネット公開）",
     "credit": "『鎌倉社寺めぐり』,大正15. 国立国会図書館デジタルコレクション https://dl.ndl.go.jp/pid/1019051 (参照 2026-11-02)",
     "pageSrc": "https://dl.ndl.go.jp/api/iiif/1019051/R0000120/full/1200,/0/default.jpg"
+   },
+   {
+    "src": "https://iiif.adeac.jp/iiif/3/1392015100%2F054-064%2F001.tif/full/1200,/0/default.jpg",
+    "thumb": "https://iiif.adeac.jp/iiif/3/1392015100%2F054-064%2F001.tif/full/400,/0/default.jpg",
+    "page": "https://adeac.jp/tamashin/catalog/mp2020e054064-200010",
+    "title": "絵はがき「北條時宗公廟所 (大本山鎌倉圓覚寺)」",
+    "titleEn": "Mausoleum of Hojo Tokimune, Engakuji (postcard)",
+    "year": "年不明（絵はがき・戦前）",
+    "yearEn": "undated (pre-war postcard)",
+    "holder": "たましん地域文化財団（ADEAC）",
+    "holderEn": "Tamashin Regional Culture Foundation (ADEAC)",
+    "license": "CC BY 4.0（「クリエイティブ・コモンズ 表示 4.0 国際 ライセンスの下に提供」）",
+    "credit": "「北條時宗公廟所 (大本山鎌倉圓覚寺)」たましん地域文化財団 所蔵 ADEAC https://adeac.jp/tamashin/catalog/mp2020e054064-200010 CC BY 4.0 （参照 2026-11-09）",
+    "weak": true
    }
   ],
   "photo": {
@@ -5452,6 +5975,743 @@
    "pageSrc": "https://dl.ndl.go.jp/api/iiif/1033998/R0000005/full/1200,/0/default.jpg",
    "weak": true,
    "rot": -90
+  }
+ },
+ {
+  "id": "add-yokosuka-suwa-view",
+  "ready": false,
+  "name": "諏訪公園からの眺め（横須賀）",
+  "nameEn": "View from Suwa Park, Yokosuka",
+  "target": {
+   "lat": 35.2808744,
+   "lon": 139.6648476
+  },
+  "photos": [
+   {
+    "src": "https://dl.ndl.go.jp/api/iiif/966765/R0000145/1920,370,1230,890/1200,/0/default.jpg",
+    "thumb": "https://dl.ndl.go.jp/api/iiif/966765/R0000145/1920,370,1230,890/400,/0/default.jpg",
+    "page": "https://dl.ndl.go.jp/pid/966765/1/145",
+    "pageSrc": "https://dl.ndl.go.jp/api/iiif/966765/R0000145/full/full/0/default.jpg",
+    "title": "横須賀市諏訪公園より見たる震火災の跡",
+    "titleEn": "Earthquake and fire ruins seen from Suwa Park, Yokosuka",
+    "year": "1923（大正12）撮影・1926（大正15）刊",
+    "yearEn": "1923",
+    "holder": "国立国会図書館デジタルコレクション",
+    "holderEn": "National Diet Library Digital Collections",
+    "license": "インターネット公開（保護期間満了）／IIIF Access Restrictions: PDM",
+    "credit": "内務省社会局 編『大正震災志写真帖』,内務省社会局,1926. 国立国会図書館デジタルコレクション https://dl.ndl.go.jp/pid/966765 （コマ145）(参照 2026-11-09)"
+   }
+  ],
+  "photo": {
+   "src": "https://dl.ndl.go.jp/api/iiif/966765/R0000145/1920,370,1230,890/1200,/0/default.jpg",
+   "thumb": "https://dl.ndl.go.jp/api/iiif/966765/R0000145/1920,370,1230,890/400,/0/default.jpg",
+   "page": "https://dl.ndl.go.jp/pid/966765/1/145",
+   "pageSrc": "https://dl.ndl.go.jp/api/iiif/966765/R0000145/full/full/0/default.jpg",
+   "title": "横須賀市諏訪公園より見たる震火災の跡",
+   "titleEn": "Earthquake and fire ruins seen from Suwa Park, Yokosuka",
+   "year": "1923（大正12）撮影・1926（大正15）刊",
+   "yearEn": "1923",
+   "holder": "国立国会図書館デジタルコレクション",
+   "holderEn": "National Diet Library Digital Collections",
+   "license": "インターネット公開（保護期間満了）／IIIF Access Restrictions: PDM",
+   "credit": "内務省社会局 編『大正震災志写真帖』,内務省社会局,1926. 国立国会図書館デジタルコレクション https://dl.ndl.go.jp/pid/966765 （コマ145）(参照 2026-11-09)"
+  }
+ },
+ {
+  "id": "add-zushi-fujimibashi",
+  "ready": false,
+  "name": "富士見橋のたもと（逗子）",
+  "nameEn": "Foot of Fujimi Bridge, Zushi",
+  "target": {
+   "lat": 35.2886762,
+   "lon": 139.5755436
+  },
+  "photos": [
+   {
+    "src": "https://touda.tohoku.ac.jp/iiif/2/public%2Flibrary%2Fkano%2Fpostcard%2F137-00293L.tif/full/full/0/default.jpg",
+    "thumb": "https://touda.tohoku.ac.jp/iiif/2/public%2Flibrary%2Fkano%2Fpostcard%2F137-00293L.tif/full/400,/0/default.jpg",
+    "page": "https://touda.tohoku.ac.jp/portal/item/10010030004236",
+    "title": "絵はがき「相州逗子名代冨士見橋畔甘酒屋」",
+    "titleEn": "Amazake teahouse by Fujimi Bridge, Zushi (postcard)",
+    "year": "年不明（絵はがき）",
+    "yearEn": "undated (postcard)",
+    "holder": "東北大学附属図書館（狩野文庫）",
+    "holderEn": "Tohoku University Library (Kano Collection)",
+    "license": "CC BY（「特段の許可なく利用できます」）",
+    "credit": "「相州逗子名代冨士見橋畔甘酒屋」東北大学附属図書館所蔵（狩野文庫 請求記号 137-1-293）CC BY https://touda.tohoku.ac.jp/portal/item/10010030004236 （参照 2026-11-09）"
+   }
+  ],
+  "photo": {
+   "src": "https://touda.tohoku.ac.jp/iiif/2/public%2Flibrary%2Fkano%2Fpostcard%2F137-00293L.tif/full/full/0/default.jpg",
+   "thumb": "https://touda.tohoku.ac.jp/iiif/2/public%2Flibrary%2Fkano%2Fpostcard%2F137-00293L.tif/full/400,/0/default.jpg",
+   "page": "https://touda.tohoku.ac.jp/portal/item/10010030004236",
+   "title": "絵はがき「相州逗子名代冨士見橋畔甘酒屋」",
+   "titleEn": "Amazake teahouse by Fujimi Bridge, Zushi (postcard)",
+   "year": "年不明（絵はがき）",
+   "yearEn": "undated (postcard)",
+   "holder": "東北大学附属図書館（狩野文庫）",
+   "holderEn": "Tohoku University Library (Kano Collection)",
+   "license": "CC BY（「特段の許可なく利用できます」）",
+   "credit": "「相州逗子名代冨士見橋畔甘酒屋」東北大学附属図書館所蔵（狩野文庫 請求記号 137-1-293）CC BY https://touda.tohoku.ac.jp/portal/item/10010030004236 （参照 2026-11-09）"
+  }
+ },
+ {
+  "id": "add-hayama-morito-jinja",
+  "ready": false,
+  "name": "森戸神社と千貫松",
+  "nameEn": "Morito Shrine and Senkan pine",
+  "target": {
+   "lat": 35.2726949,
+   "lon": 139.5698167
+  },
+  "photos": [
+   {
+    "src": "https://touda.tohoku.ac.jp/iiif/2/public%2Flibrary%2Fkano%2Fpostcard%2F137-00301L.tif/full/full/0/default.jpg",
+    "thumb": "https://touda.tohoku.ac.jp/iiif/2/public%2Flibrary%2Fkano%2Fpostcard%2F137-00301L.tif/full/400,/0/default.jpg",
+    "page": "https://touda.tohoku.ac.jp/portal/item/10010030004244",
+    "title": "絵はがき「森戸明神ヲ望ム」",
+    "titleEn": "View of Morito Shrine (postcard)",
+    "year": "年不明（絵はがき）",
+    "yearEn": "undated (postcard)",
+    "holder": "東北大学附属図書館（狩野文庫）",
+    "holderEn": "Tohoku University Library (Kano Collection)",
+    "license": "CC BY（「特段の許可なく利用できます」）",
+    "credit": "「森戸明神ヲ望ム」東北大学附属図書館所蔵（狩野文庫 請求記号 137-1-301）CC BY https://touda.tohoku.ac.jp/portal/item/10010030004244 （参照 2026-11-09）"
+   },
+   {
+    "src": "https://touda.tohoku.ac.jp/iiif/2/public%2Flibrary%2Fkano%2Fpostcard%2F137-00306L.tif/full/full/0/default.jpg",
+    "thumb": "https://touda.tohoku.ac.jp/iiif/2/public%2Flibrary%2Fkano%2Fpostcard%2F137-00306L.tif/full/400,/0/default.jpg",
+    "page": "https://touda.tohoku.ac.jp/portal/item/10010030004249",
+    "title": "絵はがき「葉山ヨリ森戸ヲ望ム」",
+    "titleEn": "Morito seen from Hayama (postcard)",
+    "year": "年不明（絵はがき）",
+    "yearEn": "undated (postcard)",
+    "holder": "東北大学附属図書館（狩野文庫）",
+    "holderEn": "Tohoku University Library (Kano Collection)",
+    "license": "CC BY（「特段の許可なく利用できます」）",
+    "credit": "「葉山ヨリ森戸ヲ望ム」東北大学附属図書館所蔵（狩野文庫 請求記号 137-1-306）CC BY https://touda.tohoku.ac.jp/portal/item/10010030004249 （参照 2026-11-09）",
+    "weak": true
+   },
+   {
+    "src": "https://touda.tohoku.ac.jp/iiif/2/public%2Flibrary%2Fkano%2Fpostcard%2F137-00792L.tif/full/full/0/default.jpg",
+    "thumb": "https://touda.tohoku.ac.jp/iiif/2/public%2Flibrary%2Fkano%2Fpostcard%2F137-00792L.tif/full/400,/0/default.jpg",
+    "page": "https://touda.tohoku.ac.jp/portal/item/10010030004735",
+    "title": "絵はがき「森戸海岸千貫松」",
+    "titleEn": "Senkan pine, Morito coast (postcard)",
+    "year": "年不明（絵はがき）",
+    "yearEn": "undated (postcard)",
+    "holder": "東北大学附属図書館（狩野文庫）",
+    "holderEn": "Tohoku University Library (Kano Collection)",
+    "license": "CC BY（「特段の許可なく利用できます」）",
+    "credit": "「森戸海岸千貫松」東北大学附属図書館所蔵（狩野文庫 請求記号 137-3-792）CC BY https://touda.tohoku.ac.jp/portal/item/10010030004735 （参照 2026-11-09）"
+   }
+  ],
+  "photo": {
+   "src": "https://touda.tohoku.ac.jp/iiif/2/public%2Flibrary%2Fkano%2Fpostcard%2F137-00301L.tif/full/full/0/default.jpg",
+   "thumb": "https://touda.tohoku.ac.jp/iiif/2/public%2Flibrary%2Fkano%2Fpostcard%2F137-00301L.tif/full/400,/0/default.jpg",
+   "page": "https://touda.tohoku.ac.jp/portal/item/10010030004244",
+   "title": "絵はがき「森戸明神ヲ望ム」",
+   "titleEn": "View of Morito Shrine (postcard)",
+   "year": "年不明（絵はがき）",
+   "yearEn": "undated (postcard)",
+   "holder": "東北大学附属図書館（狩野文庫）",
+   "holderEn": "Tohoku University Library (Kano Collection)",
+   "license": "CC BY（「特段の許可なく利用できます」）",
+   "credit": "「森戸明神ヲ望ム」東北大学附属図書館所蔵（狩野文庫 請求記号 137-1-301）CC BY https://touda.tohoku.ac.jp/portal/item/10010030004244 （参照 2026-11-09）"
+  }
+ },
+ {
+  "id": "add-hayama-morito-beach",
+  "ready": false,
+  "name": "森戸海岸",
+  "nameEn": "Morito Beach, Hayama",
+  "target": {
+   "lat": 35.273911,
+   "lon": 139.5720818
+  },
+  "photos": [
+   {
+    "src": "https://touda.tohoku.ac.jp/iiif/2/public%2Flibrary%2Fkano%2Fpostcard%2F137-00791L.tif/full/full/0/default.jpg",
+    "thumb": "https://touda.tohoku.ac.jp/iiif/2/public%2Flibrary%2Fkano%2Fpostcard%2F137-00791L.tif/full/400,/0/default.jpg",
+    "page": "https://touda.tohoku.ac.jp/portal/item/10010030004734",
+    "title": "絵はがき「森戸海水浴塲」",
+    "titleEn": "Morito bathing beach (postcard)",
+    "year": "年不明（絵はがき）",
+    "yearEn": "undated (postcard)",
+    "holder": "東北大学附属図書館（狩野文庫）",
+    "holderEn": "Tohoku University Library (Kano Collection)",
+    "license": "CC BY（「特段の許可なく利用できます」）",
+    "credit": "「森戸海水浴塲」東北大学附属図書館所蔵（狩野文庫 請求記号 137-3-791）CC BY https://touda.tohoku.ac.jp/portal/item/10010030004734 （参照 2026-11-09）",
+    "weak": true
+   }
+  ],
+  "photo": {
+   "src": "https://touda.tohoku.ac.jp/iiif/2/public%2Flibrary%2Fkano%2Fpostcard%2F137-00791L.tif/full/full/0/default.jpg",
+   "thumb": "https://touda.tohoku.ac.jp/iiif/2/public%2Flibrary%2Fkano%2Fpostcard%2F137-00791L.tif/full/400,/0/default.jpg",
+   "page": "https://touda.tohoku.ac.jp/portal/item/10010030004734",
+   "title": "絵はがき「森戸海水浴塲」",
+   "titleEn": "Morito bathing beach (postcard)",
+   "year": "年不明（絵はがき）",
+   "yearEn": "undated (postcard)",
+   "holder": "東北大学附属図書館（狩野文庫）",
+   "holderEn": "Tohoku University Library (Kano Collection)",
+   "license": "CC BY（「特段の許可なく利用できます」）",
+   "credit": "「森戸海水浴塲」東北大学附属図書館所蔵（狩野文庫 請求記号 137-3-791）CC BY https://touda.tohoku.ac.jp/portal/item/10010030004734 （参照 2026-11-09）",
+   "weak": true
+  }
+ },
+ {
+  "id": "add-hayama-chojagasaki",
+  "ready": false,
+  "name": "長者ヶ崎",
+  "nameEn": "Chojagasaki, Hayama",
+  "target": {
+   "lat": 35.2550585,
+   "lon": 139.5808673
+  },
+  "photos": [
+   {
+    "src": "https://touda.tohoku.ac.jp/iiif/2/public%2Flibrary%2Fkano%2Fpostcard%2F137-00307L.tif/full/full/0/default.jpg",
+    "thumb": "https://touda.tohoku.ac.jp/iiif/2/public%2Flibrary%2Fkano%2Fpostcard%2F137-00307L.tif/full/400,/0/default.jpg",
+    "page": "https://touda.tohoku.ac.jp/portal/item/10010030004250",
+    "title": "絵はがき「長者ケ崎ヨリ冨士遠望」",
+    "titleEn": "Mt Fuji from Chojagasaki (postcard)",
+    "year": "年不明（絵はがき）",
+    "yearEn": "undated (postcard)",
+    "holder": "東北大学附属図書館（狩野文庫）",
+    "holderEn": "Tohoku University Library (Kano Collection)",
+    "license": "CC BY（「特段の許可なく利用できます」）",
+    "credit": "「長者ケ崎ヨリ冨士遠望」東北大学附属図書館所蔵（狩野文庫 請求記号 137-1-307）CC BY https://touda.tohoku.ac.jp/portal/item/10010030004250 （参照 2026-11-09）"
+   }
+  ],
+  "photo": {
+   "src": "https://touda.tohoku.ac.jp/iiif/2/public%2Flibrary%2Fkano%2Fpostcard%2F137-00307L.tif/full/full/0/default.jpg",
+   "thumb": "https://touda.tohoku.ac.jp/iiif/2/public%2Flibrary%2Fkano%2Fpostcard%2F137-00307L.tif/full/400,/0/default.jpg",
+   "page": "https://touda.tohoku.ac.jp/portal/item/10010030004250",
+   "title": "絵はがき「長者ケ崎ヨリ冨士遠望」",
+   "titleEn": "Mt Fuji from Chojagasaki (postcard)",
+   "year": "年不明（絵はがき）",
+   "yearEn": "undated (postcard)",
+   "holder": "東北大学附属図書館（狩野文庫）",
+   "holderEn": "Tohoku University Library (Kano Collection)",
+   "license": "CC BY（「特段の許可なく利用できます」）",
+   "credit": "「長者ケ崎ヨリ冨士遠望」東北大学附属図書館所蔵（狩野文庫 請求記号 137-1-307）CC BY https://touda.tohoku.ac.jp/portal/item/10010030004250 （参照 2026-11-09）"
+  }
+ },
+ {
+  "id": "add-yokosuka-tateishi",
+  "ready": false,
+  "name": "秋谷の立石",
+  "nameEn": "Tateishi rock, Akiya",
+  "target": {
+   "lat": 35.2403913,
+   "lon": 139.5976787
+  },
+  "photos": [
+   {
+    "src": "https://touda.tohoku.ac.jp/iiif/2/public%2Flibrary%2Fkano%2Fpostcard%2F137-00775L.tif/full/full/0/default.jpg",
+    "thumb": "https://touda.tohoku.ac.jp/iiif/2/public%2Flibrary%2Fkano%2Fpostcard%2F137-00775L.tif/full/400,/0/default.jpg",
+    "page": "https://touda.tohoku.ac.jp/portal/item/10010030004718",
+    "title": "絵はがき「秋谷海岸」",
+    "titleEn": "Akiya coast (postcard)",
+    "year": "年不明（絵はがき）",
+    "yearEn": "undated (postcard)",
+    "holder": "東北大学附属図書館（狩野文庫）",
+    "holderEn": "Tohoku University Library (Kano Collection)",
+    "license": "CC BY（「特段の許可なく利用できます」）",
+    "credit": "「秋谷海岸」東北大学附属図書館所蔵（狩野文庫 請求記号 137-3-775）CC BY https://touda.tohoku.ac.jp/portal/item/10010030004718 （参照 2026-11-09）"
+   }
+  ],
+  "photo": {
+   "src": "https://touda.tohoku.ac.jp/iiif/2/public%2Flibrary%2Fkano%2Fpostcard%2F137-00775L.tif/full/full/0/default.jpg",
+   "thumb": "https://touda.tohoku.ac.jp/iiif/2/public%2Flibrary%2Fkano%2Fpostcard%2F137-00775L.tif/full/400,/0/default.jpg",
+   "page": "https://touda.tohoku.ac.jp/portal/item/10010030004718",
+   "title": "絵はがき「秋谷海岸」",
+   "titleEn": "Akiya coast (postcard)",
+   "year": "年不明（絵はがき）",
+   "yearEn": "undated (postcard)",
+   "holder": "東北大学附属図書館（狩野文庫）",
+   "holderEn": "Tohoku University Library (Kano Collection)",
+   "license": "CC BY（「特段の許可なく利用できます」）",
+   "credit": "「秋谷海岸」東北大学附属図書館所蔵（狩野文庫 請求記号 137-3-775）CC BY https://touda.tohoku.ac.jp/portal/item/10010030004718 （参照 2026-11-09）"
+  }
+ },
+ {
+  "id": "add-misaki-kainan",
+  "ready": false,
+  "name": "海南神社（三崎）",
+  "nameEn": "Kainan Shrine, Misaki",
+  "target": {
+   "lat": 35.1426771,
+   "lon": 139.6188544
+  },
+  "photos": [
+   {
+    "src": "https://touda.tohoku.ac.jp/iiif/2/public%2Flibrary%2Fkano%2Fpostcard%2F137-00794L.tif/full/full/0/default.jpg",
+    "thumb": "https://touda.tohoku.ac.jp/iiif/2/public%2Flibrary%2Fkano%2Fpostcard%2F137-00794L.tif/full/400,/0/default.jpg",
+    "page": "https://touda.tohoku.ac.jp/portal/item/10010030004737",
+    "title": "絵はがき「相州三崎海南神社」",
+    "titleEn": "Kainan Shrine, Misaki (postcard)",
+    "year": "年不明（絵はがき）",
+    "yearEn": "undated (postcard)",
+    "holder": "東北大学附属図書館（狩野文庫）",
+    "holderEn": "Tohoku University Library (Kano Collection)",
+    "license": "CC BY（「特段の許可なく利用できます」）",
+    "credit": "「相州三崎海南神社」東北大学附属図書館所蔵（狩野文庫 請求記号 137-3-794）CC BY https://touda.tohoku.ac.jp/portal/item/10010030004737 （参照 2026-11-09）"
+   }
+  ],
+  "photo": {
+   "src": "https://touda.tohoku.ac.jp/iiif/2/public%2Flibrary%2Fkano%2Fpostcard%2F137-00794L.tif/full/full/0/default.jpg",
+   "thumb": "https://touda.tohoku.ac.jp/iiif/2/public%2Flibrary%2Fkano%2Fpostcard%2F137-00794L.tif/full/400,/0/default.jpg",
+   "page": "https://touda.tohoku.ac.jp/portal/item/10010030004737",
+   "title": "絵はがき「相州三崎海南神社」",
+   "titleEn": "Kainan Shrine, Misaki (postcard)",
+   "year": "年不明（絵はがき）",
+   "yearEn": "undated (postcard)",
+   "holder": "東北大学附属図書館（狩野文庫）",
+   "holderEn": "Tohoku University Library (Kano Collection)",
+   "license": "CC BY（「特段の許可なく利用できます」）",
+   "credit": "「相州三崎海南神社」東北大学附属図書館所蔵（狩野文庫 請求記号 137-3-794）CC BY https://touda.tohoku.ac.jp/portal/item/10010030004737 （参照 2026-11-09）"
+  }
+ },
+ {
+  "id": "add-misaki-tooriya",
+  "ready": false,
+  "name": "通り矢（三崎）",
+  "nameEn": "Toriya rocks, Misaki",
+  "target": {
+   "lat": 35.1383378,
+   "lon": 139.6267857
+  },
+  "photos": [
+   {
+    "src": "https://touda.tohoku.ac.jp/iiif/2/public%2Flibrary%2Fkano%2Fpostcard%2F137-00805L.tif/full/full/0/default.jpg",
+    "thumb": "https://touda.tohoku.ac.jp/iiif/2/public%2Flibrary%2Fkano%2Fpostcard%2F137-00805L.tif/full/400,/0/default.jpg",
+    "page": "https://touda.tohoku.ac.jp/portal/item/10010030004748",
+    "title": "絵はがき「通り矢」",
+    "titleEn": "Toriya (postcard)",
+    "year": "年不明（絵はがき）",
+    "yearEn": "undated (postcard)",
+    "holder": "東北大学附属図書館（狩野文庫）",
+    "holderEn": "Tohoku University Library (Kano Collection)",
+    "license": "CC BY（「特段の許可なく利用できます」）",
+    "credit": "「通り矢」東北大学附属図書館所蔵（狩野文庫 請求記号 137-3-805）CC BY https://touda.tohoku.ac.jp/portal/item/10010030004748 （参照 2026-11-09）",
+    "weak": true
+   }
+  ],
+  "photo": {
+   "src": "https://touda.tohoku.ac.jp/iiif/2/public%2Flibrary%2Fkano%2Fpostcard%2F137-00805L.tif/full/full/0/default.jpg",
+   "thumb": "https://touda.tohoku.ac.jp/iiif/2/public%2Flibrary%2Fkano%2Fpostcard%2F137-00805L.tif/full/400,/0/default.jpg",
+   "page": "https://touda.tohoku.ac.jp/portal/item/10010030004748",
+   "title": "絵はがき「通り矢」",
+   "titleEn": "Toriya (postcard)",
+   "year": "年不明（絵はがき）",
+   "yearEn": "undated (postcard)",
+   "holder": "東北大学附属図書館（狩野文庫）",
+   "holderEn": "Tohoku University Library (Kano Collection)",
+   "license": "CC BY（「特段の許可なく利用できます」）",
+   "credit": "「通り矢」東北大学附属図書館所蔵（狩野文庫 請求記号 137-3-805）CC BY https://touda.tohoku.ac.jp/portal/item/10010030004748 （参照 2026-11-09）",
+   "weak": true
+  }
+ },
+ {
+  "id": "add-enoshima-iwamotoro",
+  "ready": false,
+  "name": "岩本楼（江の島）",
+  "nameEn": "Iwamoto-ro inn, Enoshima",
+  "target": {
+   "lat": 35.3013114,
+   "lon": 139.4802176
+  },
+  "photos": [
+   {
+    "src": "https://touda.tohoku.ac.jp/iiif/2/public%2Flibrary%2Fkano%2Fpostcard%2F137-00019L.tif/full/full/0/default.jpg",
+    "thumb": "https://touda.tohoku.ac.jp/iiif/2/public%2Flibrary%2Fkano%2Fpostcard%2F137-00019L.tif/full/400,/0/default.jpg",
+    "page": "https://touda.tohoku.ac.jp/portal/item/10010030003962",
+    "title": "絵はがき「海岸ヨリ見タル岩本樓全景」",
+    "titleEn": "Iwamoto-ro inn seen from the shore (postcard)",
+    "year": "年不明（絵はがき）",
+    "yearEn": "undated (postcard)",
+    "holder": "東北大学附属図書館（狩野文庫）",
+    "holderEn": "Tohoku University Library (Kano Collection)",
+    "license": "CC BY（「特段の許可なく利用できます」）",
+    "credit": "「海岸ヨリ見タル岩本樓全景」東北大学附属図書館所蔵（狩野文庫 請求記号 137-1-19）CC BY https://touda.tohoku.ac.jp/portal/item/10010030003962 （参照 2026-11-09）"
+   }
+  ],
+  "photo": {
+   "src": "https://touda.tohoku.ac.jp/iiif/2/public%2Flibrary%2Fkano%2Fpostcard%2F137-00019L.tif/full/full/0/default.jpg",
+   "thumb": "https://touda.tohoku.ac.jp/iiif/2/public%2Flibrary%2Fkano%2Fpostcard%2F137-00019L.tif/full/400,/0/default.jpg",
+   "page": "https://touda.tohoku.ac.jp/portal/item/10010030003962",
+   "title": "絵はがき「海岸ヨリ見タル岩本樓全景」",
+   "titleEn": "Iwamoto-ro inn seen from the shore (postcard)",
+   "year": "年不明（絵はがき）",
+   "yearEn": "undated (postcard)",
+   "holder": "東北大学附属図書館（狩野文庫）",
+   "holderEn": "Tohoku University Library (Kano Collection)",
+   "license": "CC BY（「特段の許可なく利用できます」）",
+   "credit": "「海岸ヨリ見タル岩本樓全景」東北大学附属図書館所蔵（狩野文庫 請求記号 137-1-19）CC BY https://touda.tohoku.ac.jp/portal/item/10010030003962 （参照 2026-11-09）"
+  }
+ },
+ {
+  "id": "add-koshigoe-godobashi",
+  "ready": false,
+  "name": "腰越 神戸橋",
+  "nameEn": "Godo Bridge, Koshigoe",
+  "target": {
+   "lat": 35.3086149,
+   "lon": 139.492692
+  },
+  "photos": [
+   {
+    "src": "https://touda.tohoku.ac.jp/iiif/2/public%2Flibrary%2Fkano%2Fpostcard%2F137-00222L.tif/full/full/0/default.jpg",
+    "thumb": "https://touda.tohoku.ac.jp/iiif/2/public%2Flibrary%2Fkano%2Fpostcard%2F137-00222L.tif/full/400,/0/default.jpg",
+    "page": "https://touda.tohoku.ac.jp/portal/item/10010030004165",
+    "title": "絵はがき「腰越神戸橋」",
+    "titleEn": "Godo Bridge, Koshigoe (postcard)",
+    "year": "年不明（絵はがき）",
+    "yearEn": "undated (postcard)",
+    "holder": "東北大学附属図書館（狩野文庫）",
+    "holderEn": "Tohoku University Library (Kano Collection)",
+    "license": "CC BY（「特段の許可なく利用できます」）",
+    "credit": "「腰越神戸橋」東北大学附属図書館所蔵（狩野文庫 請求記号 137-1-222）CC BY https://touda.tohoku.ac.jp/portal/item/10010030004165 （参照 2026-11-09）"
+   }
+  ],
+  "photo": {
+   "src": "https://touda.tohoku.ac.jp/iiif/2/public%2Flibrary%2Fkano%2Fpostcard%2F137-00222L.tif/full/full/0/default.jpg",
+   "thumb": "https://touda.tohoku.ac.jp/iiif/2/public%2Flibrary%2Fkano%2Fpostcard%2F137-00222L.tif/full/400,/0/default.jpg",
+   "page": "https://touda.tohoku.ac.jp/portal/item/10010030004165",
+   "title": "絵はがき「腰越神戸橋」",
+   "titleEn": "Godo Bridge, Koshigoe (postcard)",
+   "year": "年不明（絵はがき）",
+   "yearEn": "undated (postcard)",
+   "holder": "東北大学附属図書館（狩野文庫）",
+   "holderEn": "Tohoku University Library (Kano Collection)",
+   "license": "CC BY（「特段の許可なく利用できます」）",
+   "credit": "「腰越神戸橋」東北大学附属図書館所蔵（狩野文庫 請求記号 137-1-222）CC BY https://touda.tohoku.ac.jp/portal/item/10010030004165 （参照 2026-11-09）"
+  }
+ },
+ {
+  "id": "add-koshigoe-manpukuji",
+  "ready": false,
+  "name": "満福寺（腰越）",
+  "nameEn": "Manpukuji, Koshigoe",
+  "target": {
+   "lat": 35.3077149,
+   "lon": 139.4950194
+  },
+  "photos": [
+   {
+    "src": "https://touda.tohoku.ac.jp/iiif/2/public%2Flibrary%2Fkano%2Fpostcard%2F137-00235L.tif/full/full/0/default.jpg",
+    "thumb": "https://touda.tohoku.ac.jp/iiif/2/public%2Flibrary%2Fkano%2Fpostcard%2F137-00235L.tif/full/400,/0/default.jpg",
+    "page": "https://touda.tohoku.ac.jp/portal/item/10010030004178",
+    "title": "絵はがき「滿福寺（辨慶腰越状の古跡）」",
+    "titleEn": "Manpukuji (Benkei's Koshigoe letter) (postcard)",
+    "year": "年不明（絵はがき）",
+    "yearEn": "undated (postcard)",
+    "holder": "東北大学附属図書館（狩野文庫）",
+    "holderEn": "Tohoku University Library (Kano Collection)",
+    "license": "CC BY（「特段の許可なく利用できます」）",
+    "credit": "「滿福寺（辨慶腰越状の古跡）」東北大学附属図書館所蔵（狩野文庫 請求記号 137-1-235）CC BY https://touda.tohoku.ac.jp/portal/item/10010030004178 （参照 2026-11-09）"
+   }
+  ],
+  "photo": {
+   "src": "https://touda.tohoku.ac.jp/iiif/2/public%2Flibrary%2Fkano%2Fpostcard%2F137-00235L.tif/full/full/0/default.jpg",
+   "thumb": "https://touda.tohoku.ac.jp/iiif/2/public%2Flibrary%2Fkano%2Fpostcard%2F137-00235L.tif/full/400,/0/default.jpg",
+   "page": "https://touda.tohoku.ac.jp/portal/item/10010030004178",
+   "title": "絵はがき「滿福寺（辨慶腰越状の古跡）」",
+   "titleEn": "Manpukuji (Benkei's Koshigoe letter) (postcard)",
+   "year": "年不明（絵はがき）",
+   "yearEn": "undated (postcard)",
+   "holder": "東北大学附属図書館（狩野文庫）",
+   "holderEn": "Tohoku University Library (Kano Collection)",
+   "license": "CC BY（「特段の許可なく利用できます」）",
+   "credit": "「滿福寺（辨慶腰越状の古跡）」東北大学附属図書館所蔵（狩野文庫 請求記号 137-1-235）CC BY https://touda.tohoku.ac.jp/portal/item/10010030004178 （参照 2026-11-09）"
+  }
+ },
+ {
+  "id": "add-katase-beach-enoshima",
+  "ready": false,
+  "name": "片瀬の浜から見る江の島",
+  "nameEn": "Enoshima seen from Katase beach",
+  "target": {
+   "lat": 35.3,
+   "lon": 139.48055556
+  },
+  "photos": [
+   {
+    "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e8/Gezicht_op_Enoshima_met_op_de_voorgrond_boten_en_dragers_Enoshima_Island_%28titel_op_object%29%2C_RP-F-F01102-AR.jpg/1280px-Gezicht_op_Enoshima_met_op_de_voorgrond_boten_en_dragers_Enoshima_Island_%28titel_op_object%29%2C_RP-F-F01102-AR.jpg",
+    "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e8/Gezicht_op_Enoshima_met_op_de_voorgrond_boten_en_dragers_Enoshima_Island_%28titel_op_object%29%2C_RP-F-F01102-AR.jpg/330px-Gezicht_op_Enoshima_met_op_de_voorgrond_boten_en_dragers_Enoshima_Island_%28titel_op_object%29%2C_RP-F-F01102-AR.jpg",
+    "page": "https://commons.wikimedia.org/wiki/File:Gezicht_op_Enoshima_met_op_de_voorgrond_boten_en_dragers_Enoshima_Island_%28titel_op_object%29%2C_RP-F-F01102-AR.jpg",
+    "title": "江の島（浜の舟と荷を担ぐ人）",
+    "titleEn": "Enoshima Island, with boats and porters in the foreground",
+    "year": "1870頃–1900頃（明治）",
+    "yearEn": "c. 1870–1900",
+    "holder": "アムステルダム国立美術館",
+    "holderEn": "Rijksmuseum, Amsterdam",
+    "license": "CC0（パブリックドメイン）",
+    "credit": "Gezicht op Enoshima met op de voorgrond boten en dragers, RP-F-F01102-AR, Rijksmuseum, CC0. Wikimedia Commons https://commons.wikimedia.org/wiki/File:Gezicht_op_Enoshima_met_op_de_voorgrond_boten_en_dragers_Enoshima_Island_(titel_op_object),_RP-F-F01102-AR.jpg / http://hdl.handle.net/10934/RM0001.COLLECT.276286 (参照 2026-11-09)"
+   },
+   {
+    "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5d/Gezicht_op_de_het_eiland_Enoshima_Enoshima_%28titel_op_object%29%2C_RP-F-F01206-R.jpg/1280px-Gezicht_op_de_het_eiland_Enoshima_Enoshima_%28titel_op_object%29%2C_RP-F-F01206-R.jpg",
+    "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5d/Gezicht_op_de_het_eiland_Enoshima_Enoshima_%28titel_op_object%29%2C_RP-F-F01206-R.jpg/330px-Gezicht_op_de_het_eiland_Enoshima_Enoshima_%28titel_op_object%29%2C_RP-F-F01206-R.jpg",
+    "page": "https://commons.wikimedia.org/wiki/File:Gezicht_op_de_het_eiland_Enoshima_Enoshima_%28titel_op_object%29%2C_RP-F-F01206-R.jpg",
+    "title": "江の島（砂丘の上から）",
+    "titleEn": "View of Enoshima island",
+    "year": "1870頃–1900頃（明治）",
+    "yearEn": "c. 1870–1900",
+    "holder": "アムステルダム国立美術館",
+    "holderEn": "Rijksmuseum, Amsterdam",
+    "license": "CC0（パブリックドメイン）",
+    "credit": "Gezicht op de het eiland Enoshima, RP-F-F01206-R, Rijksmuseum, CC0. Wikimedia Commons https://commons.wikimedia.org/wiki/File:Gezicht_op_de_het_eiland_Enoshima_Enoshima_(titel_op_object),_RP-F-F01206-R.jpg / http://hdl.handle.net/10934/RM0001.COLLECT.276444 (参照 2026-11-09)"
+   },
+   {
+    "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/55/Collectie_Wereldmuseum%2C_RV-A180-1-11%2C_Foto%2C_%27Yenoshima%2C_een_rots_in_zee_vanaf_het_aan_de_overzijde_gelegen_strand_gezien%27%2C_maker_onbekend-unknown%2C_1896.jpg/1280px-Collectie_Wereldmuseum%2C_RV-A180-1-11%2C_Foto%2C_%27Yenoshima%2C_een_rots_in_zee_vanaf_het_aan_de_overzijde_gelegen_strand_gezien%27%2C_maker_onbekend-unknown%2C_1896.jpg",
+    "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/55/Collectie_Wereldmuseum%2C_RV-A180-1-11%2C_Foto%2C_%27Yenoshima%2C_een_rots_in_zee_vanaf_het_aan_de_overzijde_gelegen_strand_gezien%27%2C_maker_onbekend-unknown%2C_1896.jpg/330px-Collectie_Wereldmuseum%2C_RV-A180-1-11%2C_Foto%2C_%27Yenoshima%2C_een_rots_in_zee_vanaf_het_aan_de_overzijde_gelegen_strand_gezien%27%2C_maker_onbekend-unknown%2C_1896.jpg",
+    "page": "https://commons.wikimedia.org/wiki/File:Collectie_Wereldmuseum%2C_RV-A180-1-11%2C_Foto%2C_%27Yenoshima%2C_een_rots_in_zee_vanaf_het_aan_de_overzijde_gelegen_strand_gezien%27%2C_maker_onbekend-unknown%2C_1896.jpg",
+    "title": "江の島（対岸の浜から）",
+    "titleEn": "Yenoshima, a rock in the sea seen from the beach opposite",
+    "year": "1896（明治29）",
+    "yearEn": "1896",
+    "holder": "オランダ国立世界文化博物館（Wereldmuseum）",
+    "holderEn": "Wereldmuseum (Nationaal Museum van Wereldculturen)",
+    "license": "パブリックドメイン（コモンズ表示）",
+    "credit": "Collectie Wereldmuseum, RV-A180-1-11, 'Yenoshima, een rots in zee vanaf het aan de overzijde gelegen strand gezien', 1896, maker onbekend. Wikimedia Commons https://commons.wikimedia.org/wiki/File:Collectie_Wereldmuseum,_RV-A180-1-11,_Foto,_'Yenoshima,_een_rots_in_zee_vanaf_het_aan_de_overzijde_gelegen_strand_gezien',_maker_onbekend-unknown,_1896.jpg / https://hdl.handle.net/20.500.11840/904335 (参照 2026-11-09)"
+   },
+   {
+    "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ee/KITLV_A955_-_Enoshima%2C_het_eiland_bij_de_monding_van_de_Katase_in_de_Sagami-baai_in_Japan%2C_KITLV_107919.tiff/lossy-page1-1280px-KITLV_A955_-_Enoshima%2C_het_eiland_bij_de_monding_van_de_Katase_in_de_Sagami-baai_in_Japan%2C_KITLV_107919.tiff.jpg",
+    "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ee/KITLV_A955_-_Enoshima%2C_het_eiland_bij_de_monding_van_de_Katase_in_de_Sagami-baai_in_Japan%2C_KITLV_107919.tiff/lossy-page1-330px-KITLV_A955_-_Enoshima%2C_het_eiland_bij_de_monding_van_de_Katase_in_de_Sagami-baai_in_Japan%2C_KITLV_107919.tiff.jpg",
+    "page": "https://commons.wikimedia.org/wiki/File:KITLV_A955_-_Enoshima%2C_het_eiland_bij_de_monding_van_de_Katase_in_de_Sagami-baai_in_Japan%2C_KITLV_107919.tiff",
+    "title": "絵はがき「江の島名勝 江の島全景」",
+    "titleEn": "Famous places of Enoshima: general view (postcard)",
+    "year": "1930年頃（昭和初期）",
+    "yearEn": "c. 1930",
+    "holder": "ライデン大学図書館（KITLV）",
+    "holderEn": "Leiden University Libraries (KITLV)",
+    "license": "CC BY 4.0",
+    "credit": "KITLV A955 - Enoshima, het eiland bij de monding van de Katase in de Sagami-baai in Japan, KITLV 107919, Leiden University Libraries, CC BY 4.0. http://hdl.handle.net/1887.1/item:729180 / Wikimedia Commons https://commons.wikimedia.org/wiki/File:KITLV_A955_-_Enoshima,_het_eiland_bij_de_monding_van_de_Katase_in_de_Sagami-baai_in_Japan,_KITLV_107919.tiff (参照 2026-11-09)"
+   }
+  ],
+  "photo": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e8/Gezicht_op_Enoshima_met_op_de_voorgrond_boten_en_dragers_Enoshima_Island_%28titel_op_object%29%2C_RP-F-F01102-AR.jpg/1280px-Gezicht_op_Enoshima_met_op_de_voorgrond_boten_en_dragers_Enoshima_Island_%28titel_op_object%29%2C_RP-F-F01102-AR.jpg",
+   "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e8/Gezicht_op_Enoshima_met_op_de_voorgrond_boten_en_dragers_Enoshima_Island_%28titel_op_object%29%2C_RP-F-F01102-AR.jpg/330px-Gezicht_op_Enoshima_met_op_de_voorgrond_boten_en_dragers_Enoshima_Island_%28titel_op_object%29%2C_RP-F-F01102-AR.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:Gezicht_op_Enoshima_met_op_de_voorgrond_boten_en_dragers_Enoshima_Island_%28titel_op_object%29%2C_RP-F-F01102-AR.jpg",
+   "title": "江の島（浜の舟と荷を担ぐ人）",
+   "titleEn": "Enoshima Island, with boats and porters in the foreground",
+   "year": "1870頃–1900頃（明治）",
+   "yearEn": "c. 1870–1900",
+   "holder": "アムステルダム国立美術館",
+   "holderEn": "Rijksmuseum, Amsterdam",
+   "license": "CC0（パブリックドメイン）",
+   "credit": "Gezicht op Enoshima met op de voorgrond boten en dragers, RP-F-F01102-AR, Rijksmuseum, CC0. Wikimedia Commons https://commons.wikimedia.org/wiki/File:Gezicht_op_Enoshima_met_op_de_voorgrond_boten_en_dragers_Enoshima_Island_(titel_op_object),_RP-F-F01102-AR.jpg / http://hdl.handle.net/10934/RM0001.COLLECT.276286 (参照 2026-11-09)"
+  }
+ },
+ {
+  "id": "add-enoshima-pier-katase",
+  "ready": false,
+  "name": "江の島から見る桟橋と片瀬の町",
+  "nameEn": "The bridge and Katase town seen from Enoshima",
+  "target": {
+   "lat": 35.3044597,
+   "lon": 139.4821935
+  },
+  "photos": [
+   {
+    "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/07/KITLV_A955_-_Enoshima%2C_het_eiland_bij_de_monding_van_de_Katase_in_de_Sagami-baai_in_Japan%2C_KITLV_107917.tiff/lossy-page1-1280px-KITLV_A955_-_Enoshima%2C_het_eiland_bij_de_monding_van_de_Katase_in_de_Sagami-baai_in_Japan%2C_KITLV_107917.tiff.jpg",
+    "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/07/KITLV_A955_-_Enoshima%2C_het_eiland_bij_de_monding_van_de_Katase_in_de_Sagami-baai_in_Japan%2C_KITLV_107917.tiff/lossy-page1-330px-KITLV_A955_-_Enoshima%2C_het_eiland_bij_de_monding_van_de_Katase_in_de_Sagami-baai_in_Japan%2C_KITLV_107917.tiff.jpg",
+    "page": "https://commons.wikimedia.org/wiki/File:KITLV_A955_-_Enoshima%2C_het_eiland_bij_de_monding_van_de_Katase_in_de_Sagami-baai_in_Japan%2C_KITLV_107917.tiff",
+    "title": "絵はがき「江の島入口桟橋ト片瀬町全景」",
+    "titleEn": "Entrance bridge of Enoshima and Katase town (postcard)",
+    "year": "1930年頃（昭和初期）",
+    "yearEn": "c. 1930",
+    "holder": "ライデン大学図書館（KITLV）",
+    "holderEn": "Leiden University Libraries (KITLV)",
+    "license": "CC BY 4.0",
+    "credit": "KITLV A955 - Enoshima, het eiland bij de monding van de Katase in de Sagami-baai in Japan, KITLV 107917, Leiden University Libraries, CC BY 4.0. http://hdl.handle.net/1887.1/item:731635 / Wikimedia Commons https://commons.wikimedia.org/wiki/File:KITLV_A955_-_Enoshima,_het_eiland_bij_de_monding_van_de_Katase_in_de_Sagami-baai_in_Japan,_KITLV_107917.tiff (参照 2026-11-09)",
+    "weak": true
+   }
+  ],
+  "photo": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/07/KITLV_A955_-_Enoshima%2C_het_eiland_bij_de_monding_van_de_Katase_in_de_Sagami-baai_in_Japan%2C_KITLV_107917.tiff/lossy-page1-1280px-KITLV_A955_-_Enoshima%2C_het_eiland_bij_de_monding_van_de_Katase_in_de_Sagami-baai_in_Japan%2C_KITLV_107917.tiff.jpg",
+   "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/07/KITLV_A955_-_Enoshima%2C_het_eiland_bij_de_monding_van_de_Katase_in_de_Sagami-baai_in_Japan%2C_KITLV_107917.tiff/lossy-page1-330px-KITLV_A955_-_Enoshima%2C_het_eiland_bij_de_monding_van_de_Katase_in_de_Sagami-baai_in_Japan%2C_KITLV_107917.tiff.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:KITLV_A955_-_Enoshima%2C_het_eiland_bij_de_monding_van_de_Katase_in_de_Sagami-baai_in_Japan%2C_KITLV_107917.tiff",
+   "title": "絵はがき「江の島入口桟橋ト片瀬町全景」",
+   "titleEn": "Entrance bridge of Enoshima and Katase town (postcard)",
+   "year": "1930年頃（昭和初期）",
+   "yearEn": "c. 1930",
+   "holder": "ライデン大学図書館（KITLV）",
+   "holderEn": "Leiden University Libraries (KITLV)",
+   "license": "CC BY 4.0",
+   "credit": "KITLV A955 - Enoshima, het eiland bij de monding van de Katase in de Sagami-baai in Japan, KITLV 107917, Leiden University Libraries, CC BY 4.0. http://hdl.handle.net/1887.1/item:731635 / Wikimedia Commons https://commons.wikimedia.org/wiki/File:KITLV_A955_-_Enoshima,_het_eiland_bij_de_monding_van_de_Katase_in_de_Sagami-baai_in_Japan,_KITLV_107917.tiff (参照 2026-11-09)",
+   "weak": true
+  }
+ },
+ {
+  "id": "add-enoshima-okutsunomiya",
+  "ready": false,
+  "name": "江島神社 奥津宮",
+  "nameEn": "Okutsunomiya, Enoshima Shrine",
+  "target": {
+   "lat": 35.2992708,
+   "lon": 139.4758366
+  },
+  "photos": [
+   {
+    "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e4/KITLV_A955_-_Tempel_op_Enoshima_in_Japan%2C_KITLV_107924.tiff/lossy-page1-1280px-KITLV_A955_-_Tempel_op_Enoshima_in_Japan%2C_KITLV_107924.tiff.jpg",
+    "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e4/KITLV_A955_-_Tempel_op_Enoshima_in_Japan%2C_KITLV_107924.tiff/lossy-page1-330px-KITLV_A955_-_Tempel_op_Enoshima_in_Japan%2C_KITLV_107924.tiff.jpg",
+    "page": "https://commons.wikimedia.org/wiki/File:KITLV_A955_-_Tempel_op_Enoshima_in_Japan%2C_KITLV_107924.tiff",
+    "title": "絵はがき「江の島神社奥津宮」",
+    "titleEn": "Okutsunomiya of Enoshima Shrine (postcard)",
+    "year": "1930年頃（昭和初期）",
+    "yearEn": "c. 1930",
+    "holder": "ライデン大学図書館（KITLV）",
+    "holderEn": "Leiden University Libraries (KITLV)",
+    "license": "CC BY 4.0",
+    "credit": "KITLV A955 - Tempel op Enoshima in Japan, KITLV 107924, Leiden University Libraries, CC BY 4.0. http://hdl.handle.net/1887.1/item:731276 / Wikimedia Commons https://commons.wikimedia.org/wiki/File:KITLV_A955_-_Tempel_op_Enoshima_in_Japan,_KITLV_107924.tiff (参照 2026-11-09)"
+   }
+  ],
+  "photo": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e4/KITLV_A955_-_Tempel_op_Enoshima_in_Japan%2C_KITLV_107924.tiff/lossy-page1-1280px-KITLV_A955_-_Tempel_op_Enoshima_in_Japan%2C_KITLV_107924.tiff.jpg",
+   "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e4/KITLV_A955_-_Tempel_op_Enoshima_in_Japan%2C_KITLV_107924.tiff/lossy-page1-330px-KITLV_A955_-_Tempel_op_Enoshima_in_Japan%2C_KITLV_107924.tiff.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:KITLV_A955_-_Tempel_op_Enoshima_in_Japan%2C_KITLV_107924.tiff",
+   "title": "絵はがき「江の島神社奥津宮」",
+   "titleEn": "Okutsunomiya of Enoshima Shrine (postcard)",
+   "year": "1930年頃（昭和初期）",
+   "yearEn": "c. 1930",
+   "holder": "ライデン大学図書館（KITLV）",
+   "holderEn": "Leiden University Libraries (KITLV)",
+   "license": "CC BY 4.0",
+   "credit": "KITLV A955 - Tempel op Enoshima in Japan, KITLV 107924, Leiden University Libraries, CC BY 4.0. http://hdl.handle.net/1887.1/item:731276 / Wikimedia Commons https://commons.wikimedia.org/wiki/File:KITLV_A955_-_Tempel_op_Enoshima_in_Japan,_KITLV_107924.tiff (参照 2026-11-09)"
+  }
+ },
+ {
+  "id": "add-enoshima-hetsunomiya",
+  "ready": false,
+  "name": "江島神社 辺津宮",
+  "nameEn": "Hetsunomiya, Enoshima Shrine",
+  "target": {
+   "lat": 35.3004274,
+   "lon": 139.4796241
+  },
+  "photos": [
+   {
+    "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/KITLV_A955_-_Tempel_op_Enoshima_in_Japan%2C_KITLV_107925.tiff/lossy-page1-1280px-KITLV_A955_-_Tempel_op_Enoshima_in_Japan%2C_KITLV_107925.tiff.jpg",
+    "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/KITLV_A955_-_Tempel_op_Enoshima_in_Japan%2C_KITLV_107925.tiff/lossy-page1-330px-KITLV_A955_-_Tempel_op_Enoshima_in_Japan%2C_KITLV_107925.tiff.jpg",
+    "page": "https://commons.wikimedia.org/wiki/File:KITLV_A955_-_Tempel_op_Enoshima_in_Japan%2C_KITLV_107925.tiff",
+    "title": "絵はがき「江の島神社辺津宮」",
+    "titleEn": "Hetsunomiya of Enoshima Shrine (postcard)",
+    "year": "1930年頃（昭和初期）",
+    "yearEn": "c. 1930",
+    "holder": "ライデン大学図書館（KITLV）",
+    "holderEn": "Leiden University Libraries (KITLV)",
+    "license": "CC BY 4.0",
+    "credit": "KITLV A955 - Tempel op Enoshima in Japan, KITLV 107925, Leiden University Libraries, CC BY 4.0. http://hdl.handle.net/1887.1/item:727786 / Wikimedia Commons https://commons.wikimedia.org/wiki/File:KITLV_A955_-_Tempel_op_Enoshima_in_Japan,_KITLV_107925.tiff (参照 2026-11-09)",
+    "weak": true
+   }
+  ],
+  "photo": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/KITLV_A955_-_Tempel_op_Enoshima_in_Japan%2C_KITLV_107925.tiff/lossy-page1-1280px-KITLV_A955_-_Tempel_op_Enoshima_in_Japan%2C_KITLV_107925.tiff.jpg",
+   "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/KITLV_A955_-_Tempel_op_Enoshima_in_Japan%2C_KITLV_107925.tiff/lossy-page1-330px-KITLV_A955_-_Tempel_op_Enoshima_in_Japan%2C_KITLV_107925.tiff.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:KITLV_A955_-_Tempel_op_Enoshima_in_Japan%2C_KITLV_107925.tiff",
+   "title": "絵はがき「江の島神社辺津宮」",
+   "titleEn": "Hetsunomiya of Enoshima Shrine (postcard)",
+   "year": "1930年頃（昭和初期）",
+   "yearEn": "c. 1930",
+   "holder": "ライデン大学図書館（KITLV）",
+   "holderEn": "Leiden University Libraries (KITLV)",
+   "license": "CC BY 4.0",
+   "credit": "KITLV A955 - Tempel op Enoshima in Japan, KITLV 107925, Leiden University Libraries, CC BY 4.0. http://hdl.handle.net/1887.1/item:727786 / Wikimedia Commons https://commons.wikimedia.org/wiki/File:KITLV_A955_-_Tempel_op_Enoshima_in_Japan,_KITLV_107925.tiff (参照 2026-11-09)",
+   "weak": true
+  }
+ },
+ {
+  "id": "add-enoshima-chigogafuchi",
+  "ready": false,
+  "name": "稚児ヶ淵",
+  "nameEn": "Chigogafuchi, Enoshima",
+  "target": {
+   "lat": 35.2991139,
+   "lon": 139.4744491
+  },
+  "photos": [
+   {
+    "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/77/Mannen_en_vrouwen_aan_de_kust_bij_Chigogafuchi_op_Enoshima%2C_Japan%2C_RP-F-2003-147-113.jpg/1280px-Mannen_en_vrouwen_aan_de_kust_bij_Chigogafuchi_op_Enoshima%2C_Japan%2C_RP-F-2003-147-113.jpg",
+    "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/77/Mannen_en_vrouwen_aan_de_kust_bij_Chigogafuchi_op_Enoshima%2C_Japan%2C_RP-F-2003-147-113.jpg/330px-Mannen_en_vrouwen_aan_de_kust_bij_Chigogafuchi_op_Enoshima%2C_Japan%2C_RP-F-2003-147-113.jpg",
+    "page": "https://commons.wikimedia.org/wiki/File:Mannen_en_vrouwen_aan_de_kust_bij_Chigogafuchi_op_Enoshima%2C_Japan%2C_RP-F-2003-147-113.jpg",
+    "title": "江の島 稚児ヶ淵の磯",
+    "titleEn": "Men and women on the shore at Chigogafuchi, Enoshima",
+    "year": "1890頃–1903（明治）",
+    "yearEn": "c. 1890–1903",
+    "holder": "アムステルダム国立美術館",
+    "holderEn": "Rijksmuseum, Amsterdam",
+    "license": "CC0（パブリックドメイン）",
+    "credit": "Mannen en vrouwen aan de kust bij Chigogafuchi op Enoshima, Japan, RP-F-2003-147-113, Rijksmuseum, CC0. Wikimedia Commons https://commons.wikimedia.org/wiki/File:Mannen_en_vrouwen_aan_de_kust_bij_Chigogafuchi_op_Enoshima,_Japan,_RP-F-2003-147-113.jpg / http://hdl.handle.net/10934/RM0001.COLLECT.439974 (参照 2026-11-09)"
+   },
+   {
+    "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/11/View_of_Yenoshima_LACMA_M.91.377.37.jpg/1280px-View_of_Yenoshima_LACMA_M.91.377.37.jpg",
+    "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/11/View_of_Yenoshima_LACMA_M.91.377.37.jpg/330px-View_of_Yenoshima_LACMA_M.91.377.37.jpg",
+    "page": "https://commons.wikimedia.org/wiki/File:View_of_Yenoshima_LACMA_M.91.377.37.jpg",
+    "title": "江島兒淵（稚児ヶ淵の崖）",
+    "titleEn": "View of Yenoshima (Chigogafuchi cliff)",
+    "year": "1865（慶応元）",
+    "yearEn": "1865",
+    "holder": "ロサンゼルス・カウンティ美術館（LACMA）",
+    "holderEn": "Los Angeles County Museum of Art",
+    "license": "パブリックドメイン（LACMA公開画像・コモンズ表示）",
+    "credit": "View of Yenoshima, 1865, albumen print, hand-colored, LACMA M.91.377.37, Gift of Mrs. Ruthe Feldman, public domain. Wikimedia Commons https://commons.wikimedia.org/wiki/File:View_of_Yenoshima_LACMA_M.91.377.37.jpg (参照 2026-11-09)"
+   }
+  ],
+  "photo": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/77/Mannen_en_vrouwen_aan_de_kust_bij_Chigogafuchi_op_Enoshima%2C_Japan%2C_RP-F-2003-147-113.jpg/1280px-Mannen_en_vrouwen_aan_de_kust_bij_Chigogafuchi_op_Enoshima%2C_Japan%2C_RP-F-2003-147-113.jpg",
+   "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/77/Mannen_en_vrouwen_aan_de_kust_bij_Chigogafuchi_op_Enoshima%2C_Japan%2C_RP-F-2003-147-113.jpg/330px-Mannen_en_vrouwen_aan_de_kust_bij_Chigogafuchi_op_Enoshima%2C_Japan%2C_RP-F-2003-147-113.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:Mannen_en_vrouwen_aan_de_kust_bij_Chigogafuchi_op_Enoshima%2C_Japan%2C_RP-F-2003-147-113.jpg",
+   "title": "江の島 稚児ヶ淵の磯",
+   "titleEn": "Men and women on the shore at Chigogafuchi, Enoshima",
+   "year": "1890頃–1903（明治）",
+   "yearEn": "c. 1890–1903",
+   "holder": "アムステルダム国立美術館",
+   "holderEn": "Rijksmuseum, Amsterdam",
+   "license": "CC0（パブリックドメイン）",
+   "credit": "Mannen en vrouwen aan de kust bij Chigogafuchi op Enoshima, Japan, RP-F-2003-147-113, Rijksmuseum, CC0. Wikimedia Commons https://commons.wikimedia.org/wiki/File:Mannen_en_vrouwen_aan_de_kust_bij_Chigogafuchi_op_Enoshima,_Japan,_RP-F-2003-147-113.jpg / http://hdl.handle.net/10934/RM0001.COLLECT.439974 (参照 2026-11-09)"
+  }
+ },
+ {
+  "id": "add-katase-town-fuji",
+  "ready": false,
+  "name": "片瀬の町並みと富士（高台から）",
+  "nameEn": "Katase village and Mt. Fuji from a hill",
+  "target": {
+   "lat": 35.31171389,
+   "lon": 139.48935833
+  },
+  "photos": [
+   {
+    "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/24/Collectie_Wereldmuseum%2C_RV-A122-1-94%2C_Foto%2C_%27Katase%2C_Kanagawa%27%2C_maker_onbekend-unknown%2C_1888.jpg/1280px-Collectie_Wereldmuseum%2C_RV-A122-1-94%2C_Foto%2C_%27Katase%2C_Kanagawa%27%2C_maker_onbekend-unknown%2C_1888.jpg",
+    "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/24/Collectie_Wereldmuseum%2C_RV-A122-1-94%2C_Foto%2C_%27Katase%2C_Kanagawa%27%2C_maker_onbekend-unknown%2C_1888.jpg/330px-Collectie_Wereldmuseum%2C_RV-A122-1-94%2C_Foto%2C_%27Katase%2C_Kanagawa%27%2C_maker_onbekend-unknown%2C_1888.jpg",
+    "page": "https://commons.wikimedia.org/wiki/File:Collectie_Wereldmuseum%2C_RV-A122-1-94%2C_Foto%2C_%27Katase%2C_Kanagawa%27%2C_maker_onbekend-unknown%2C_1888.jpg",
+    "title": "片瀬",
+    "titleEn": "Katase",
+    "year": "1888（明治21）",
+    "yearEn": "1888",
+    "holder": "オランダ国立世界文化博物館（Wereldmuseum）",
+    "holderEn": "Wereldmuseum (Nationaal Museum van Wereldculturen)",
+    "license": "パブリックドメイン（コモンズ表示）",
+    "credit": "Collectie Wereldmuseum, RV-A122-1-94, 'Katase, Kanagawa', 1888, maker onbekend. Wikimedia Commons https://commons.wikimedia.org/wiki/File:Collectie_Wereldmuseum,_RV-A122-1-94,_Foto,_'Katase,_Kanagawa',_maker_onbekend-unknown,_1888.jpg / https://hdl.handle.net/20.500.11840/910206 (参照 2026-11-09)",
+    "weak": true
+   }
+  ],
+  "photo": {
+   "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/24/Collectie_Wereldmuseum%2C_RV-A122-1-94%2C_Foto%2C_%27Katase%2C_Kanagawa%27%2C_maker_onbekend-unknown%2C_1888.jpg/1280px-Collectie_Wereldmuseum%2C_RV-A122-1-94%2C_Foto%2C_%27Katase%2C_Kanagawa%27%2C_maker_onbekend-unknown%2C_1888.jpg",
+   "thumb": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/24/Collectie_Wereldmuseum%2C_RV-A122-1-94%2C_Foto%2C_%27Katase%2C_Kanagawa%27%2C_maker_onbekend-unknown%2C_1888.jpg/330px-Collectie_Wereldmuseum%2C_RV-A122-1-94%2C_Foto%2C_%27Katase%2C_Kanagawa%27%2C_maker_onbekend-unknown%2C_1888.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:Collectie_Wereldmuseum%2C_RV-A122-1-94%2C_Foto%2C_%27Katase%2C_Kanagawa%27%2C_maker_onbekend-unknown%2C_1888.jpg",
+   "title": "片瀬",
+   "titleEn": "Katase",
+   "year": "1888（明治21）",
+   "yearEn": "1888",
+   "holder": "オランダ国立世界文化博物館（Wereldmuseum）",
+   "holderEn": "Wereldmuseum (Nationaal Museum van Wereldculturen)",
+   "license": "パブリックドメイン（コモンズ表示）",
+   "credit": "Collectie Wereldmuseum, RV-A122-1-94, 'Katase, Kanagawa', 1888, maker onbekend. Wikimedia Commons https://commons.wikimedia.org/wiki/File:Collectie_Wereldmuseum,_RV-A122-1-94,_Foto,_'Katase,_Kanagawa',_maker_onbekend-unknown,_1888.jpg / https://hdl.handle.net/20.500.11840/910206 (参照 2026-11-09)",
+   "weak": true
   }
  }
 ];
@@ -5674,7 +6934,7 @@
   // 本に横倒しで印刷された写真は、見せる時だけまっすぐに起こす（画像そのものは加工しない。国会図書館の仕組みは回転に対応していないので、この画面の中で回す）
   function uprightAll() {
     const jobs = [];
-    SOON.forEach((s) => (s.photos || [s.photo]).forEach((ph) => {
+    SPOTS.concat(SOON).forEach((s) => (s.photos || [s.photo]).forEach((ph) => {
       if (!ph.rot || ph.upright) return;
       ["src", "thumb"].forEach((f) => jobs.push(new Promise((ok) => {
         const im = new Image(); im.crossOrigin = "anonymous";
@@ -6231,7 +7491,7 @@
   });
   document.querySelector("header h1").addEventListener("click", goHome);
   // ===== 地域（国土地理院の住所検索で市町を確かめた。境目の龍口寺＝藤沢、法性寺＝逗子は住所どおりに手で直した）=====
-  const AREA = {"daibutsu": "kamakura", "hachimangu": "kamakura", "hasedera": "kamakura", "engakuji": "kamakura", "kenchoji": "kamakura", "kamakuragu": "kamakura", "yoritomo": "kamakura", "inamuragasaki": "kamakura", "yuigahama": "kamakura", "zushi": "zushi", "zushi-rokudai-gozen": "zushi", "zushi-tagoegawa": "zushi", "zushi-namiko-fudo": "zushi", "zushi-gandenji": "zushi", "zushi-jimmuji": "zushi", "zushi-hoshoji": "zushi", "zushi-kaihoin": "zushi", "ndl-kamakura-station-1950": "kamakura", "ndl-hase-main-street-1950": "kamakura", "ndl-wakamiya-oji-1950": "kamakura", "ndl-rokujizo-1950": "kamakura", "ndl-namerikawa-mouth-1950": "kamakura", "ndl-zaimokuza-beach-1950": "kamakura", "ndl-wakaejima-1950": "kamakura", "ndl-sakanoshita-1950": "kamakura", "ndl-shichirigahama-1950": "kamakura", "ndl-kakuonji-1950": "kamakura", "ndl-gokurakuji-1950": "kamakura", "ndl-zuisenji-1950": "kamakura", "ndl-sugimotodera-1950": "kamakura", "ndl-komyoji-1950": "kamakura", "ndl-kosokuji-1950": "kamakura", "ndl-wadazuka-1950": "kamakura", "ndl-hino-toshimoto-tomb-1950": "kamakura", "ndl-jomyoji-1950": "kamakura", "ndl-jochiji-1950": "kamakura", "ndl-jufukuji-1950": "kamakura", "ndl-kamegayatsu-pass-1950": "kamakura", "ndl-perry-monument-1918": "yokosuka", "ndl-hayama-imperial-villa-1900": "hayama", "ndl-yokosuka-dock-1900": "yokosuka", "ndl-uraga-harbor-1900": "yokosuka", "hashirimizu-suigenchi-1925": "yokosuka", "misaki-port-1955": "miura", "hakushu-monument-1955": "miura", "aburatsubo-1955": "miura", "zushi-fujoki-1955": "zushi", "okura-bakufu-1955": "kamakura", "zaimokuza-1955": "kamakura", "nichiren-tsujiseppo-1955": "kamakura", "yokosuka-port-1955": "yokosuka", "uraga-dock": "yokosuka", "mikasa": "yokosuka", "kannonzaki-lh-1904": "yokosuka", "tsurugisaki-lh-1904": "miura", "jogashima-lh-1904": "miura", "uraga-townhall-1937": "yokosuka", "uraga-fishmarket-1937": "yokosuka", "kurihama-sumiyoshi-1917": "yokosuka", "kurihama-denpukuji-1917": "yokosuka", "kurihama-hachiman-1917": "yokosuka", "iwato-manganji-1917": "yokosuka", "kurihama-choanji-1917": "yokosuka", "sahara-jigenin-1917": "yokosuka", "sahara-shotokuin-1917": "yokosuka", "sahara-joshoji-1917": "yokosuka", "kumura-togakuji-1917": "yokosuka", "yawata-shogyoji-1917": "yokosuka", "yokosuka-station-1925": "yokosuka", "yokosuka-suwa-1925": "yokosuka", "kamakura-toshoji-1920": "kamakura", "kamakura-ichinotorii-1920": "kamakura", "kamakura-shirahata-1920": "kamakura", "kamakura-hoshinoi-1920": "kamakura", "kamakura-iijimazaki-1920": "kamakura", "shichirigahama-tram-1920": "kamakura", "ryukoji-katase": "enoshima", "wakamiya-oji-dankazura": "kamakura", "namerikawa": "kamakura", "enoshima-iwaya": "enoshima", "hayama-isshiki": "hayama", "enoshima-bronze-torii": "enoshima", "anjinzuka": "yokosuka", "ryuhonji": "yokosuka", "sarushima-nichiren": "yokosuka", "kinugasa-park": "yokosuka", "mansyoji-oyabe": "yokosuka", "hashirimizu-ototachibana": "yokosuka", "kurihama-village": "yokosuka", "arai-castle": "miura", "misaki-three-gosho": "miura", "nagai-yakata": "yokosuka", "yokosuka-motomachi": "yokosuka", "yokosuka-hirasaka": "yokosuka", "misaki-hanagure": "miura", "hanzobo": "kamakura", "tokimune-byo": "kamakura", "kobukurozaka": "kamakura", "misaki-town-1923": "miura", "yokosuka-city-hall": "yokosuka"};
+  const AREA = {"daibutsu": "kamakura", "hachimangu": "kamakura", "hasedera": "kamakura", "engakuji": "kamakura", "kenchoji": "kamakura", "kamakuragu": "kamakura", "yoritomo": "kamakura", "inamuragasaki": "kamakura", "yuigahama": "kamakura", "zushi": "zushi", "zushi-rokudai-gozen": "zushi", "zushi-tagoegawa": "zushi", "zushi-namiko-fudo": "zushi", "zushi-gandenji": "zushi", "zushi-jimmuji": "zushi", "zushi-hoshoji": "zushi", "zushi-kaihoin": "zushi", "ndl-kamakura-station-1950": "kamakura", "ndl-hase-main-street-1950": "kamakura", "ndl-wakamiya-oji-1950": "kamakura", "ndl-rokujizo-1950": "kamakura", "ndl-namerikawa-mouth-1950": "kamakura", "ndl-zaimokuza-beach-1950": "kamakura", "ndl-wakaejima-1950": "kamakura", "ndl-sakanoshita-1950": "kamakura", "ndl-shichirigahama-1950": "kamakura", "ndl-kakuonji-1950": "kamakura", "ndl-gokurakuji-1950": "kamakura", "ndl-zuisenji-1950": "kamakura", "ndl-sugimotodera-1950": "kamakura", "ndl-komyoji-1950": "kamakura", "ndl-kosokuji-1950": "kamakura", "ndl-wadazuka-1950": "kamakura", "ndl-hino-toshimoto-tomb-1950": "kamakura", "ndl-jomyoji-1950": "kamakura", "ndl-jochiji-1950": "kamakura", "ndl-jufukuji-1950": "kamakura", "ndl-kamegayatsu-pass-1950": "kamakura", "ndl-perry-monument-1918": "yokosuka", "ndl-hayama-imperial-villa-1900": "hayama", "ndl-yokosuka-dock-1900": "yokosuka", "ndl-uraga-harbor-1900": "yokosuka", "hashirimizu-suigenchi-1925": "yokosuka", "misaki-port-1955": "miura", "hakushu-monument-1955": "miura", "aburatsubo-1955": "miura", "zushi-fujoki-1955": "zushi", "okura-bakufu-1955": "kamakura", "zaimokuza-1955": "kamakura", "nichiren-tsujiseppo-1955": "kamakura", "yokosuka-port-1955": "yokosuka", "uraga-dock": "yokosuka", "mikasa": "yokosuka", "kannonzaki-lh-1904": "yokosuka", "tsurugisaki-lh-1904": "miura", "jogashima-lh-1904": "miura", "uraga-townhall-1937": "yokosuka", "uraga-fishmarket-1937": "yokosuka", "kurihama-sumiyoshi-1917": "yokosuka", "kurihama-denpukuji-1917": "yokosuka", "kurihama-hachiman-1917": "yokosuka", "iwato-manganji-1917": "yokosuka", "kurihama-choanji-1917": "yokosuka", "sahara-jigenin-1917": "yokosuka", "sahara-shotokuin-1917": "yokosuka", "sahara-joshoji-1917": "yokosuka", "kumura-togakuji-1917": "yokosuka", "yawata-shogyoji-1917": "yokosuka", "yokosuka-station-1925": "yokosuka", "yokosuka-suwa-1925": "yokosuka", "kamakura-toshoji-1920": "kamakura", "kamakura-ichinotorii-1920": "kamakura", "kamakura-shirahata-1920": "kamakura", "kamakura-hoshinoi-1920": "kamakura", "kamakura-iijimazaki-1920": "kamakura", "shichirigahama-tram-1920": "kamakura", "ryukoji-katase": "enoshima", "wakamiya-oji-dankazura": "kamakura", "namerikawa": "kamakura", "enoshima-iwaya": "enoshima", "hayama-isshiki": "hayama", "enoshima-bronze-torii": "enoshima", "anjinzuka": "yokosuka", "ryuhonji": "yokosuka", "sarushima-nichiren": "yokosuka", "kinugasa-park": "yokosuka", "mansyoji-oyabe": "yokosuka", "hashirimizu-ototachibana": "yokosuka", "kurihama-village": "yokosuka", "arai-castle": "miura", "misaki-three-gosho": "miura", "nagai-yakata": "yokosuka", "yokosuka-motomachi": "yokosuka", "yokosuka-hirasaka": "yokosuka", "misaki-hanagure": "miura", "hanzobo": "kamakura", "tokimune-byo": "kamakura", "kobukurozaka": "kamakura", "misaki-town-1923": "miura", "yokosuka-city-hall": "yokosuka", "add-yokosuka-suwa-view": "yokosuka", "add-zushi-fujimibashi": "zushi", "add-hayama-morito-jinja": "hayama", "add-hayama-morito-beach": "hayama", "add-hayama-chojagasaki": "hayama", "add-yokosuka-tateishi": "yokosuka", "add-misaki-kainan": "miura", "add-misaki-tooriya": "miura", "add-enoshima-iwamotoro": "enoshima", "add-koshigoe-godobashi": "enoshima", "add-koshigoe-manpukuji": "enoshima", "add-katase-beach-enoshima": "enoshima", "add-enoshima-pier-katase": "enoshima", "add-enoshima-okutsunomiya": "enoshima", "add-enoshima-hetsunomiya": "enoshima", "add-enoshima-chigogafuchi": "enoshima", "add-katase-town-fuji": "enoshima"};
   const AREAS = [["kamakura", "鎌倉", "Kamakura"], ["enoshima", "江の島・片瀬", "Enoshima & Katase"], ["zushi", "逗子", "Zushi"], ["hayama", "葉山", "Hayama"], ["yokosuka", "横須賀", "Yokosuka"], ["miura", "三浦", "Miura"]];
   let areaSel = "all";
   try { areaSel = localStorage.getItem("tw-area") || "all"; } catch (_) {}
